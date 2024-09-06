@@ -138,8 +138,8 @@ export default function Home() {
                 Get in Touch
               </h2>
               <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Have any questions or need assistance? Contact our team and
-                we'll be happy to help.
+                Have any questions or need assistance? Contact our team and we
+                ll be happy to help.
               </p>
             </div>
             <div className="mx-auto w-full max-w-sm space-y-2">
@@ -152,7 +152,7 @@ export default function Home() {
                 <Button type="submit">Submit</Button>
               </form>
               <p className="text-xs text-muted-foreground">
-                We'll get back to you as soon as possible.
+                We ll get back to you as soon as possible.
               </p>
             </div>
           </div>
