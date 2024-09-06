@@ -1,84 +1,21 @@
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
-import Link from "next/link";
-import { Car } from "lucide-react";
+import SearchSection from "@/components/component/search-section";
 import { Input } from "@/components/ui/input";
+import PriceSection from "@/components/component/price-section";
+import { FeatureSection } from "@/components/component/feature-section";
+import HeroSection from "@/components/component/hero-section";
 
 export default function Home() {
   return (
-    <div className="flex flex-col m-auto ">
-      <header className="bg-primary text-primary-foreground px-4 lg:px-6 h-14 flex items-center">
-        <Link href="#" className="flex items-center gap-2" prefetch={false}>
-          <Car className="h-6 w-6" />
-          <span className="text-xl font-bold">VoitureConnect</span>
-        </Link>
-        <nav className="ml-auto flex gap-4 sm:gap-6">
-          <Link
-            href="#"
-            className="text-sm font-medium hover:underline underline-offset-4"
-            prefetch={false}
-          >
-            Features
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium hover:underline underline-offset-4"
-            prefetch={false}
-          >
-            Benefits
-          </Link>
-          <Link
-            href="#"
-            className="text-sm font-medium hover:underline underline-offset-4"
-            prefetch={false}
-          >
-            Contact
-          </Link>
-        </nav>
-      </header>
-      <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32 bg-background">
-          <div className="container px-4 md:px-6 grid gap-6 lg:grid-cols-2 lg:gap-12">
-            <div className="space-y-4">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                Simplify Your Garage Management
-              </h1>
-              <p className="max-w-[600px] text-muted-foreground md:text-xl">
-                Garage Finder is your one-stop solution for buying, selling, and
-                managing your garage. Easily post ads, connect with buyers, and
-                streamline your garage operations.
-              </p>
-              <div className="flex gap-2">
-                <Link
-                  href="#"
-                  className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                  prefetch={false}
-                >
-                  Post an Ad
-                </Link>
-                <Link
-                  href="#"
-                  className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                  prefetch={false}
-                >
-                  Manage Garage
-                </Link>
-              </div>
-            </div>
-            <Image
-              src="/placeholder.svg"
-              width="500"
-              height="500"
-              alt="Hero"
-              className="mx-auto aspect-square overflow-hidden rounded-xl object-cover"
-            />
-          </div>
-        </section>
+    <div className="flex flex-col w-full ">
+      <main className="m-auto w-full">
+        <HeroSection />
+        <SearchSection />
         <section
           id="features"
           className="w-full py-12 md:py-24 lg:py-32 bg-muted"
         >
-          <div className="container px-4 md:px-6">
+          <div className="container m-auto px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -132,7 +69,7 @@ export default function Home() {
           </div>
         </section>
         <section id="benefits" className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
+          <div className="container m-auto px-4 md:px-6">
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
@@ -188,6 +125,9 @@ export default function Home() {
             </div>
           </div>
         </section>
+        <FeatureSection />
+        <PriceSection />
+
         <section
           id="contact"
           className="w-full py-12 md:py-24 lg:py-32 bg-muted"
@@ -218,27 +158,6 @@ export default function Home() {
           </div>
         </section>
       </main>
-      <footer className="flex flex-col gap-2 sm:flex-row py-6 w-full shrink-0 items-center px-4 md:px-6 border-t">
-        <p className="text-xs text-muted-foreground">
-          &copy; 2024 Garage Finder. All rights reserved.
-        </p>
-        <nav className="sm:ml-auto flex gap-4 sm:gap-6">
-          <Link
-            href="#"
-            className="text-xs hover:underline underline-offset-4"
-            prefetch={false}
-          >
-            Terms of Service
-          </Link>
-          <Link
-            href="#"
-            className="text-xs hover:underline underline-offset-4"
-            prefetch={false}
-          >
-            Privacy Policy
-          </Link>
-        </nav>
-      </footer>
     </div>
   );
 }

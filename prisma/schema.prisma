@@ -3,12 +3,119 @@
 
 // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
 // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "postgresql" // ou "mysql", "sqlite", etc. selon votre choix
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String
+  garages   Garage[] @relation("GarageOwner")
+  offers    Offer[]
+  buyerTransactions  Transaction[] @relation("Buyer")
+  sellerTransactions Transaction[] @relation("Seller")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  Account Account[]
+
+  Session Session[]
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  userId       String
+  sessionToken String   @unique
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Account {
+  id                String   @id @default(uuid())
+  userId            String
+  providerType      String
+  providerId        String
+  providerAccountId String
+  refreshToken      String?
+  accessToken       String?
+  expires           DateTime?
+  user              User     @relation(fields: [userId], references: [id])
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Garage {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  phone     String
+  ownerId   String
+  owner     User     @relation("GarageOwner", fields: [ownerId], references: [id])
+  ads       Ad[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Car {
+  id          String        @id @default(uuid())
+  make        String
+  model       String
+  year        Int
+  vin         String        @unique
+  ads         Ad[]
+  transactions Transaction[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Ad {
+  id          String        @id @default(uuid())
+  carId       String
+  garageId    String?
+  price       Decimal
+  description String
+  car         Car           @relation(fields: [carId], references: [id])
+  garage      Garage?       @relation(fields: [garageId], references: [id])
+  offers      Offer[]
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Offer {
+  id          String        @id @default(uuid())
+  adId        String
+  userId      String
+  offerAmount Decimal
+  status      String
+  ad          Ad            @relation(fields: [adId], references: [id])
+  user        User          @relation(fields: [userId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+}
+
+model Transaction {
+  id          String        @id @default(uuid())
+  carId       String
+  buyerId     String
+  sellerId    String
+  price       Decimal
+  car         Car           @relation(fields: [carId], references: [id])
+  buyer       User          @relation("Buyer", fields: [buyerId], references: [id])
+  seller      User          @relation("Seller", fields: [sellerId], references: [id])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
