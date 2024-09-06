@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { signIn } from "../../../auth";
-import { Button } from "@/components/ui/button";
+import { Button } from "../../components/ui/button";
 import Image from "next/image";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 

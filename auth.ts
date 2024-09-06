@@ -52,7 +52,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         if (!user) {
           throw new Error("User not found.");
         }
-        const isPasswordValid = bcrypt.compare(password, user.password);
+        const isPasswordValid = bcrypt.compare(
+          password as string,
+          user.password as string
+        );
 
         if (!isPasswordValid) {
           throw new Error("Invalid password");

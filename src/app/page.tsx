@@ -119,7 +119,7 @@ export default function Home() {
               <div className="grid gap-1">
                 <h3 className="text-xl font-bold">Competitive Pricing</h3>
                 <p className="text-muted-foreground">
-                  Enjoy affordable pricing plans to fit your garage's needs.
+                  Enjoy affordable pricing plans to fit your garages needs.
                 </p>
               </div>
             </div>
