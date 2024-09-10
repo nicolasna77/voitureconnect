@@ -30,7 +30,9 @@ const ProductCard = (item: Ad) => {
               <h4 className="font-semibold">{item.title}</h4>
             </div>
             <div className="w-full ">
-              <h4 className="font-semibold float-end">{item.price} €</h4>
+              <h4 className="font-semibold float-end">
+                {item.price.toString()} €
+              </h4>
             </div>
           </CardDescription>
         </div>

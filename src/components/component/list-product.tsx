@@ -22,7 +22,7 @@ const ListProduct = () => {
       return response.data;
     },
   });
-  
+
   if (isError) {
     return <span>erreur: {error.message}</span>;
   }
@@ -36,7 +36,21 @@ const ListProduct = () => {
         >
           {Array.isArray(data?.data) &&
             data.data.map((car: AdWithCar) => (
-              <ProductCard key={car.id} item={car} />
+              <ProductCard
+                key={car.id}
+                id={car.id}
+                carId={car.carId}
+                garageId={car.garageId}
+                Kms={car.Kms}
+                price={car.price}
+                title={car.title}
+                optionsID={car.optionsID}
+                description={car.description}
+                vin={car.vin}
+                createdAt={car.createdAt}
+                updatedAt={car.updatedAt}
+                userId={car.userId}
+              />
             ))}
         </div>
       </div>
