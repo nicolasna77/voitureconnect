@@ -4,6 +4,7 @@ import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ReactQueryProvider } from "./react-query-provider";
+import { Analytics } from "@vercel/analytics/react";
 
 const roboto = Roboto({
   weight: "400",
@@ -24,7 +25,9 @@ export default function RootLayout({
       <body className={roboto.className}>
         <ReactQueryProvider>
           <Header />
-          <div className=" "> {children}</div> <Footer />
+          {children}
+          <Footer />
+          <Analytics />
         </ReactQueryProvider>
       </body>
     </html>
