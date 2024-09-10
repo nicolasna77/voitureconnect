@@ -7,7 +7,7 @@ const AdForm = () => {
   return (
     <form className="space-y-4">
       <div>
-        <Label htmlFor="title">Titre de l'annonce</Label>
+        <Label htmlFor="title">{"Titre de l'annonce"}</Label>
         <Input id="title" type="text" placeholder="Titre de l'annonce" />
       </div>
       <div>
@@ -31,7 +31,7 @@ const AdForm = () => {
         <Input id="images" type="file" multiple />
       </div>
       <Button type="submit" className="w-full">
-        Publier l'annonce
+        {" Publier l'annonce"}
       </Button>
     </form>
   );

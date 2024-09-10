@@ -13,8 +13,8 @@ export function FeatureSection() {
               Découvrez ce qui arrive bientôt
             </h2>
             <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-              Nous travaillons sans relâche pour améliorer votre expérience.
-              Jetez un coup d'œil à nos prochaines mises à jour.
+              {"Nous travaillons sans relâche pour améliorer votre expérience."}
+              {"Jetez un coup d'œil à nos prochaines mises à jour."}
             </p>
           </div>
         </div>
@@ -36,8 +36,9 @@ export function FeatureSection() {
                 <div className="grid gap-1">
                   <h3 className="text-xl font-bold">Calendrier intégré</h3>
                   <p className="text-muted-foreground">
-                    Gardez une trace de vos rendez-vous et événements
-                    directement dans l'application.
+                    {
+                      " Gardez une trace de vos rendez-vous et événements directement dans l'application."
+                    }
                   </p>
                 </div>
               </li>
@@ -47,8 +48,9 @@ export function FeatureSection() {
                     Notifications améliorées
                   </h3>
                   <p className="text-muted-foreground">
-                    Recevez des alertes en temps réel pour ne rien manquer
-                    d'important.
+                    {
+                      "                    Recevez des alertes en temps réel pour ne rien manquer d'important."
+                    }
                   </p>
                 </div>
               </li>

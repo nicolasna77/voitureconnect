@@ -84,7 +84,7 @@ const ProductPage = () => {
               <ul className="list-disc pl-4">
                 <li>Climatisation automatique</li>
                 <li>Système de navigation GPS</li>
-                <li>Jantes alliage 17"</li>
+                <li>Jantes alliage 17pouces</li>
                 <li>Phares LED</li>
                 <li>Régulateur de vitesse</li>
               </ul>
@@ -92,9 +92,9 @@ const ProductPage = () => {
             <div className="grid gap-2">
               <span className="text-sm font-medium">État général</span>
               <p>
-                Le véhicule est en excellent état, entretenu régulièrement avec
-                un historique d'entretien complet. La carrosserie est en très
-                bon état et l'intérieur est bien préservé.
+                {
+                  " Le véhicule est en excellent état, entretenu régulièrement avec un historique d'entretien complet. La carrosserie est en très bon état et l'intérieur est bien préservé."
+                }
               </p>
             </div>
           </div>
