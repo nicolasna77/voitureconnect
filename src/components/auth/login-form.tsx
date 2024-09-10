@@ -3,10 +3,9 @@ import { AtSign, Key } from "lucide-react";
 import { auth, signIn } from "../../../auth";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import Image from "next/image";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import LoginSocial from "./login-social";
 
 export default async function LoginForm() {
   const session = await auth();
@@ -17,46 +16,7 @@ export default async function LoginForm() {
         <CardTitle className="text-2xl">Connectez-vous</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-2 max-w-xs">
-          <form
-            action={async () => {
-              "use server";
-              await signIn("google", { redirectTo: "/dashboard" });
-            }}
-          >
-            <Button
-              variant={"outline"}
-              className=" m-auto py-2 border flex gap-2"
-              type="submit"
-              size={"sm"}
-            >
-              <Image
-                src="/google.svg"
-                height={24}
-                width={24}
-                alt="icon google"
-              />
-              Sign in with Google
-            </Button>
-          </form>
-
-          <form
-            action={async () => {
-              "use server";
-              await signIn("github", { redirectTo: "/dashboard" });
-            }}
-          >
-            <Button
-              variant={"outline"}
-              className=" m-auto py-2 border flex gap-2"
-              type="submit"
-              size={"sm"}
-            >
-              <GitHubLogoIcon width={24} height={24} />
-              Sign in with GitHub
-            </Button>
-          </form>
-        </div>
+        <LoginSocial />
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />

@@ -24,7 +24,7 @@ export default function RootLayout({
       <body className={roboto.className}>
         <ReactQueryProvider>
           <Header />
-          <div className=" bg-muted/40"> {children}</div> <Footer />
+          <div className=" "> {children}</div> <Footer />
         </ReactQueryProvider>
       </body>
     </html>

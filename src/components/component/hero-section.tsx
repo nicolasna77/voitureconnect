@@ -3,10 +3,10 @@ import Link from "next/link";
 
 const HeroSection = () => {
   return (
-    <section className="w-full py-12 md:py-24  lg:py-44 bg-primary-foreground">
+    <section className="w-full py-12 md:py-24  lg:py-44 bg-inherit">
       <div className="container m-auto px-4 md:px-6 grid gap-6 lg:grid-cols-2 lg:gap-12">
         <div className="space-y-4">
-          <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+          <h1 className="text-3xl text-primary font-bold tracking-tighter sm:text-4xl md:text-5xl">
             Simplifiez la gestion de votre garage
           </h1>
           <p className=" text-muted-foreground md:text-xl">

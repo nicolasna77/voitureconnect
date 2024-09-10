@@ -8,9 +8,11 @@ import HeroSection from "@/components/component/hero-section";
 export default function Home() {
   return (
     <div className="flex flex-col w-full ">
-      <main className="m-auto w-full">
+      <main className="m-auto  w-full">
         <HeroSection />
+
         <SearchSection />
+
         <section
           id="features"
           className="w-full py-12 md:py-24 lg:py-32 bg-muted"
@@ -127,36 +129,6 @@ export default function Home() {
         </section>
         <FeatureSection />
         <PriceSection />
-
-        <section
-          id="contact"
-          className="w-full py-12 md:py-24 lg:py-32 bg-muted"
-        >
-          <div className="container px-4 md:px-6 grid items-center justify-center gap-4 text-center">
-            <div className="space-y-3">
-              <h2 className="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                Get in Touch
-              </h2>
-              <p className="mx-auto max-w-[600px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                Have any questions or need assistance? Contact our team and we
-                ll be happy to help.
-              </p>
-            </div>
-            <div className="mx-auto w-full max-w-sm space-y-2">
-              <form className="flex gap-2">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="max-w-lg flex-1"
-                />
-                <Button type="submit">Submit</Button>
-              </form>
-              <p className="text-xs text-muted-foreground">
-                We ll get back to you as soon as possible.
-              </p>
-            </div>
-          </div>
-        </section>
       </main>
     </div>
   );

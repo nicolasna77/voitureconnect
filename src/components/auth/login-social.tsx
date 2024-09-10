@@ -1,8 +1,8 @@
+"use server";
 import React from "react";
 import { signIn } from "../../../auth";
 import { Button } from "../../components/ui/button";
-import Image from "next/image";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import { FcGoogle } from "react-icons/fc";
 
 const LoginSocial = () => {
   return (
@@ -16,29 +16,12 @@ const LoginSocial = () => {
       >
         <Button
           variant={"outline"}
-          className="px-4 m-auto py-2 border flex gap-2"
+          className=" m-auto mb-4 w-full border flex gap-2"
           type="submit"
           size={"lg"}
         >
-          <Image src="/google.svg" height={24} width={24} alt="icon google" />
-          Sign in with Google
-        </Button>
-      </form>
-      <form
-        action={async () => {
-          "use server";
-
-          await signIn("github", { redirectTo: "/dashboard" });
-        }}
-      >
-        <Button
-          variant={"outline"}
-          className="px-4 m-auto py-2 border flex gap-2"
-          type="submit"
-          size={"lg"}
-        >
-          <GitHubLogoIcon width={24} height={24} />
-          Sign in with GitHub
+          <FcGoogle size={24} height={24} width={24} />
+          {" S'identifier avec Google"}
         </Button>
       </form>
     </>

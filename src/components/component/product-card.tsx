@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 
 const ProductCard = (item: Ad) => {
   const router = useRouter();
-  console.log(item);
   return (
     <Card
       onClick={() => {
@@ -28,9 +27,7 @@ const ProductCard = (item: Ad) => {
         <div className={`flex-1 grid gap-2`}>
           <CardDescription>
             <div className="flex items-center justify-between">
-              <h4 className="font-semibold">
-                {item.car.model} - {item.car.generation}
-              </h4>
+              <h4 className="font-semibold">{item.title}</h4>
             </div>
             <div className="w-full ">
               <h4 className="font-semibold float-end">{item.price} €</h4>

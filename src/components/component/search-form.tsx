@@ -26,7 +26,6 @@ import {
 import { DualRangeSlider } from "../ui/dual-range-slider";
 const SearchForm = () => {
   const [moreFilters, setMoreFilters] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [brand, setBrand] = useState("");
   const [model, setModel] = useState("");
   const [yearMin, setYearMin] = useState("");

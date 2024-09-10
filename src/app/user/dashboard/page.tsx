@@ -1,4 +1,4 @@
-import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
+// import { BentoCard, BentoGrid } from "@/components/magicui/bento-grid";
 import {
   BellIcon,
   Car,
@@ -93,11 +93,11 @@ const features = [
 const BentoDemo = () => {
   return (
     <div className="container min-h-screen py-8 justify-center items-center flex">
-      <BentoGrid className="lg:grid-rows-3">
+      {/* <BentoGrid className="lg:grid-rows-3">
         {features.map((feature) => (
           <BentoCard key={feature.name} {...feature} />
         ))}
-      </BentoGrid>
+      </BentoGrid> */}
     </div>
   );
 };

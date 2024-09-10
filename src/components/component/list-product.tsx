@@ -3,14 +3,26 @@
 import { useQuery } from "@tanstack/react-query";
 import Axios from "axios";
 import ProductCard from "./product-card";
-import { Ad } from "@prisma/client";
+import { Ad, Car } from "@prisma/client";
 import LoaderComponant from "./loader";
 
+type AdWithCar = Ad & {
+  car: Car;
+};
+type AdResponse = {
+  data: {
+    data: AdWithCar[];
+  };
+};
 const ListProduct = () => {
-  const { isPending, isError, data, error } = useQuery({
+  const { isPending, isError, data, error } = useQuery<AdResponse>({
     queryKey: ["todos"],
-    queryFn: async () => await Axios.get("/api/ad"),
+    queryFn: async () => {
+      const response = await Axios.get<AdResponse>("/api/ad");
+      return response.data;
+    },
   });
+  
   if (isError) {
     return <span>erreur: {error.message}</span>;
   }
@@ -22,8 +34,8 @@ const ListProduct = () => {
         <div
           className={`grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4`}
         >
-          {Array.isArray(data?.data.cars) &&
-            data.data.cars.map((car: Ad) => (
+          {Array.isArray(data?.data) &&
+            data.data.map((car: AdWithCar) => (
               <ProductCard key={car.id} item={car} />
             ))}
         </div>
