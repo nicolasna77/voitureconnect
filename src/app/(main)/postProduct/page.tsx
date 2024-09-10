@@ -1,12 +1,13 @@
-import AdForm from "@/components/component/ad-form";
+import AdForm from "../../../components/component/ad-form";
 import Image from "next/image";
+import React from "react";
 
 const PagePostProduct = () => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-6  mx-auto p-4 sm:p-6 md:p-8">
       <div className="bg-background rounded-lg  overflow-hidden">
         <div className="p-6 sm:p-8 ">
-          <h1 className="text-2xl font-bold mb-4">Aperçu de l'annonce</h1>
+          <h1 className="text-2xl font-bold mb-4">{"Aperçu de l'annonce"}</h1>
           <div className="space-y-4">
             <Image
               alt=""
@@ -16,7 +17,9 @@ const PagePostProduct = () => {
               sizes="100vw"
             />
             <div>
-              <h2 className="text-lg font-medium mb-2">Titre de l'annonce</h2>
+              <h2 className="text-lg font-medium mb-2">
+                {"Titre de l'annonce"}
+              </h2>
               <p className="text-muted-foreground">
                 Votre annonce aura un titre accrocheur ici.
               </p>

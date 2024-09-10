@@ -1,4 +1,4 @@
-import NextAuth from "next-auth";
+import NextAuth, { User } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "@/../prisma";
 import Google from "next-auth/providers/google";
@@ -6,11 +6,9 @@ import Github from "next-auth/providers/github";
 import { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 
-class InvalidLoginError extends CredentialsSignin {
-  code = "Invalid identifier or password";
-}
+
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: {
@@ -36,29 +34,32 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Password", type: "password" },
       },
       authorize: async (credentials) => {
+        let user = null;
         if (!credentials) {
           throw new Error("Credentials not provided");
         }
         const prisma = new PrismaClient();
 
         const { email, password } = credentials;
-        let user = null;
 
+        const passwordHash = await bcrypt.hash(password as string, 10);
         user = await prisma.user.findUnique({
           where: {
             email: email as string,
           },
         });
+
+        const compare = await bcrypt.compare(
+          password as string,
+          user?.password as string
+        );
+
         if (!user) {
           throw new Error("User not found.");
         }
-        const isPasswordValid = bcrypt.compare(
-          password as string,
-          user.password as string
-        );
 
-        if (!isPasswordValid) {
-          throw new Error("Invalid password");
+        if (!compare) {
+          throw new Error("Invalid password.");
         }
         return user;
       },
@@ -66,5 +67,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   ],
   pages: {
     signIn: "/login",
+    newUser: "/register",
   },
 });

@@ -23,7 +23,7 @@ import {
   Settings,
   X,
 } from "lucide-react";
-
+import { DualRangeSlider } from "../ui/dual-range-slider";
 const SearchForm = () => {
   const [moreFilters, setMoreFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -37,6 +37,7 @@ const SearchForm = () => {
   const [priceMax, setPriceMax] = useState("");
   const [fuelType, setFuelType] = useState("");
   const [transmission, setTransmission] = useState("");
+  const [values, setValues] = useState([0, 100]);
 
   return (
     <Card className="bg-card max-w-4xl m-auto py-8">
@@ -62,7 +63,7 @@ const SearchForm = () => {
 
           <div className="flex gap-4 py-4">
             {yearMin || yearMax ? (
-              <Badge className="group " variant={"outline"} >
+              <Badge className="group " variant={"outline"}>
                 <CalendarIcon className="mr-2 w-4" />
                 {yearMin && yearMax
                   ? `${yearMin} à ${yearMax}`
@@ -120,7 +121,7 @@ const SearchForm = () => {
               <div>
                 <div className="space-y-2">
                   <Label htmlFor="brand">Brand</Label>
-                  <Select id="brand" value={brand} onValueChange={setBrand}>
+                  <Select name="brand" value={brand} onValueChange={setBrand}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select brand" />
                     </SelectTrigger>
@@ -135,7 +136,7 @@ const SearchForm = () => {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="model">Model</Label>
-                  <Select id="model" value={model} onValueChange={setModel}>
+                  <Select name="model" value={model} onValueChange={setModel}>
                     <SelectTrigger>
                       <SelectValue placeholder="Select model" />
                     </SelectTrigger>
@@ -150,83 +151,41 @@ const SearchForm = () => {
                 </div>
               </div>
 
-              <div>
-                <div className="space-y-2">
-                  <Label htmlFor="year">Year</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Select
-                      id="year-min"
-                      value={yearMin}
-                      onValueChange={setYearMin}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Min year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="2023">2023</SelectItem>
-                        <SelectItem value="2022">2022</SelectItem>
-                        <SelectItem value="2021">2021</SelectItem>
-                        <SelectItem value="2020">2020</SelectItem>
-                        <SelectItem value="2019">2019</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select
-                      id="year-max"
-                      value={yearMax}
-                      onValueChange={setYearMax}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Max year" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="2023">2023</SelectItem>
-                        <SelectItem value="2022">2022</SelectItem>
-                        <SelectItem value="2021">2021</SelectItem>
-                        <SelectItem value="2020">2020</SelectItem>
-                        <SelectItem value="2019">2019</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+              <div className="space-y-4">
+                <div className="space-y-8">
+                  <Label htmlFor="year">Année</Label>
+                  <DualRangeSlider
+                    label={(value) => value}
+                    value={values}
+                    onValueChange={setValues}
+                    min={0}
+                    max={100}
+                    step={1}
+                  />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="mileage">Mileage</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Input
-                      id="mileage-min"
-                      type="number"
-                      placeholder="Min mileage"
-                      value={mileageMin}
-                      onChange={(e) => setMileageMin(e.target.value)}
-                    />
-                    <Input
-                      id="mileage-max"
-                      type="number"
-                      placeholder="Max mileage"
-                      value={mileageMax}
-                      onChange={(e) => setMileageMax(e.target.value)}
-                    />
-                  </div>
+                <div className="space-y-8">
+                  <Label htmlFor="mileage">Kilométrage</Label>
+                  <DualRangeSlider
+                    label={(value) => value}
+                    value={values}
+                    onValueChange={setValues}
+                    min={0}
+                    max={100}
+                    step={1}
+                  />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="price">Price</Label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Input
-                      id="price-min"
-                      type="number"
-                      placeholder="Min price"
-                      value={priceMin}
-                      onChange={(e) => setPriceMin(e.target.value)}
-                    />
-                    <Input
-                      id="price-max"
-                      type="number"
-                      placeholder="Max price"
-                      value={priceMax}
-                      onChange={(e) => setPriceMax(e.target.value)}
-                    />
-                  </div>
+                <div className="space-y-8">
+                  <Label htmlFor="price">Prix</Label>
+                  <DualRangeSlider
+                    label={(value) => value}
+                    value={values}
+                    onValueChange={setValues}
+                    min={0}
+                    max={100}
+                    step={1}
+                  />
                 </div>
               </div>
 
@@ -234,7 +193,7 @@ const SearchForm = () => {
                 <div className="space-y-2">
                   <Label htmlFor="fuel-type">Fuel Type</Label>
                   <Select
-                    id="fuel-type"
+                    name="fuel-type"
                     value={fuelType}
                     onValueChange={setFuelType}
                   >
@@ -254,7 +213,7 @@ const SearchForm = () => {
                 <div className="space-y-2">
                   <Label htmlFor="transmission">Transmission</Label>
                   <Select
-                    id="transmission"
+                    name="transmission"
                     value={transmission}
                     onValueChange={setTransmission}
                   >

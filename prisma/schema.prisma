@@ -13,21 +13,20 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(uuid())
-  name      String
-  email     String   @unique
-  password  String
-  role      String
-  garages   Garage[] @relation("GarageOwner")
-  offers    Offer[]
+  id                 String        @id @default(uuid())
+  name               String
+  email              String        @unique
+  password           String
+  role               String
+  garages            Garage[]      @relation("GarageOwner")
+  offers             Offer[]
   buyerTransactions  Transaction[] @relation("Buyer")
   sellerTransactions Transaction[] @relation("Seller")
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  Account Account[]
-
-  Session Session[]
+  createdAt          DateTime      @default(now())
+  updatedAt          DateTime      @updatedAt
+  Account            Account[]
+  Session            Session[]
+  Ad                 Ad[]
 }
 
 model Session {
@@ -39,7 +38,7 @@ model Session {
 }
 
 model Account {
-  id                String   @id @default(uuid())
+  id                String    @id @default(uuid())
   userId            String
   providerType      String
   providerId        String
@@ -47,7 +46,7 @@ model Account {
   refreshToken      String?
   accessToken       String?
   expires           DateTime?
-  user              User     @relation(fields: [userId], references: [id])
+  user              User      @relation(fields: [userId], references: [id])
 }
 
 model VerificationToken {
@@ -63,59 +62,120 @@ model Garage {
   name      String
   address   String
   phone     String
+  cars      Car[]
   ownerId   String
   owner     User     @relation("GarageOwner", fields: [ownerId], references: [id])
-  ads       Ad[]
+  adID      Ad[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Car {
-  id          String        @id @default(uuid())
-  make        String
-  model       String
-  year        Int
-  vin         String        @unique
-  ads         Ad[]
-  transactions Transaction[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id                  String        @id @default(uuid())
+  model               String
+  generation          String
+  yearStart           Int
+  yearEnd             Int?
+  series              String?
+  version             String?
+  bodyType            String?
+  seats               Int?
+  length              Int?
+  width               Int?
+  height              Int?
+  wheelbase           Int?
+  frontTrack          Int?
+  rearTrack           Int?
+  frontLoad           Int?
+  rearLoad            Int?
+  loadHeight          Int?
+  cargoDims           String?
+  cargoVolume         Float?
+  curbWeight          Int?
+  groundClearance     Int?
+  maxCargoVolume      Int?
+  minCargoVolume      Int?
+  payload             Int?
+  grossWeight         Int?
+  maxTowingWeight     Int?
+  engineType          String?
+  displacement        Int?
+  horsepower          Int?
+  maxPowerRpm         Int?
+  maxTorque           Int?
+  induction           String?
+  cylinderLayout      String?
+  cylinders           Int?
+  forcedInduction     String?
+  bore                Float?
+  stroke              Float?
+  valvesPerCylinder   Int?
+  maxTorqueRpm        Int?
+  intercooler         Boolean?
+  transmissionType    String?
+  actuator            String?
+  turningDiameter     Float?
+  gears               Int?
+  fuelType            String?
+  maxSpeed            Int?
+  urbanConsumption    Float?
+  combinedConsumption Float?
+  acceleration        Float?
+  range               Int?
+  emissionStandard    String?
+  fuelTank            Int?
+  highwayConsumption  Float?
+  frontBrakes         String?
+  rearBrakes          String?
+  frontSuspension     String?
+  rearSuspension      String?
+  ads                 Ad[]
+  transactions        Transaction[]
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+  Garage              Garage?       @relation(fields: [garageId], references: [id])
+  garageId            String?
 }
 
 model Ad {
-  id          String        @id @default(uuid())
+  id          String   @id @default(uuid())
   carId       String
   garageId    String?
+  Kms         Int
   price       Decimal
+  title       String
   description String
-  car         Car           @relation(fields: [carId], references: [id])
-  garage      Garage?       @relation(fields: [garageId], references: [id])
+  vin         String   @unique
+  car         Car      @relation(fields: [carId], references: [id])
+  garage      Garage?  @relation(fields: [garageId], references: [id])
   offers      Offer[]
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  User        User?    @relation(fields: [userId], references: [id])
+  userId      String?
 }
 
 model Offer {
-  id          String        @id @default(uuid())
+  id          String   @id @default(uuid())
   adId        String
   userId      String
   offerAmount Decimal
   status      String
-  ad          Ad            @relation(fields: [adId], references: [id])
-  user        User          @relation(fields: [userId], references: [id])
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  ad          Ad       @relation(fields: [adId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Transaction {
-  id          String        @id @default(uuid())
-  carId       String
-  buyerId     String
-  sellerId    String
-  price       Decimal
-  car         Car           @relation(fields: [carId], references: [id])
-  buyer       User          @relation("Buyer", fields: [buyerId], references: [id])
-  seller      User          @relation("Seller", fields: [sellerId], references: [id])
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  id        String   @id @default(uuid())
+  carId     String
+  buyerId   String
+  sellerId  String
+  price     Decimal
+  car       Car      @relation(fields: [carId], references: [id])
+  buyer     User     @relation("Buyer", fields: [buyerId], references: [id])
+  seller    User     @relation("Seller", fields: [sellerId], references: [id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

@@ -1,5 +1,5 @@
-import ListProduct from "@/components/component/list-product";
-import SearchForm from "@/components/component/search-form";
+import ListProduct from "../../../components/component/list-product";
+import SearchForm from "../../../components/component/search-form";
 
 const page = () => {
   return (

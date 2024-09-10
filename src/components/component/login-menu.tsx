@@ -16,8 +16,7 @@ const LoginMenu = async () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="sm" className="gap-4">
-          {session?.user?.name}
+        <Button variant="ghost" size="icon" className="gap-4">
           <Avatar className="h-8 w-8">
             <AvatarImage src="/placeholder-user.jpg" />
             <AvatarFallback></AvatarFallback>
@@ -25,10 +24,21 @@ const LoginMenu = async () => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
+        <DropdownMenuItem className="border-b">
+          <div className="px-4 py-3 text-sm text-gray-900 ">
+            <div>{session?.user?.name}</div>
+            <div className="font-medium truncate">{session?.user?.email}</div>
+          </div>
+        </DropdownMenuItem>
+
         <DropdownMenuItem>
-          <Link href="#" className="flex items-center gap-2" prefetch={false}>
+          <Link
+            href="/user/setting"
+            className="flex items-center gap-2"
+            prefetch={false}
+          >
             <div className="h-4 w-4" />
-            <span>My Account</span>
+            <span>Parametre</span>
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem>

@@ -33,7 +33,15 @@ const features = [
     description: "Vos coups de coeur son reuni ici.",
     href: "/",
     cta: "Voir plus",
-    background: <img className="absolute -right-20 -top-20 opacity-60" />,
+    background: (
+      <Image
+        width={600}
+        src={""}
+        height={600}
+        alt="Mes favoris"
+        className="absolute -right-20 -top-20 opacity-60"
+      />
+    ),
     className: "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-3",
   },
   {
@@ -51,7 +59,15 @@ const features = [
     description: "Consulter votre stock de voiture.",
     href: "/",
     cta: "Learn more",
-    background: <img className="absolute -right-20 -top-20 opacity-60" />,
+    background: (
+      <Image
+        width={600}
+        src={""}
+        height={600}
+        alt="stock de voiture"
+        className="absolute -right-20 -top-20 opacity-60"
+      />
+    ),
     className: "lg:col-start-3 lg:col-end-3 lg:row-start-1 lg:row-end-2",
   },
   {
@@ -61,14 +77,22 @@ const features = [
       "Get notified when someone shares a file or mentions you in a comment.",
     href: "/",
     cta: "Learn more",
-    background: <img className="absolute -right-20 -top-20 opacity-60" />,
+    background: (
+      <Image
+        width={600}
+        height={600}
+        alt="Notifications"
+        src={""}
+        className="absolute -right-20 -top-20 opacity-60"
+      />
+    ),
     className: "lg:col-start-3 lg:col-end-3 lg:row-start-2 lg:row-end-4",
   },
 ];
 
 const BentoDemo = () => {
   return (
-    <div className="container h-screen justify-center items-center flex">
+    <div className="container min-h-screen py-8 justify-center items-center flex">
       <BentoGrid className="lg:grid-rows-3">
         {features.map((feature) => (
           <BentoCard key={feature.name} {...feature} />

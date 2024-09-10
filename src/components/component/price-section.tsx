@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, Plus } from "lucide-react";
 
 const PriceSection = () => {
   return (
@@ -19,8 +19,8 @@ const PriceSection = () => {
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
           <div className="flex flex-col items-start rounded-lg border bg-background p-6 shadow-sm">
             <div className="mb-4 flex w-full items-center justify-between">
-              <h3 className="text-2xl font-bold">Starter</h3>
-              <div className="text-4xl font-bold">€9</div>
+              <h3 className="text-2xl font-bold">Particulier</h3>
+              <div className="text-4xl font-bold">Gratuit</div>
             </div>
             <p className="mb-6 text-muted-foreground">
               Idéal pour les petites entreprises en phase de démarrage.
@@ -48,7 +48,9 @@ const PriceSection = () => {
           </div>
           <div className="flex flex-col items-start rounded-lg border bg-background p-6 shadow-sm">
             <div className="mb-4 flex w-full items-center justify-between">
-              <h3 className="text-2xl font-bold">Pro</h3>
+              <h3 className="text-2xl font-bold flex items-center gap-2">
+                Particulier <Plus />
+              </h3>
               <div className="text-4xl font-bold">€19</div>
             </div>
             <p className="mb-6 text-muted-foreground">
@@ -77,7 +79,7 @@ const PriceSection = () => {
           </div>
           <div className="flex flex-col items-start rounded-lg border bg-background p-6 shadow-sm">
             <div className="mb-4 flex w-full items-center justify-between">
-              <h3 className="text-2xl font-bold">Enterprise</h3>
+              <h3 className="text-2xl font-bold">Professionnel</h3>
               <div className="text-4xl font-bold">€49</div>
             </div>
             <p className="mb-6 text-muted-foreground">
@@ -90,7 +92,7 @@ const PriceSection = () => {
               </li>
               <li className="flex items-center gap-2">
                 <CheckIcon className="h-4 w-4 fill-primary" />
-                Nombre d'utilisateurs illimité
+                {" Nombre d'utilisateurs illimité"}
               </li>
               <li className="flex items-center gap-2">
                 <CheckIcon className="h-4 w-4 fill-primary" />
