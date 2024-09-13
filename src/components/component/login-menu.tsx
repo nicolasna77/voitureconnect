@@ -16,19 +16,38 @@ const LoginMenu = async () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon" className="gap-4">
+        <Button variant="ghost" size="icon" className="gap-4 rounded-full">
           <Avatar className="h-8 w-8">
             <AvatarImage src="/placeholder-user.jpg" />
-            <AvatarFallback></AvatarFallback>
+            <AvatarFallback>
+              {session?.user?.name?.charAt(0).toUpperCase()}
+            </AvatarFallback>
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         <DropdownMenuItem className="border-b">
-          <div className="px-4 py-3 text-sm text-gray-900 ">
-            <div>{session?.user?.name}</div>
-            <div className="font-medium truncate">{session?.user?.email}</div>
+          <div className="px-4 py-3 text-sm  ">
+            <span className="font-medium block text-sm text-gray-900">
+              {session?.user?.name}
+            </span>
+            <span className="font-medium block text-sm  text-gray-500   truncate">
+              {session?.user?.email}
+            </span>
           </div>
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link href="#" className="flex items-center gap-2" prefetch={false}>
+            <div className="h-4 w-4" />
+            <span>Profil</span>
+          </Link>
+        </DropdownMenuItem>
+
+        <DropdownMenuItem>
+          <Link href="#" className="flex items-center gap-2" prefetch={false}>
+            <div className="h-4 w-4" />
+            <span>Mes annonces</span>
+          </Link>
         </DropdownMenuItem>
 
         <DropdownMenuItem>
@@ -41,18 +60,7 @@ const LoginMenu = async () => {
             <span>Parametre</span>
           </Link>
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href="#" className="flex items-center gap-2" prefetch={false}>
-            <div className="h-4 w-4" />
-            <span>Cart</span>
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <Link href="#" className="flex items-center gap-2" prefetch={false}>
-            <div className="h-4 w-4" />
-            <span>Orders</span>
-          </Link>
-        </DropdownMenuItem>
+
         <DropdownMenuSeparator />
 
         <form

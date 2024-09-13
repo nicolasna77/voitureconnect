@@ -1,246 +1,365 @@
 "use client";
 import { Input } from "../ui/input";
-import { Label } from "../ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select";
+import * as React from "react";
 import { Button } from "../ui/button";
-import { useState } from "react";
 import { Card, CardContent } from "../ui/card";
-import { Badge } from "../ui/badge";
-import { TransformIcon } from "@radix-ui/react-icons";
+import { CaretSortIcon } from "@radix-ui/react-icons";
 import {
-  CalendarIcon,
-  Euro,
-  EuroIcon,
-  FuelIcon,
-  GaugeIcon,
-  Search,
-  Settings,
-  X,
-} from "lucide-react";
-import { DualRangeSlider } from "../ui/dual-range-slider";
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  Command,
+} from "../ui/command";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { cn } from "@/lib/utils";
+import { CheckIcon, Search } from "lucide-react";
+import { useRouter } from "next/navigation";
+
+const marques = [
+  {
+    value: "toyota",
+    label: "Toyota",
+  },
+  {
+    value: "honda",
+    label: "Honda",
+  },
+  {
+    value: "ford",
+    label: "Ford",
+  },
+  {
+    value: "chevrolet",
+    label: "Chevrolet",
+  },
+  {
+    value: "nissan",
+    label: "Nissan",
+  },
+];
+
+const models = [
+  {
+    value: "camry",
+    label: "Camry",
+  },
+  {
+    value: "civic",
+    label: "Civic",
+  },
+  {
+    value: "f150",
+    label: "F-150",
+  },
+  {
+    value: "silverado",
+    label: "Silverado",
+  },
+  {
+    value: "altima",
+    label: "Altima",
+  },
+];
+
+const moteurs = [
+  {
+    value: "electric",
+    label: "Electric",
+  },
+  {
+    value: "diesel",
+    label: "Diesel",
+  },
+  {
+    value: "hybrid",
+    label: "Hybrid",
+  },
+];
+
+const versions = [
+  {
+    value: "v1",
+    label: "Version 1",
+  },
+  {
+    value: "v2",
+    label: "Version 2",
+  },
+  {
+    value: "v3",
+    label: "Version 3",
+  },
+];
+
 const SearchForm = () => {
-  const [moreFilters, setMoreFilters] = useState(false);
-  const [brand, setBrand] = useState("");
-  const [model, setModel] = useState("");
-  const [yearMin, setYearMin] = useState("");
-  const [yearMax, setYearMax] = useState("");
-  const [mileageMin, setMileageMin] = useState("");
-  const [mileageMax, setMileageMax] = useState("");
-  const [priceMin, setPriceMin] = useState("");
-  const [priceMax, setPriceMax] = useState("");
-  const [fuelType, setFuelType] = useState("");
-  const [transmission, setTransmission] = useState("");
-  const [values, setValues] = useState([0, 100]);
+  const [openMarque, setOpenMarque] = React.useState(false);
+  const [openModel, setOpenModel] = React.useState(false);
+  const [openMoteur, setOpenMoteur] = React.useState(false);
+  const [openVersion, setOpenVersion] = React.useState(false);
+  const [valueMarque, setValueMarque] = React.useState("");
+  const [valueModel, setValueModel] = React.useState("");
+  const [valueMoteur, setValueMoteur] = React.useState("");
+  const [valueVersion, setValueVersion] = React.useState("");
+  const [valueInput, setValueInput] = React.useState("");
+  const router = useRouter();
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const query = new URLSearchParams({
+      q: valueInput,
+      marque: valueMarque,
+      model: valueModel,
+      version: valueVersion,
+      moteur: valueMoteur,
+    }).toString();
+    router.push(`/search?${query}`);
+  };
 
   return (
-    <Card className="bg-card max-w-4xl m-auto py-8">
+    <Card className="bg-border max-w-2xl m-auto py-8">
       <CardContent>
-        <form>
-          <div className="col-span-1 sm:col-span-2 md:col-span-3 lg:col-span-4 space-y-2">
-            <div className="flex w-full max-w-sm m-auto items-center space-x-2">
+        <form onSubmit={handleSubmit}>
+          <div className="m-auto flex justify-center">
+            <div className="relative ">
               <Input
                 type="text"
-                size={42}
-                className="h-14 max-w-full"
+                size={65}
+                name="search"
+                value={valueInput}
+                onChange={(e) => setValueInput(e.target.value)}
+                className="h-14 peer max-w-lg pl-10 bg-white"
                 placeholder="Rechercher votre voiture ..."
               />
-              <Button
-                variant={"default"}
-                className="rounded-full w-12 h-12"
-                type="submit"
-              >
-                <Search className="w-6 h-6" />
-              </Button>
+              <Search className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
             </div>
           </div>
-
-          <div className="flex gap-4 py-4">
-            {yearMin || yearMax ? (
-              <Badge className="group " variant={"outline"}>
-                <CalendarIcon className="mr-2 w-4" />
-                {yearMin && yearMax
-                  ? `${yearMin} à ${yearMax}`
-                  : yearMin || yearMax}
-                <Button
-                  type="button"
-                  onClick={() => {
-                    setYearMin("");
-                    setYearMax("");
-                  }}
-                  className="rounded-full opacity-0 w-4 h-4 ml-2 group-hover:opacity-100"
-                  variant={"destructive"}
-                  size={"icon"}
-                >
-                  <X width={12} />
-                </Button>
-              </Badge>
-            ) : null}
-
-            {mileageMin || mileageMax ? (
-              <Badge variant={"outline"}>
-                <GaugeIcon className="mr-2 w-4" />
-                {mileageMin && mileageMax
-                  ? `${mileageMin} klm à ${mileageMax} klm`
-                  : mileageMin || mileageMax}
-              </Badge>
-            ) : null}
-
-            {priceMin || priceMax ? (
-              <Badge variant={"outline"}>
-                <EuroIcon className="mr-2 w-4" />
-                {priceMin && priceMax
-                  ? `${priceMin} à ${priceMax}`
-                  : priceMin || priceMax}
-              </Badge>
-            ) : null}
-
-            {fuelType ? (
-              <Badge variant={"outline"}>
-                <FuelIcon className="mr-2 w-4" />
-                {fuelType}
-              </Badge>
-            ) : null}
-
-            {transmission ? (
-              <Badge variant={"outline"}>
-                <Settings className="mr-2 w-4" />
-                {transmission}
-              </Badge>
-            ) : null}
+          <div className="flex m-auto w-full align-middle justify-center">
+            <div className="space-y-2">
+              <Popover open={openMarque} onOpenChange={setOpenMarque}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openMarque}
+                    className=" justify-between rounded-l-full rounded-r-none"
+                    size={"lg"}
+                  >
+                    {valueMarque
+                      ? marques.find((marque) => marque.value === valueMarque)
+                          ?.label
+                      : "Marque"}
+                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className=" p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search marque..."
+                      className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>No marque found.</CommandEmpty>
+                      <CommandGroup>
+                        {marques.map((marque) => (
+                          <CommandItem
+                            key={marque.value}
+                            value={marque.value}
+                            onSelect={(currentValue) => {
+                              setValueMarque(
+                                currentValue === valueMarque ? "" : currentValue
+                              );
+                              setOpenMarque(false);
+                            }}
+                          >
+                            {marque.label}
+                            <CheckIcon
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                valueMarque === marque.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="space-y-2">
+              <Popover open={openVersion} onOpenChange={setOpenVersion}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openVersion}
+                    size={"lg"}
+                    className="justify-between rounded-none"
+                  >
+                    {valueVersion
+                      ? versions.find(
+                          (version) => version.value === valueVersion
+                        )?.label
+                      : "Version"}
+                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className=" p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search version..."
+                      className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>No version found.</CommandEmpty>
+                      <CommandGroup>
+                        {versions.map((version) => (
+                          <CommandItem
+                            key={version.value}
+                            value={version.value}
+                            onSelect={(currentValue) => {
+                              setValueVersion(
+                                currentValue === valueVersion
+                                  ? ""
+                                  : currentValue
+                              );
+                              setOpenVersion(false);
+                            }}
+                          >
+                            {version.label}
+                            <CheckIcon
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                valueVersion === version.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="space-y-2">
+              <Popover open={openModel} onOpenChange={setOpenModel}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    aria-expanded={openModel}
+                    size={"lg"}
+                    className=" justify-between rounded-none"
+                  >
+                    {valueModel
+                      ? models.find((model) => model.value === valueModel)
+                          ?.label
+                      : "Model"}
+                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className=" p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search model..."
+                      className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>No model found.</CommandEmpty>
+                      <CommandGroup>
+                        {models.map((model) => (
+                          <CommandItem
+                            key={model.value}
+                            value={model.value}
+                            onSelect={(currentValue) => {
+                              setValueModel(
+                                currentValue === valueModel ? "" : currentValue
+                              );
+                              setOpenModel(false);
+                            }}
+                          >
+                            {model.label}
+                            <CheckIcon
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                valueModel === model.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
+            <div className="space-y-2">
+              <Popover open={openMoteur} onOpenChange={setOpenMoteur}>
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    size={"lg"}
+                    aria-expanded={openMoteur}
+                    className=" justify-between rounded-l-none rounded-r-full"
+                  >
+                    {valueMoteur
+                      ? moteurs.find((moteur) => moteur.value === valueMoteur)
+                          ?.label
+                      : "Moteur"}
+                    <CaretSortIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-[150px] p-0">
+                  <Command>
+                    <CommandInput
+                      placeholder="Search moteur..."
+                      className="h-9"
+                    />
+                    <CommandList>
+                      <CommandEmpty>No moteur found.</CommandEmpty>
+                      <CommandGroup>
+                        {moteurs.map((moteur) => (
+                          <CommandItem
+                            key={moteur.value}
+                            value={moteur.value}
+                            onSelect={(currentValue) => {
+                              setValueMoteur(
+                                currentValue === valueMoteur ? "" : currentValue
+                              );
+                              setOpenMoteur(false);
+                            }}
+                          >
+                            {moteur.label}
+                            <CheckIcon
+                              className={cn(
+                                "ml-auto h-4 w-4",
+                                valueMoteur === moteur.value
+                                  ? "opacity-100"
+                                  : "opacity-0"
+                              )}
+                            />
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </CommandList>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
-
-          {moreFilters ? (
-            <div className="grid grid-cols-1 py-14 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              <div>
-                <div className="space-y-2">
-                  <Label htmlFor="brand">Brand</Label>
-                  <Select name="brand" value={brand} onValueChange={setBrand}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select brand" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="toyota">Toyota</SelectItem>
-                      <SelectItem value="honda">Honda</SelectItem>
-                      <SelectItem value="ford">Ford</SelectItem>
-                      <SelectItem value="chevrolet">Chevrolet</SelectItem>
-                      <SelectItem value="nissan">Nissan</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="model">Model</Label>
-                  <Select name="model" value={model} onValueChange={setModel}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select model" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="camry">Camry</SelectItem>
-                      <SelectItem value="civic">Civic</SelectItem>
-                      <SelectItem value="f150">F-150</SelectItem>
-                      <SelectItem value="silverado">Silverado</SelectItem>
-                      <SelectItem value="altima">Altima</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="space-y-8">
-                  <Label htmlFor="year">Année</Label>
-                  <DualRangeSlider
-                    label={(value) => value}
-                    value={values}
-                    onValueChange={setValues}
-                    min={0}
-                    max={100}
-                    step={1}
-                  />
-                </div>
-
-                <div className="space-y-8">
-                  <Label htmlFor="mileage">Kilométrage</Label>
-                  <DualRangeSlider
-                    label={(value) => value}
-                    value={values}
-                    onValueChange={setValues}
-                    min={0}
-                    max={100}
-                    step={1}
-                  />
-                </div>
-
-                <div className="space-y-8">
-                  <Label htmlFor="price">Prix</Label>
-                  <DualRangeSlider
-                    label={(value) => value}
-                    value={values}
-                    onValueChange={setValues}
-                    min={0}
-                    max={100}
-                    step={1}
-                  />
-                </div>
-              </div>
-
-              <div>
-                <div className="space-y-2">
-                  <Label htmlFor="fuel-type">Fuel Type</Label>
-                  <Select
-                    name="fuel-type"
-                    value={fuelType}
-                    onValueChange={setFuelType}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select fuel type" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="electric">Electric</SelectItem>
-                      <SelectItem value="diesel">Diesel</SelectItem>
-                      <SelectItem value="hybrid">Hybrid</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-
-              <div>
-                <div className="space-y-2">
-                  <Label htmlFor="transmission">Transmission</Label>
-                  <Select
-                    name="transmission"
-                    value={transmission}
-                    onValueChange={setTransmission}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select transmission" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="automatic">Automatic</SelectItem>
-                      <SelectItem value="manual">Manual</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          ) : null}
-          <div className="col-span-1 sm:col-span-2  md:col-span-3 lg:col-span-4 space-y-2">
-            <div className="flex items-center">
-              <Button
-                type="button"
-                onClick={() => {
-                  setMoreFilters(!moreFilters);
-                }}
-                variant={"secondary"}
-                className="m-auto"
-              >
-                {!moreFilters ? "Plus de filtre" : "Moins de filtre"}
-              </Button>
-            </div>
+          <div className="flex justify-center mt-4">
+            <Button type="submit" variant="default" size="lg">
+              Rechercher
+            </Button>
           </div>
         </form>
       </CardContent>

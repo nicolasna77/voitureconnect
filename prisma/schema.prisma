@@ -72,6 +72,7 @@ model Garage {
 
 model Car {
   id                  String        @id @default(uuid())
+  brand               String
   model               String
   generation          String
   yearStart           Int
@@ -143,6 +144,10 @@ model Ad {
   garageId    String?
   Kms         Int
   price       Decimal
+  year        Int
+  color       String
+  fuelType    String
+  gearbox     String
   title       String
   optionsID   String[]
   description String

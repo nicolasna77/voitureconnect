@@ -3,11 +3,14 @@ import {
   CarFront,
   CarIcon,
   CircleUser,
+  Heart,
   LogsIcon,
   Menu,
   MessageCircle,
   Package2,
   Search,
+  SearchCheck,
+  SearchIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "./ui/button";
@@ -28,25 +31,22 @@ import {
 } from "./ui/navigation-menu";
 import React from "react";
 import { cn } from "@/lib/utils";
-import { FcServices } from "react-icons/fc";
-import Image from "next/image";
-import logo from "../../public/data/logo/carconnect-high-resolution-logo-transparent.png";
+import { FcLike, FcLikePlaceholder, FcServices } from "react-icons/fc";
+
+import { Separator } from "./ui/separator";
 
 const Header = async () => {
   const session = await auth();
-  const link = [
-    { name: "Dashboard", href: "/user/dashboard" },
-    { name: "Rechercher", href: "/view" },
-  ];
+  const link = [{ name: "Dashboard", href: "/user/dashboard" }];
 
   return (
     <header className="sticky z-40 top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
       <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
         <Link
           href="/"
-          className="flex items-center gap-2 text-lg font-semibold md:text-base"
+          className="flex items-center text-primary font-extrabold gap-2 text-2xl  "
         >
-          <Image src={logo} alt="logo" quality={100} width={120} height={120} />
+          <span>CarConnect</span>
         </Link>
 
         <NavigationMenu>
@@ -88,12 +88,6 @@ const Header = async () => {
                   <ListItem href="/docs/installation" title="Prix carte grise ">
                     How to install dependencies and structure your app.
                   </ListItem>
-                  <ListItem
-                    href="/docs/primitives/typography"
-                    title="Typography"
-                  >
-                    Styles for headings, paragraphs, lists...etc
-                  </ListItem>
                 </ul>
               </NavigationMenuContent>
             </NavigationMenuItem>
@@ -130,16 +124,29 @@ const Header = async () => {
         </SheetContent>
       </Sheet>
 
-      <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
-        <div className="ml-auto gap-4 items-center flex ">
+      <div className="flex w-full items-center gap-2 md:ml-auto md:gap-2 lg:gap-2">
+        <div className="ml-auto gap-3 items-center flex ">
           <Button variant="outline">
             <Link href="/postProduct" prefetch={false}>
               Déposer une annonce
             </Link>
           </Button>
-          <Button size="icon" variant={"ghost"}>
+          <Separator orientation="vertical" className="h-6 w-0.5 bg-primary" />
+          <Button size="icon" className="rounded-full" variant={"ghost"}>
+            <Link href="/search" prefetch={false}>
+              <SearchIcon className="h-5 w-5" />
+              <span className="sr-only">Search</span>
+            </Link>
+          </Button>
+          <Button size="icon" className="rounded-full" variant={"ghost"}>
             <Link href="/user/chat" prefetch={false}>
-              <MessageCircle className="h-6 w-6" />
+              <Heart className="h-5 w-5" />
+              <span className="sr-only">Like</span>
+            </Link>
+          </Button>
+          <Button size="icon" className="rounded-full" variant={"ghost"}>
+            <Link href="/user/chat" prefetch={false}>
+              <MessageCircle className="h-5 w-5" />
               <span className="sr-only">Messagerie</span>
             </Link>
           </Button>

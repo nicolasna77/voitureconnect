@@ -9,10 +9,10 @@ const ProductCard = (item: Ad) => {
   return (
     <Card
       onClick={() => {
-        router.push(`view/product/${item.id}`);
+        router.push(`search/${item.id}`);
       }}
       key={item.id}
-      className={"relative group grid gap-4"}
+      className={"relative group "}
     >
       <Image
         src="/placeholder.svg"
@@ -23,16 +23,26 @@ const ProductCard = (item: Ad) => {
         style={{ aspectRatio: "300/200", objectFit: "cover" }}
       />
       <CardContent>
-        <CardTitle className="font-semibold">{item.title}</CardTitle>
         <div className={`flex-1 grid gap-2`}>
           <CardDescription>
-            <div className="flex items-center justify-between">
-              <h4 className="font-semibold">{item.title}</h4>
+            <div className="flex items-center py-4 justify-between">
+              <CardTitle className="font-semibold text-2xl">
+                {item.title}
+              </CardTitle>
+              <div className="text-2xl font-bold flex">
+                {Math.floor(Number(item.price)).toString()} €
+              </div>
             </div>
             <div className="w-full ">
-              <h4 className="font-semibold float-end">
-                {item.price.toString()} €
-              </h4>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-500">{""}</span>
+                  <span className="text-sm text-gray-500">{item.Kms} km</span>
+                  <span className="text-sm text-gray-500">
+                    {item.optionsID.length} options
+                  </span>
+                </div>
+              </div>
             </div>
           </CardDescription>
         </div>

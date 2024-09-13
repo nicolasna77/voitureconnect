@@ -11,8 +11,6 @@ export default function Home() {
       <main className="m-auto  w-full">
         <HeroSection />
 
-        <SearchSection />
-
         <section
           id="features"
           className="w-full py-12 md:py-24 lg:py-32 bg-muted"
@@ -21,50 +19,58 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Key Features
+                  Fonctionnalités Clés
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Garage Finder offers a comprehensive set of features to
-                  streamline your garage management and buying/selling
-                  experience.
+                  Garage Finder offre un ensemble complet de fonctionnalités
+                  pour rationaliser la gestion de votre garage et
+                  l&apos;expérience d&apos;achat/vente.
                 </p>
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-start gap-6 py-12 lg:grid-cols-3 lg:gap-12">
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Post Ads</h3>
+                <h3 className="text-xl font-bold">Publier des Annonces</h3>
                 <p className="text-muted-foreground">
-                  Easily create and publish ads for your garage or parts.
+                  Créez et publiez facilement des annonces pour votre garage ou
+                  vos pièces.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Manage Inventory</h3>
+                <h3 className="text-xl font-bold">Gérer l'Inventaire</h3>
                 <p className="text-muted-foreground">
-                  Keep track of your garage inventory and sales history.
+                  Suivez l&apos;inventaire de votre garage et l&apos;historique
+                  des ventes.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Connect with Buyers</h3>
+                <h3 className="text-xl font-bold">
+                  Se Connecter avec les Acheteurs
+                </h3>
                 <p className="text-muted-foreground">
-                  Communicate directly with potential buyers and close deals.
+                  Communiquez directement avec les acheteurs potentiels et
+                  concluez des affaires.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Scheduling Tools</h3>
+                <h3 className="text-xl font-bold">Outils de Planification</h3>
                 <p className="text-muted-foreground">
-                  Manage your garage appointments and customer bookings.
+                  Gérez vos rendez-vous de garage et les réservations des
+                  clients.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Analytics</h3>
+                <h3 className="text-xl font-bold">Analytique</h3>
                 <p className="text-muted-foreground">
-                  Track your sales, inventory, and customer engagement.
+                  Suivez vos ventes, votre inventaire et l'engagement des
+                  clients.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Mobile App</h3>
+                <h3 className="text-xl font-bold">Application Mobile</h3>
                 <p className="text-muted-foreground">
-                  Manage your garage on-the-go with our mobile app.
+                  Gérez votre garage en déplacement avec notre application
+                  mobile.
                 </p>
               </div>
             </div>
@@ -75,53 +81,56 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Benefits of Using Garage Finder
+                  Avantages de l'Utilisation de Garage Finder
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Garage Finder offers a range of benefits to help you
-                  streamline your garage operations and connect with buyers.
+                  Garage Finder offre une gamme d'avantages pour vous aider à
+                  rationaliser les opérations de votre garage et à vous
+                  connecter avec les acheteurs.
                 </p>
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl items-start gap-6 py-12 lg:grid-cols-3 lg:gap-12">
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Increased Visibility</h3>
+                <h3 className="text-xl font-bold">Visibilité Accrue</h3>
                 <p className="text-muted-foreground">
-                  Reach a wider audience and get more exposure for your garage
-                  and parts.
+                  Atteignez un public plus large et obtenez plus de visibilité
+                  pour votre garage et vos pièces.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Time-Saving Tools</h3>
+                <h3 className="text-xl font-bold">Outils de Gain de Temps</h3>
                 <p className="text-muted-foreground">
-                  Streamline your garage operations with our suite of management
-                  tools.
+                  Rationalisez les opérations de votre garage avec notre suite
+                  d'outils de gestion.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Improved Efficiency</h3>
+                <h3 className="text-xl font-bold">Efficacité Améliorée</h3>
                 <p className="text-muted-foreground">
-                  Optimize your garage workflow and focus on serving your
-                  customers.
+                  Optimisez le flux de travail de votre garage et
+                  concentrez-vous sur le service à vos clients.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Seamless Transactions</h3>
+                <h3 className="text-xl font-bold">Transactions Fluides</h3>
                 <p className="text-muted-foreground">
-                  Facilitate smooth and secure transactions between buyers and
-                  sellers.
+                  Facilitez des transactions fluides et sécurisées entre
+                  acheteurs et vendeurs.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Comprehensive Support</h3>
+                <h3 className="text-xl font-bold">Support Complet</h3>
                 <p className="text-muted-foreground">
-                  Get dedicated support from our team to help you succeed.
+                  Obtenez un support dédié de notre équipe pour vous aider à
+                  réussir.
                 </p>
               </div>
               <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Competitive Pricing</h3>
+                <h3 className="text-xl font-bold">Tarification Compétitive</h3>
                 <p className="text-muted-foreground">
-                  Enjoy affordable pricing plans to fit your garages needs.
+                  Profitez de plans tarifaires abordables pour répondre aux
+                  besoins de votre garage.
                 </p>
               </div>
             </div>

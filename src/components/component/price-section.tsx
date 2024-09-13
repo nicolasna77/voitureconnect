@@ -3,7 +3,7 @@ import { CheckIcon, Plus } from "lucide-react";
 
 const PriceSection = () => {
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
+    <section className="w-full py-12 md:py-24 lg:py-32 bg-secondary">
       <div className="container m-auto grid gap-8 px-4 md:px-6">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">

@@ -10,15 +10,15 @@ export default function PostProductLayout({
   return (
     <MultiStepContenxtProvider>
       <div className="mx-auto flex  ">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6  mx-auto p-4 sm:p-6 md:p-8">
-          <div className="bg-background rounded-lg shadow-lg">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full  mx-auto p-4 sm:p-6 md:p-8">
+          <div className="bg-background md:col-span-1 rounded-lg shadow-lg">
             <div className="p-6 sm:p-8">
-              <h1 className="text-2xl font-bold mb-4">Créer une annonce</h1>
+              <h1 className="text-2xl font-bold mb-4">Déposer une annonce</h1>
               <Steps />
               <MultiForm />
             </div>
           </div>
-          {children}
+          <div className=" md:col-span-2">{children}</div>
         </div>
       </div>
     </MultiStepContenxtProvider>

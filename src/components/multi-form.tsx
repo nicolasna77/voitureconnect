@@ -11,14 +11,26 @@ import { Button } from "./ui/button";
 import { Form } from "./ui/form";
 
 const formSchema = z.object({
-  name: z.string().min(1, { message: "This field is required" }),
-  email: z.string().email({ message: "This field is required" }),
-  phone: z.string().min(8, { message: "This field is required" }),
-  plan: z.string(),
-  onlineService: z.boolean(),
-  largerStorage: z.boolean(),
-  customProfile: z.boolean(),
-  userTotal: z.number(),
+  marque: z.string().min(1, { message: "La marque est obligatoire" }),
+  modele: z.string().min(1, { message: "Le modèle est obligatoire" }),
+  motorisation: z
+    .string()
+    .min(1, { message: "La motorisation est obligatoire" }),
+  vehicleTitle: z.string().min(1, { message: "Ce champ est obligatoire" }),
+  vehicleDescription: z
+    .string()
+    .min(1, { message: "Ce champ est obligatoire" }),
+  transmissionType: z.string().min(1, { message: "Ce champ est obligatoire" }),
+  fuelType: z.string().min(1, { message: "Ce champ est obligatoire" }),
+  vehicleColor: z.string().min(1, { message: "Ce champ est obligatoire" }),
+  vehiclePhotos: z
+    .array(z.string())
+    .min(1, { message: "Au moins une photo est requise" }),
+  plan: z.string().optional(),
+  onlineService: z.boolean().optional(),
+  largerStorage: z.boolean().optional(),
+  customProfile: z.boolean().optional(),
+  userTotal: z.number().optional(),
 });
 
 type NewFormData = z.infer<typeof formSchema>;
@@ -29,9 +41,15 @@ export function MultiForm() {
   const form = useForm<NewFormData>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      email: "",
-      phone: "",
+      marque: "",
+      modele: "",
+      motorisation: "",
+      vehicleTitle: "",
+      vehicleDescription: "",
+      transmissionType: "",
+      fuelType: "",
+      vehicleColor: "",
+      vehiclePhotos: [],
       plan: "",
       onlineService: false,
       largerStorage: false,
@@ -64,8 +82,12 @@ export function MultiForm() {
     if (isYear) {
       userPlanTotal *= 10;
     }
-    values.userTotal += userPlanTotal;
-    if (step === 4) {
+    if (values.userTotal !== undefined) {
+      values.userTotal += userPlanTotal;
+    } else {
+      values.userTotal = userPlanTotal;
+    }
+    if (step === 5) {
       createUserData(values);
     }
     console.log(values);
@@ -82,18 +104,18 @@ export function MultiForm() {
           {step === 3 && <StepThree />}
           {step === 4 && <StepFour />}
         </FormProvider>
-        {step < 5 && (
-          <div className="absolute bottom-0 left-0 flex w-full justify-between bg-white p-4 lg:bottom-0">
+        {step < 6 && (
+          <div className="relative bottom-0 left-0 flex w-full justify-between  p-4 lg:bottom-0">
             <Button
               type="button"
               variant={"outline"}
               className={`${step === 1 ? "invisible" : ""}`}
               onClick={() => prevStep()}
             >
-              Go Back
+              Retour
             </Button>
             <Button type="submit">
-              {step === 4 ? "Confirm" : "Next Step"}
+              {step === 5 ? "Confirmer" : "Étape suivante"}
             </Button>
           </div>
         )}

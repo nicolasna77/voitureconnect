@@ -6,8 +6,14 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import { useFormContext } from "react-hook-form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
 
 export function StepOne() {
   const { control } = useFormContext();
@@ -15,45 +21,119 @@ export function StepOne() {
     <>
       <FormField
         control={control}
-        name="name"
+        name="marque"
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center justify-between">
-              Name
+              Marque
               <FormMessage />
             </FormLabel>
             <FormControl>
-              <Input placeholder="e.g Stephen King" {...field} />
+              <Select {...field}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une marque" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Toyota">Toyota</SelectItem>
+                  <SelectItem value="Honda">Honda</SelectItem>
+                  <SelectItem value="Ford">Ford</SelectItem>
+                </SelectContent>
+              </Select>
             </FormControl>
           </FormItem>
         )}
       />
       <FormField
         control={control}
-        name="email"
+        name="modele"
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center justify-between">
-              Email Address
+              Modèle
               <FormMessage />
             </FormLabel>
             <FormControl>
-              <Input placeholder="e.g stephenking@lorem.com" {...field} />
+              <Select {...field}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un modèle" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Corolla">Corolla</SelectItem>
+                  <SelectItem value="Civic">Civic</SelectItem>
+                  <SelectItem value="Mustang">Mustang</SelectItem>
+                </SelectContent>
+              </Select>
             </FormControl>
           </FormItem>
         )}
       />
       <FormField
         control={control}
-        name="phone"
+        name="fuelType"
         render={({ field }) => (
           <FormItem>
             <FormLabel className="flex items-center justify-between">
-              Phone Number
+              Carburant
               <FormMessage />
             </FormLabel>
             <FormControl>
-              <Input placeholder="e.g +1 234 567 890" {...field} />
+              <Select {...field}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner un type de carburant" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Essence">Essence</SelectItem>
+                  <SelectItem value="Diesel">Diesel</SelectItem>
+                  <SelectItem value="Électrique">Électrique</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
+        name="motorisation"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="flex items-center justify-between">
+              Motorisation
+              <FormMessage />
+            </FormLabel>
+            <FormControl>
+              <Select {...field}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une motorisation" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Hybride">Hybride</SelectItem>
+                  <SelectItem value="Électrique">Électrique</SelectItem>
+                  <SelectItem value="Thermique">Thermique</SelectItem>
+                </SelectContent>
+              </Select>
+            </FormControl>
+          </FormItem>
+        )}
+      />
+      <FormField
+        control={control}
+        name="transmissionType"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel className="flex items-center justify-between">
+              Boîte de vitesse
+              <FormMessage />
+            </FormLabel>
+            <FormControl>
+              <Select {...field}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Sélectionner une option" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Automatique">Automatique</SelectItem>
+                  <SelectItem value="Manuel">Manuel</SelectItem>
+                </SelectContent>
+              </Select>
             </FormControl>
           </FormItem>
         )}
