@@ -1,98 +1,153 @@
 "use client";
-import { FormControl, FormField, FormItem, FormLabel } from "./ui/form";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Switch } from "@/components/ui/switch";
+import {
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "./ui/form";
 import { useMultiContext } from "@/contexts/multistep-form-context";
 import { useFormContext } from "react-hook-form";
-import { IconBase } from "react-icons/lib";
+import { Input } from "./ui/input";
+import { Textarea } from "./ui/textarea";
 
-const plansData = [
-  {
-    text: "Arcade",
-    icon: <IconBase className="lg:size-12" />,
-    monthValue: "9",
-    yearValue: "90",
-  },
-  {
-    text: "Advanced",
-    icon: <IconBase className="lg:size-12" />,
-    monthValue: "12",
-    yearValue: "120",
-  },
-  {
-    text: "Pro",
-    icon: <IconBase className="lg:size-12" />,
-    monthValue: "15",
-    yearValue: "150",
-  },
-];
 export function StepTwo() {
   const { control } = useFormContext();
-  const { isYear, setPlan } = useMultiContext();
+  const { updateFormData } = useMultiContext();
+
   return (
-    <FormField
-      control={control}
-      name="plan"
-      render={({ field }) => (
-        <FormItem className="lg:flex lg:flex-col lg:gap-5">
-          <FormControl className="lg:grid lg:h-48 lg:grid-cols-3">
-            <RadioGroup onChange={field.onChange}>
-              {plansData.map((plan, i) => {
-                return (
-                  <FormItem key={i} className="">
-                    <FormControl>
-                      <RadioGroupItem
-                        value={plan.text}
-                        className="peer sr-only"
-                      />
-                    </FormControl>
-                    <FormLabel className="flex h-[80px] cursor-pointer items-center gap-4 rounded-md border p-2 shadow-sm hover:border-indigo-800 peer-focus-visible:ring-1 peer-aria-checked:border-indigo-600 lg:h-full lg:flex-col lg:items-start lg:justify-between lg:p-5">
-                      {plan.icon}
-                      <div className="flex flex-col font-medium text-sky-950">
-                        <p className="text-lg">{plan.text}</p>
-                        <p className="-mt-1 text-gray-400">
-                          ${isYear ? plan.yearValue : plan.monthValue}/
-                          {isYear ? "yr" : "mo"}
-                        </p>
-                        {isYear && (
-                          <span className="mt-1 text-xs text-indigo-600">
-                            2 months free
-                          </span>
-                        )}
-                      </div>
-                    </FormLabel>
-                  </FormItem>
-                );
-              })}
-            </RadioGroup>
-          </FormControl>
-          <div className="flex items-center justify-center gap-5 rounded-sm bg-slate-50 p-2">
-            <Label
-              className={`lg:text-lg  ${
-                !isYear ? "text-indigo-600" : "text-gray-400"
-              }`}
-              htmlFor="plan-mode"
-            >
-              Monthy
-            </Label>
-            <Switch
-              id="plan-mode"
-              onClick={() => setPlan()}
-              className="data-[state=checked]:bg-sky-950 data-[state=unchecked]:bg-sky-950"
-              checked={isYear}
-            />
-            <Label
-              className={`lg:text-lg ${
-                isYear ? "text-indigo-600" : "text-gray-400"
-              }`}
-              htmlFor="plan-mode"
-            >
-              Yearly
-            </Label>
-          </div>
-        </FormItem>
-      )}
-    />
+    <div className="space-y-6">
+      <FormField
+        control={control}
+        name="title"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Titre</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="Entrez le titre de l'annonce"
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  updateFormData({ title: e.target.value });
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="description"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Description</FormLabel>
+            <FormControl>
+              <Textarea
+                placeholder="Décrivez votre véhicule"
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  updateFormData({ description: e.target.value });
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="price"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Prix</FormLabel>
+            <FormControl>
+              <Input
+                type="number"
+                placeholder="Entrez le prix"
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  updateFormData({ price: e.target.value });
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="num"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Numéro de téléphone</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="Entrez votre numéro de téléphone"
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  updateFormData({ num: e.target.value });
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="picture"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Photos</FormLabel>
+            <FormControl>
+              <Input
+                type="file"
+                multiple
+                accept="image/*"
+                onChange={(e) => {
+                  const files = Array.from(e.target.files || []);
+                  const fileUrls = files.map((file) =>
+                    URL.createObjectURL(file)
+                  );
+                  field.onChange(fileUrls);
+                  updateFormData({ picture: fileUrls });
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+
+      <FormField
+        control={control}
+        name="address"
+        render={({ field }) => (
+          <FormItem>
+            <FormLabel>Adresse</FormLabel>
+            <FormControl>
+              <Input
+                placeholder="Entrez l'adresse"
+                {...field}
+                onChange={(e) => {
+                  field.onChange(e);
+                  updateFormData({ address: e.target.value });
+                }}
+              />
+            </FormControl>
+            <FormMessage />
+          </FormItem>
+        )}
+      />
+    </div>
   );
 }

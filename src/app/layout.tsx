@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
-import { Inter, Roboto } from "next/font/google";
+import { Inter, Inter_Tight } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ReactQueryProvider } from "./react-query-provider";
 import { Analytics } from "@vercel/analytics/react";
+import { SessionProvider } from "next-auth/react";
 
-const roboto = Roboto({
+import { Toaster } from "@/components/ui/toaster";
+
+const font = Inter({
   weight: "400",
   subsets: ["latin"],
 });
@@ -22,13 +25,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr">
-      <body className={roboto.className}>
-        <ReactQueryProvider>
-          <Header />
-          {children}
-          <Footer />
-          <Analytics />
-        </ReactQueryProvider>
+      <body className={font.className}>
+        <SessionProvider>
+          <ReactQueryProvider>
+            <Header />
+            {children}
+            <Toaster />
+            <Footer />
+            <Analytics />
+          </ReactQueryProvider>
+        </SessionProvider>
       </body>
     </html>
   );

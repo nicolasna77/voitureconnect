@@ -1,19 +1,13 @@
-"use server";
+"use client";
 import React from "react";
-import { signIn } from "../../../auth";
+import { signIn } from "../../lib/auth";
 import { Button } from "../../components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 
 const LoginSocial = () => {
   return (
     <>
-      <form
-        action={async () => {
-          "use server";
-
-          await signIn("google", { redirectTo: "/dashboard" });
-        }}
-      >
+      <form onSubmit={() => signIn("google", { redirectTo: "/dashboard" })}>
         <Button
           variant={"outline"}
           className=" m-auto mb-4 w-full border flex gap-2"

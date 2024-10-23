@@ -1,16 +1,10 @@
 import LoginForm from "@/components/auth/login-form";
-import { cookies } from "next/headers";
-import { auth } from "@/../../auth";
+
 import React from "react";
 
-export default async function LoginPage() {
-  const session = await auth();
-  let csrfToken = ""; // Declare csrfToken variable
-  if (!session?.user) {
-    csrfToken = cookies().get("authjs.csrf-token")?.value ?? ""; // Assign value to csrfToken
-  }
+export default function LoginPage() {
   return (
-    <main className="flex items-center justify-center md:h-screen">
+    <main className="flex items-center justify-center min-h-[calc(100vh_-_theme(spacing.16))]">
       <div className="relative mx-auto flex w-full max-w-md  flex-col space-y-2.5 p-4 md:-mt-32">
         <LoginForm />
       </div>

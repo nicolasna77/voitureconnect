@@ -1,15 +1,82 @@
+"use client";
 import { Button } from "@/components/ui/button";
 import SearchSection from "@/components/component/search-section";
 import { Input } from "@/components/ui/input";
 import PriceSection from "@/components/component/price-section";
 import { FeatureSection } from "@/components/component/feature-section";
 import HeroSection from "@/components/component/hero-section";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
+import Autoplay from "embla-carousel-autoplay";
+import Link from "next/link";
+
+import Image from "next/image";
+const carCategories = [
+  { id: 1, name: "SUV", icon: "suv" },
+  { id: 2, name: "Berline", icon: "sedan" },
+  { id: 3, name: "Coupé", icon: "coupe" },
+  { id: 4, name: "Cabriolet", icon: "cabriolet" },
+  { id: 5, name: "Citadine", icon: "micro" },
+  { id: 6, name: "Break", icon: "station" },
+];
 
 export default function Home() {
   return (
     <div className="flex flex-col w-full ">
       <main className="m-auto  w-full">
         <HeroSection />
+        <div className="py-12 md:py-24 lg:py-32 max-w-7xl  px-10  m-auto  ">
+          <h2 className="text-3xl font-bold  mb-8">Categories de voiture</h2>
+          <Carousel
+            plugins={[
+              Autoplay({
+                delay: 4000,
+              }),
+            ]}
+          >
+            <CarouselContent className="-ml-2  md:-ml-4">
+              {carCategories.map((category) => (
+                <CarouselItem
+                  className="md:basis-1/4 text-center  group basis-2/5  pl-2 md:pl-4 lg:basis-1/5"
+                  key={category.id}
+                >
+                  <Card className="transition-colors bg-card duration-300 ">
+                    <Link href={"/search"}>
+                      <CardContent>
+                        <div className="relative w-[100px] h-[100px] m-auto">
+                          <Image
+                            src={`/data/category/${category.icon}.svg`}
+                            alt={category.name}
+                            layout="fill"
+                            className=" transition-all duration-300"
+                          />
+                        </div>
+                        <span className="text-md font-bold text-secondary-foreground group-hover:underline group-hover:text-secondary-foreground">
+                          {category.name}
+                        </span>
+                      </CardContent>
+                    </Link>
+                  </Card>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            <CarouselNext />
+            <CarouselPrevious />
+          </Carousel>
+        </div>
 
         <section
           id="features"
@@ -28,50 +95,56 @@ export default function Home() {
                 </p>
               </div>
             </div>
-            <div className="mx-auto grid max-w-5xl items-start gap-6 py-12 lg:grid-cols-3 lg:gap-12">
-              <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Publier des Annonces</h3>
-                <p className="text-muted-foreground">
-                  Créez et publiez facilement des annonces pour votre garage ou
-                  vos pièces.
-                </p>
+            <div className="flex flex-col md:flex-row gap-6 max-w-7xl mx-auto px-4 py-12 md:py-16">
+              <div className="md:w-2/3 grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <Card className="bg-background rounded-lg  overflow-hidden">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-2">Fonctionnalité 1</h3>
+                    <p className="text-muted-foreground">
+                      Description de la première fonctionnalité.
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-background rounded-lg  overflow-hidden">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-2">Fonctionnalité 2</h3>
+                    <p className="text-muted-foreground">
+                      Description de la deuxième fonctionnalité.
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-background rounded-lg  overflow-hidden">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-2">Fonctionnalité 3</h3>
+                    <p className="text-muted-foreground">
+                      Description de la troisième fonctionnalité.
+                    </p>
+                  </CardContent>
+                </Card>
+                <Card className="bg-background rounded-lg  overflow-hidden">
+                  <CardContent className="p-6">
+                    <h3 className="text-xl font-bold mb-2">Fonctionnalité 4</h3>
+                    <p className="text-muted-foreground">
+                      Description de la quatrième fonctionnalité.
+                    </p>
+                  </CardContent>
+                </Card>
               </div>
-              <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Gérer l'Inventaire</h3>
-                <p className="text-muted-foreground">
-                  Suivez l&apos;inventaire de votre garage et l&apos;historique
-                  des ventes.
-                </p>
-              </div>
-              <div className="grid gap-1">
-                <h3 className="text-xl font-bold">
-                  Se Connecter avec les Acheteurs
-                </h3>
-                <p className="text-muted-foreground">
-                  Communiquez directement avec les acheteurs potentiels et
-                  concluez des affaires.
-                </p>
-              </div>
-              <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Outils de Planification</h3>
-                <p className="text-muted-foreground">
-                  Gérez vos rendez-vous de garage et les réservations des
-                  clients.
-                </p>
-              </div>
-              <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Analytique</h3>
-                <p className="text-muted-foreground">
-                  Suivez vos ventes, votre inventaire et l'engagement des
-                  clients.
-                </p>
-              </div>
-              <div className="grid gap-1">
-                <h3 className="text-xl font-bold">Application Mobile</h3>
-                <p className="text-muted-foreground">
-                  Gérez votre garage en déplacement avec notre application
-                  mobile.
-                </p>
+              <div className="md:w-1/3 ">
+                <Card className="">
+                  <CardHeader>
+                    <CardTitle>Carte en pleine hauteur</CardTitle>
+                    <CardDescription>
+                      Contenu de la carte en pleine hauteur.
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <p>Texte supplémentaire dans le contenu de la carte.</p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button>Bouton d&apos;action</Button>
+                  </CardFooter>
+                </Card>
               </div>
             </div>
           </div>
@@ -81,11 +154,11 @@ export default function Home() {
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl">
-                  Avantages de l'Utilisation de Garage Finder
+                  Avantages de l&apos;Utilisation de Garage Finder
                 </h2>
                 <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  Garage Finder offre une gamme d'avantages pour vous aider à
-                  rationaliser les opérations de votre garage et à vous
+                  Garage Finder offre une gamme d&apos;avantages pour vous aider
+                  à rationaliser les opérations de votre garage et à vous
                   connecter avec les acheteurs.
                 </p>
               </div>
@@ -102,7 +175,7 @@ export default function Home() {
                 <h3 className="text-xl font-bold">Outils de Gain de Temps</h3>
                 <p className="text-muted-foreground">
                   Rationalisez les opérations de votre garage avec notre suite
-                  d'outils de gestion.
+                  d&apos;outils de gestion.
                 </p>
               </div>
               <div className="grid gap-1">

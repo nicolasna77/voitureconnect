@@ -1,39 +1,29 @@
 "use client";
 import { ReactNode, createContext, useContext, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 
-interface FormData {
-  name: string;
-  email: string;
-  phone: string;
-  plan: string;
-  onlineService: boolean;
-  largerStorage: boolean;
-  customProfile: boolean;
-  userTotal: number;
-}
-
-export interface UserData {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  plan: string;
-  onlineService: boolean;
-  largerStorage: boolean;
-  customProfile: boolean;
-  userTotal: number;
+export interface FormData {
+  brand: string;
+  model: string;
+  motor: string;
+  transmission: string;
+  fuel: string;
+  color: string;
+  year: string;
+  title: string;
+  description: string;
+  price: string;
+  num: string;
+  address: string;
+  picture: string[];
 }
 
 interface MultiStepContextType {
-  user: UserData[];
+  data: FormData;
   step: number;
-  isYear: boolean;
   nextStep: () => void;
   prevStep: () => void;
-  setPlan: () => void;
-  changePlan: () => void;
-  createUserData: (data: FormData) => void;
+  updateFormData: (partialData: Partial<FormData>) => void;
+  submitForm: () => void;
 }
 
 export const MultiStepContext = createContext({} as MultiStepContextType);
@@ -42,54 +32,61 @@ interface MultiStepContextProviderProps {
   children: ReactNode;
 }
 
-export function MultiStepContenxtProvider({
+export function MultiStepContextProvider({
   children,
 }: MultiStepContextProviderProps) {
-  const [isYear, setIsYear] = useState(false);
   const [step, setStep] = useState(1);
-  const [user, setUser] = useState<UserData[]>([]);
+  const [data, setData] = useState<FormData>({
+    brand: "",
+    model: "",
+    motor: "",
+    transmission: "",
+    fuel: "",
+    color: "",
+    year: "",
+    title: "",
+    description: "",
+    price: "",
+    num: "",
+    address: "",
+    picture: [],
+  });
 
-  function createUserData(data: FormData) {
-    const newUser: UserData = {
-      id: uuidv4(),
-      name: data.name,
-      email: data.email,
-      phone: data.phone,
-      plan: data.plan,
-      onlineService: data.onlineService,
-      largerStorage: data.largerStorage,
-      customProfile: data.customProfile,
-      userTotal: data.userTotal,
-    };
-    setUser([...user, newUser]);
-    console.log(newUser);
+  function updateFormData(partialData: Partial<FormData>) {
+    setData((prevData) => ({ ...prevData, ...partialData }));
+    console.log("Données du formulaire mises à jour:", data);
   }
+
   function nextStep() {
-    if (step === 5) return;
-    setStep((prev) => prev + 1);
+    setStep((prevStep) => {
+      const newStep = prevStep < 4 ? prevStep + 1 : prevStep;
+      console.log("Étape suivante:", newStep);
+      return newStep;
+    });
   }
+
   function prevStep() {
-    if (step === 1) return;
-    setStep((prev) => prev - 1);
+    setStep((prevStep) => {
+      const newStep = prevStep > 1 ? prevStep - 1 : prevStep;
+      console.log("Étape précédente:", newStep);
+      return newStep;
+    });
   }
-  function setPlan() {
-    setIsYear((prev) => !prev);
-  }
-  function changePlan() {
-    setStep((prev) => prev - 2);
+
+  function submitForm() {
+    console.log("Formulaire soumis:", data);
+    // Ici, vous pouvez ajouter la logique pour envoyer les données au serveur
   }
 
   return (
     <MultiStepContext.Provider
       value={{
-        user,
+        data,
         step,
-        isYear,
-        setPlan,
         nextStep,
         prevStep,
-        changePlan,
-        createUserData,
+        updateFormData,
+        submitForm,
       }}
     >
       {children}

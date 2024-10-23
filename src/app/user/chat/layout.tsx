@@ -10,7 +10,7 @@ export default function ChatLayout({
   children: React.ReactNode;
 }) {
   return (
-    <div className="grid grid-cols-[300px_1fr] w-full relative  rounded-lg overflow-hidden border">
+    <div className="grid grid-cols-[300px_1fr] w-full  relative  rounded-lg overflow-hidden border">
       <div className="bg-muted/20 p-3 border-r">
         <div className="flex items-center justify-between space-x-4">
           <div className="font-medium text-sm">Messenger</div>

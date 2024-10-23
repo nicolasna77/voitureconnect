@@ -1,6 +1,8 @@
 import { MultiForm } from "@/components/multi-form";
-import { MultiStepContenxtProvider } from "@/contexts/multistep-form-context";
+import { MultiStepContextProvider } from "@/contexts/multistep-form-context";
 import { Steps } from "@/components/steps";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import Title from "@/components/title";
 
 export default function PostProductLayout({
   children,
@@ -8,19 +10,23 @@ export default function PostProductLayout({
   children: React.ReactNode;
 }) {
   return (
-    <MultiStepContenxtProvider>
-      <div className="mx-auto flex  ">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full  mx-auto p-4 sm:p-6 md:p-8">
-          <div className="bg-background md:col-span-1 rounded-lg shadow-lg">
-            <div className="p-6 sm:p-8">
-              <h1 className="text-2xl font-bold mb-4">Déposer une annonce</h1>
+    <MultiStepContextProvider>
+      <div className="mx-auto bg-secondary ">
+        <div className="flex-1 flex flex-col lg:flex-row items-start justify-center min-h-screen gap-4 w-full mx-auto p-4">
+          <Card className="bg-background w-full lg:w-1/3 rounded-lg shadow-lg border-border border lg:sticky lg:top-4">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
+              <Title>Déposer une annonce</Title>
+            </CardHeader>
+            <CardContent>
               <Steps />
               <MultiForm />
-            </div>
+            </CardContent>
+          </Card>
+          <div className="bg-background w-full lg:block hidden rounded-lg shadow-lg border-border border">
+            {children}
           </div>
-          <div className=" md:col-span-2">{children}</div>
         </div>
       </div>
-    </MultiStepContenxtProvider>
+    </MultiStepContextProvider>
   );
 }

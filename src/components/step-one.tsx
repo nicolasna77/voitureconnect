@@ -21,15 +21,15 @@ export function StepOne() {
     <>
       <FormField
         control={control}
-        name="marque"
-        render={({ field }) => (
+        name="brand" // Correction du nom de la propriété
+        render={({ field: { onChange, value, ref } }) => (
           <FormItem>
             <FormLabel className="flex items-center justify-between">
               Marque
               <FormMessage />
             </FormLabel>
             <FormControl>
-              <Select {...field}>
+              <Select value={value} onValueChange={onChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une marque" />
                 </SelectTrigger>
@@ -45,15 +45,15 @@ export function StepOne() {
       />
       <FormField
         control={control}
-        name="modele"
-        render={({ field }) => (
+        name="model" // Correction du nom de la propriété
+        render={({ field: { onChange, value, ref } }) => (
           <FormItem>
             <FormLabel className="flex items-center justify-between">
               Modèle
               <FormMessage />
             </FormLabel>
             <FormControl>
-              <Select {...field}>
+              <Select value={value} onValueChange={onChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un modèle" />
                 </SelectTrigger>
@@ -69,15 +69,15 @@ export function StepOne() {
       />
       <FormField
         control={control}
-        name="fuelType"
-        render={({ field }) => (
+        name="fuel" // Correction du nom de la propriété
+        render={({ field: { onChange, value, ref } }) => (
           <FormItem>
             <FormLabel className="flex items-center justify-between">
               Carburant
               <FormMessage />
             </FormLabel>
             <FormControl>
-              <Select {...field}>
+              <Select value={value} onValueChange={onChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner un type de carburant" />
                 </SelectTrigger>
@@ -93,15 +93,15 @@ export function StepOne() {
       />
       <FormField
         control={control}
-        name="motorisation"
-        render={({ field }) => (
+        name="motor" // Correction du nom de la propriété
+        render={({ field: { onChange, value, ref } }) => (
           <FormItem>
             <FormLabel className="flex items-center justify-between">
               Motorisation
               <FormMessage />
             </FormLabel>
             <FormControl>
-              <Select {...field}>
+              <Select value={value} onValueChange={onChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une motorisation" />
                 </SelectTrigger>
@@ -117,15 +117,15 @@ export function StepOne() {
       />
       <FormField
         control={control}
-        name="transmissionType"
-        render={({ field }) => (
+        name="transmission" // Correction du nom de la propriété
+        render={({ field: { onChange, value, ref } }) => (
           <FormItem>
             <FormLabel className="flex items-center justify-between">
               Boîte de vitesse
               <FormMessage />
             </FormLabel>
             <FormControl>
-              <Select {...field}>
+              <Select value={value} onValueChange={onChange}>
                 <SelectTrigger>
                   <SelectValue placeholder="Sélectionner une option" />
                 </SelectTrigger>

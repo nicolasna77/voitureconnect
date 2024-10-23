@@ -1,14 +1,31 @@
+"use client";
 import { Button } from "@/components/ui/button";
-import { AtSign, Key } from "lucide-react";
-import { auth, signIn } from "../../../auth";
+import { AtSign, Key, AlertTriangle, Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import LoginSocial from "./login-social";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { authenticate } from "@/lib/actions";
 
-export default async function LoginForm() {
-  const session = await auth();
+const LoginForm = () => {
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    try {
+      setLoading(true);
+      await authenticate(formData);
+    } catch (e) {
+      setError("Vérifiez vos identifiants");
+    } finally {
+      setLoading(false);
+    }
+  }
 
   return (
     <Card className="grid gap-6 rounded-lg  px-6 pb-4 pt-8">
@@ -26,15 +43,13 @@ export default async function LoginForm() {
           </div>
         </div>
 
-        <form
-          action={async (formData) => {
-            "use server";
-            await signIn("credentials", formData, {
-              redirectTo: "/",
-            });
-          }}
-          className="space-y-3"
-        >
+        <form onSubmit={onSubmit}>
+          {error && (
+            <div className="flex m-auto items-center gap-2">
+              <AlertTriangle className="text-red-500" />
+              <p className="text-red-500">{error}</p>
+            </div>
+          )}
           <div className="w-full">
             <div>
               <Label
@@ -85,18 +100,21 @@ export default async function LoginForm() {
             <Button
               size={"lg"}
               variant={"default"}
-              className="m-auto justify-center flex "
+              className="m-auto justify-center flex"
+              type="submit"
             >
-              Se connecter
+              {loading ? <Loader2 className="animate-spin" /> : "Se Connecter"}
             </Button>
           </div>
         </form>
         <div className="text-center m-auto">
           <Link href="/register" className="text-sm text-primary ">
-            Vous avez pas de compte ?
+            Vous n&apos;avez pas de compte ?
           </Link>
         </div>
       </CardContent>
     </Card>
   );
-}
+};
+
+export default LoginForm;
