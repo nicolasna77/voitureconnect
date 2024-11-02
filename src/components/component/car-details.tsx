@@ -23,8 +23,8 @@ const item = {
 const CarDetails = ({ item }: any) => {
   return (
     <>
-      <div className="grid gap-4 lg:grid-cols-[1fr_250px] xl:grid-cols-3  lg:gap-8">
-        <div className="grid auto-rows-max items-start gap-4 xl:col-span-2 lg:gap-8">
+      <div className="grid gap-4 lg:grid-cols-[1fr_250px] xl:grid-cols-4  lg:gap-8">
+        <div className="grid auto-rows-max items-start gap-4 xl:col-span-3 lg:gap-8">
           <div className="col-span-4">
             <CarouselDetail />
           </div>
@@ -107,27 +107,23 @@ const CarDetails = ({ item }: any) => {
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
           <Card className=" bg-card border border-border">
-            <CardContent>
-              <Link href={`/profile/${item.User.id}`}>
-                <div className="group flex items-center space-x-4 py-8 p-4 ">
-                  <Avatar className="w-10 h-10">
-                    <AvatarFallback>
-                      {item.User.name.slice(0, 2)}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 space-y-1">
-                    <p className="text-md group-hover:underline font-medium leading-none">
-                      {item.User.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">3 annonces</p>
-                  </div>
-                  <Button size="icon" variant="ghost">
-                    <ArrowRight className="h-4 w-4" />
-                  </Button>
+            <Link href={`/profile/${item.User.id}`}>
+              <div className="group flex items-center space-x-4 py-4 px-4  ">
+                <Avatar className="w-10 h-10">
+                  <AvatarFallback>{item.User.name.slice(0, 2)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-1 space-y-1">
+                  <p className="text-md group-hover:underline font-medium leading-none">
+                    {item.User.name}
+                  </p>
+                  <p className="text-sm text-muted-foreground">3 annonces</p>
                 </div>
-              </Link>
-              <DynamicCityMap city={item.location} />
-            </CardContent>
+                <Button size="icon" variant="ghost">
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+              </div>
+            </Link>
+            <DynamicCityMap city={item.location} />
 
             <CardFooter className="flex flex-col  gap-4 justify-center m-auto items-center border-t bg-muted/50  py-4">
               <div className="w-full sm:w-auto">

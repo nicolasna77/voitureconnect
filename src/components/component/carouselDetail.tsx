@@ -46,7 +46,7 @@ function CarouselDetail() {
             <Fullscreen className="w-6 h-6" />
           </Button>
         </div>
-        <CarouselMainContainer className="max-h-[30rem]">
+        <CarouselMainContainer className="max-h-[40rem]">
           {Array.from({ length: 5 }).map((_, index) => (
             <SliderMainItem
               key={index}
@@ -73,20 +73,25 @@ function CarouselDetail() {
             <SliderThumbItem
               key={index}
               index={index}
-              className="bg-transparent"
+              className=" bg-transparent "
             >
-              <div className="outline outline-1 outline-border size-full flex items-center justify-center rounded-xl bg-background">
-                Slide {index + 1}
-              </div>
+              <Image
+                src="/AdobeStock_590625806_Preview.png"
+                alt={`Image ${index + 1}`}
+                className="object-cover border  bg-white border-border rounded-xl w-full"
+                quality={100}
+                width={800}
+                height={400}
+              />
             </SliderThumbItem>
           ))}
         </CarouselThumbsContainer>
       </Carousel>
 
       <Dialog open={!!fullscreenImage} onOpenChange={closeFullscreen}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh] p-0 bg-transparent border-none">
+        <DialogContent className="max-w-[95vw] max-h-[95vh]  bg-white border-border">
           <Carousel
-            className="w-full h-full"
+            className=" max-w-[90vw] max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <CarouselNext className="absolute top-1/2 right-2 h-10 w-10 -translate-y-1/2" />
@@ -102,21 +107,17 @@ function CarouselDetail() {
                     alt={`Image ${index + 1}`}
                     className="object-contain w-full h-full"
                     quality={100}
-                    fill={true}
+                    width={800}
+                    height={400}
                     priority
-                    sizes="100vw"
-                    placeholder="blur"
+                    sizes="90vw"
                   />
                 </SliderMainItem>
               ))}
             </CarouselMainContainer>
             <CarouselThumbsContainer>
               {Array.from({ length: 10 }).map((_, index) => (
-                <SliderThumbItem
-                  key={index}
-                  index={index}
-                  className="bg-transparent"
-                >
+                <SliderThumbItem key={index} index={index} className="bg-white">
                   <div className="outline outline-1 outline-border size-full flex items-center justify-center rounded-xl bg-background">
                     Slide {index + 1}
                   </div>

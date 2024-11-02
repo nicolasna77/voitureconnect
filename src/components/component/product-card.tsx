@@ -56,9 +56,17 @@ const ProductCard = ({
       }),
 
     onSuccess: () => {
-      toast({
-        title: "Vous avez ajouté cet article à vos favoris",
-      });
+      if (method === "post") {
+        toast({
+          title: "Vous avez ajouté cet article à vos favoris",
+          description:
+            "Vous pouvez retrouver vos favoris dans l'espace favoris",
+        });
+      } else {
+        toast({
+          title: "Vous avez retiré cet article de vos favoris",
+        });
+      }
       queryClient.invalidateQueries({ queryKey: ["annonces"] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
@@ -194,7 +202,7 @@ const ProductCard = ({
             <Trash className="w-5 h-5 mr-1 fill-current" />
             Supprimer
           </Button>
-          <Button>Voir l'annonce</Button>
+          <Button>Voir l&apos;annonce</Button>
         </CardFooter>
       )}
       {favorite && (

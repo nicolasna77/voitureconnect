@@ -73,7 +73,9 @@ const SearchDetail: React.FC<SearchDetailProps> = ({
 
   if (error) {
     console.error("Une erreur s'est produite:", error);
-    return <div>Une erreur s'est produite. Veuillez réessayer plus tard.</div>;
+    return (
+      <div>{"Une erreur s'est produite. Veuillez réessayer plus tard."}</div>
+    );
   }
 
   const handleSelect = (currentValue: string) => {

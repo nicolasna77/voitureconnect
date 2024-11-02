@@ -7,7 +7,6 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import LoginSocial from "./login-social";
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { authenticate } from "@/lib/actions";
 
 const LoginForm = () => {

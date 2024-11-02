@@ -1,6 +1,7 @@
 "use server";
 
-import { signIn, signOut } from "@/lib/auth";
+import { auth, signIn } from "@/lib/auth";
+import { DEFAULT_LOGIN_REDIRECT } from "../../route";
 
 export async function authenticate(formData: FormData) {
   try {
@@ -8,8 +9,7 @@ export async function authenticate(formData: FormData) {
       email: formData.get("email"),
       password: formData.get("password"),
       redirect: true,
-      callbackUrl: "/",
-      redirectTo: "/",
+      redirectTo: DEFAULT_LOGIN_REDIRECT,
     });
 
     return response;
@@ -18,6 +18,7 @@ export async function authenticate(formData: FormData) {
   }
 }
 
-export async function doLogout() {
-  await signOut({ redirectTo: "/" });
+export async function getSession() {
+  const session = await auth();
+  return session;
 }

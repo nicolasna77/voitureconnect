@@ -30,12 +30,6 @@ export const GET = async (request: NextRequest) => {
             },
           },
           User: true,
-          likes: userId
-            ? {
-                where: { userId: userId },
-                select: { id: true },
-              }
-            : false,
           garage: true,
         },
       });
@@ -47,7 +41,15 @@ export const GET = async (request: NextRequest) => {
         );
       }
 
-      const isLiked = userId ? data.likes.length > 0 : false;
+      let isLiked = false;
+
+      if (userId) {
+        const like = await prisma.like.findFirst({
+          where: { adId: id, userId: userId },
+          select: { id: true },
+        });
+        isLiked = !!like;
+      }
 
       return NextResponse.json({ data: { ...data, isLiked } });
     } else {
@@ -72,9 +74,9 @@ export const GET = async (request: NextRequest) => {
                 carOptionValue: true,
                 carSpecification: true,
                 carSpecificationValue: true,
+                carType: true,
               },
             },
-            likes: true,
             garage: true,
             User: true,
           },
@@ -83,27 +85,28 @@ export const GET = async (request: NextRequest) => {
         prisma.ad.count({ where: whereClause }),
       ]);
 
-      const dataWithLikeInfo = await Promise.all(
-        data.map(async (ad) => {
-          let isLiked = false;
-          let idLike = null;
+      let dataWithLikeInfo = data;
 
-          if (userId) {
-            const like = await prisma.like.findFirst({
-              where: { adId: ad.id, userId: userId },
-              select: { id: true },
-            });
-            isLiked = !!like;
-            idLike = like ? like.id : null;
-          }
+      if (userId) {
+        const likes = await prisma.like.findMany({
+          where: {
+            adId: { in: data.map((ad) => ad.id) },
+            userId: userId,
+          },
+          select: { id: true, adId: true },
+        });
 
+        const likesMap = new Map(likes.map((like) => [like.adId, like.id]));
+
+        dataWithLikeInfo = data.map((ad) => {
+          const likeId = likesMap.get(ad.id);
           return {
             ...ad,
-            isLiked,
-            idLike,
+            isLiked: !!likeId,
+            idLike: likeId || null,
           };
-        })
-      );
+        });
+      }
 
       const totalPages = Math.ceil(total / limit);
 

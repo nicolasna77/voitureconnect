@@ -1,14 +1,55 @@
 import type { NextAuthConfig } from "next-auth";
-
-export const authConfig = {
+import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
+import bcrypt from "bcryptjs";
+import { PrismaClient } from "@prisma/client";
+export const authConfig: NextAuthConfig = {
   pages: {
     signIn: "/login",
+    verifyRequest: "/verify-request",
   },
-  callbacks: {
-    authorized: async ({ auth }) => {
-      if (auth) return true;
-      return false;
-    },
-  },
-  providers: [], // Add providers with an empty array for now
-} satisfies NextAuthConfig;
+  providers: [
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
+    Credentials({
+      credentials: {
+        email: { label: "email" },
+        password: { label: "Password", type: "password" },
+      },
+      authorize: async (credentials, req) => {
+        if (!credentials) {
+          throw new Error("Identifiants non fournis");
+        }
+        const prisma = new PrismaClient();
+
+        const { email, password } = credentials;
+        try {
+          const user = await prisma.user.findUnique({
+            where: {
+              email: email as string,
+            },
+          });
+          if (!user) {
+            throw new Error("User not found");
+          }
+
+          const compare = await bcrypt.compare(
+            password as string,
+            user.password as string
+          );
+          if (!compare) {
+            throw new Error("Password is not correct");
+          } else {
+            return user;
+          }
+        } catch (error) {
+          throw new Error(
+            error instanceof Error ? error.message : String(error)
+          );
+        }
+      },
+    }),
+  ],
+};

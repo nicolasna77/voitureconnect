@@ -55,7 +55,7 @@ const PaginationComponant = ({
             );
           } else if (number === currentPage - 3 || number === currentPage + 3) {
             return (
-              <PaginationItem>
+              <PaginationItem key={number}>
                 <PaginationEllipsis />
               </PaginationItem>
             );

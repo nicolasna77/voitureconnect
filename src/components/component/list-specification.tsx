@@ -25,7 +25,7 @@ const ListSpecification = ({
         </div>
       ) : isError ? (
         <div className="text-center w-full py-32">
-          Erreur : Une erreur s'est produite
+          Erreur : Une erreur s&apos;est produite
         </div>
       ) : !data || !data.data || data.data.length === 0 ? (
         <div className="text-center w-full py-32">Aucun résultat trouvé</div>

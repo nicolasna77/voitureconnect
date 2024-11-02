@@ -64,10 +64,7 @@ const CityMap: React.FC<CityMapProps> = ({ city }) => {
       style={{ height: "200px", width: "100%", zIndex: 0 }}
     >
       <ChangeView center={position} />
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-      />
+      <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
       <Marker position={position} />
     </MapContainer>
   );

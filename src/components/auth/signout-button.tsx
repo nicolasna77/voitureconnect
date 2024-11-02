@@ -1,14 +1,16 @@
-import { doLogout } from "@/lib/actions";
+"use client";
+import { signOut } from "next-auth/react";
 import { Button } from "../ui/button";
-import { LogOut } from "lucide-react";
 
 const SignoutButton = () => {
   return (
-    <form action={doLogout}>
-      <Button variant={"outline"} type="submit">
-        <LogOut /> Déconnexion
-      </Button>
-    </form>
+    <Button
+      variant={"outline"}
+      className="w-full"
+      onClick={() => signOut({ redirect: true })}
+    >
+      Déconnexion
+    </Button>
   );
 };
 
