@@ -137,13 +137,9 @@ const ProductCard = ({
       )}
 
       {item.garageId && (
-        <Button
-          size="icon"
-          variant="ghost"
-          className="absolute top-4 left-4 rounded-full text-red"
-        >
-          <Badge>Pro</Badge>
-        </Button>
+        <Badge variant={"secondary"} className="absolute top-4 left-4">
+          Pro
+        </Badge>
       )}
 
       <div className={orientation === "list" ? "w-full" : "w-full"}>

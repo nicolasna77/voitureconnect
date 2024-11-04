@@ -1,23 +1,60 @@
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
+import { getLocale } from "next-intl/server";
 
 export const GET = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const model = searchParams.get("model");
+  const locale = await getLocale();
 
-  const whereClause = model ? { carModel: { name: model } } : {};
-
-  const data = await prisma.carGeneration.findMany({
-    where: whereClause,
-    select: {
-      name: true,
-    },
-    distinct: ["name"],
-    orderBy: {
-      name: "asc",
-    },
-  });
-
-  return Response.json({ data });
+  try {
+    if (locale === "fr") {
+      const data = await prisma.carGenerationFR.findMany({
+        where: model
+          ? {
+              carModel: {
+                name: model,
+              },
+            }
+          : undefined,
+        include: {
+          carModel: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        orderBy: {
+          name: "asc",
+        },
+      });
+      return Response.json({ data });
+    } else {
+      const data = await prisma.carGenerationEN.findMany({
+        where: model
+          ? {
+              carModel: {
+                name: model,
+              },
+            }
+          : undefined,
+        include: {
+          carModel: {
+            select: {
+              name: true,
+            },
+          },
+        },
+        orderBy: {
+          name: "asc",
+        },
+      });
+      return Response.json({ data });
+    }
+  } catch (error) {
+    console.error("Erreur lors de la récupération des générations:", error);
+    return Response.json(
+      { error: "Erreur lors de la récupération des données" },
+      { status: 500 }
+    );
+  }
 };

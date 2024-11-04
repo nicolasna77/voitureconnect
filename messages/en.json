@@ -1,0 +1,47 @@
+{
+  "HomePage": {
+    "hero": {
+      "title": "Find your ideal car",
+      "description": "Discover our selection of vehicles and find the one that suits you."
+    },
+    "categories": {
+      "title": "Car Categories",
+      "description": "Find the car category that suits you from our car categories.",
+      "types": {
+        "suv": "SUV",
+        "berline": "Sedan",
+        "coupe": "Coupe",
+        "cabriolet": "Convertible",
+        "citadine": "City Car",
+        "break": "Station Wagon"
+      }
+    }
+  },
+  "Header": {
+    "navigation": {
+      "menu": "Menu",
+      "pro": "Pro",
+      "specs": "Technical Sheet",
+      "services": "Services",
+      "search": "Search",
+      "favorites": "My Favorites",
+      "postAd": "Post an Ad"
+    },
+    "services": {
+      "title": "Our Services",
+      "description": "Our services are available to help you find or sell your vehicle",
+      "accidentCheck": {
+        "title": "Accident & Mileage Check",
+        "description": "Check if your vehicle has had any accidents"
+      },
+      "registrationPrice": {
+        "title": "Registration Price",
+        "description": "Calculate your registration card price"
+      }
+    }
+  },
+  "LocaleSwitcher": {
+    "label": "Change language",
+    "locale": "{locale, select, fr {French} en {English} other {Unknown}}"
+  }
+}

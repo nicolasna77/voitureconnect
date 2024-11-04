@@ -25,36 +25,32 @@ const ListProduct = ({
 }) => {
   return (
     <section className="w-full ">
-      <div className="  ">
-        {isPending ? (
-          <div className="text-center w-full py-32">
-            <LoaderComponant />
-          </div>
-        ) : isError ? (
-          <div className="text-center w-full py-32">
-            Erreur: {error.message}
-          </div>
-        ) : !data || data.length === 0 ? (
-          <div className="text-center w-full py-32">Aucun résultat trouvé</div>
-        ) : (
-          <div
-            className={`grid w-full gap-4 ${
-              orientation === "grid"
-                ? "  sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto"
-                : "grid-cols-1 max-w-4xl m-auto"
-            } `}
-          >
-            {data.map((item) => (
-              <ProductCard
-                key={item.id}
-                orientation={orientation}
-                item={item}
-                favorite={false}
-              />
-            ))}
-          </div>
-        )}
-      </div>
+      {isPending ? (
+        <div className="text-center w-full py-32">
+          <LoaderComponant />
+        </div>
+      ) : isError ? (
+        <div className="text-center w-full py-32">Erreur: {error.message}</div>
+      ) : !data || data.length === 0 ? (
+        <div className="text-center w-full py-32">Aucun résultat trouvé</div>
+      ) : (
+        <div
+          className={`grid w-full gap-4 ${
+            orientation === "grid"
+              ? "  sm:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto"
+              : "grid-cols-1 max-w-4xl m-auto"
+          } `}
+        >
+          {data.map((item) => (
+            <ProductCard
+              key={item.id}
+              orientation={orientation}
+              item={item}
+              favorite={false}
+            />
+          ))}
+        </div>
+      )}
     </section>
   );
 };

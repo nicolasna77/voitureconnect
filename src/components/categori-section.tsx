@@ -5,25 +5,28 @@ import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
 import { CarouselNext, CarouselPrevious } from "./ui/carousel";
-import Title from "./title";
+import { useTranslations } from "next-intl";
+
 const CategoriSection = () => {
+  const t = useTranslations("HomePage.categories");
+
   const carCategories = [
-    { id: 1, name: "SUV", icon: "suv" },
-    { id: 2, name: "Berline", icon: "sedan" },
-    { id: 3, name: "Coupé", icon: "coupe" },
-    { id: 4, name: "Cabriolet", icon: "cabriolet" },
-    { id: 5, name: "Citadine", icon: "micro" },
-    { id: 6, name: "Break", icon: "station" },
+    { id: 1, name: t("types.suv"), icon: "suv" },
+    { id: 2, name: t("types.berline"), icon: "sedan" },
+    { id: 3, name: t("types.coupe"), icon: "coupe" },
+    { id: 4, name: t("types.cabriolet"), icon: "cabriolet" },
+    { id: 5, name: t("types.citadine"), icon: "micro" },
+    { id: 6, name: t("types.break"), icon: "station" },
   ];
+
   return (
-    <div className="py-12 md:py-24 lg:py-32 max-w-7xl  px-14  m-auto  ">
+    <div className="py-12 md:py-24 lg:py-32 max-w-7xl px-14 m-auto">
       <div className="flex flex-col items-center pb-8 justify-center space-y-4 text-center">
         <div className="text-3xl font-bold tracking-tighter sm:text-5xl">
-          Categories de voiture
+          {t("title")}
         </div>
         <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-          Trouvez la catégorie de voiture qui vous convient parmi nos catégories
-          de voitures.
+          {t("description")}
         </p>
       </div>
       <Carousel
@@ -67,4 +70,5 @@ const CategoriSection = () => {
     </div>
   );
 };
+
 export default CategoriSection;

@@ -32,13 +32,9 @@ const PagePostProduct = () => {
   };
 
   return (
-    <div className="bg-background rounded-lg  overflow-hidden">
-      <Card className=" sm:p-8 ">
-        <Title>{"Aperçu de l'annonce"}</Title>
-        <CardContent>
-          <CarDetails item={item} />
-        </CardContent>
-      </Card>
+    <div>
+      <Title>{"Aperçu de l'annonce"}</Title>
+      <CarDetails item={item} />
     </div>
   );
 };

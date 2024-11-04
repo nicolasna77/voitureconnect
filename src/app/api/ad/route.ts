@@ -1,14 +1,25 @@
-import { PrismaClient } from "@prisma/client";
+import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-
-const prisma = new PrismaClient();
 
 export const GET = async (request: NextRequest) => {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
   const userId = searchParams.get("userId");
   const page = Number(searchParams.get("page")) || 1;
+  const lang = searchParams.get("lang") || "FR";
   const limit = 12;
+
+  const carModels = {
+    carMake: lang === "FR" ? "carMakeFR" : "carMakeEN",
+    carModel: lang === "FR" ? "carModelFR" : "carModelEN",
+    carTrim: lang === "FR" ? "carTrimFR" : "carTrimEN",
+    carGeneration: lang === "FR" ? "carGenerationFR" : "carGenerationEN",
+    carSerie: lang === "FR" ? "carSerieFR" : "carSerieEN",
+    carEquipment: lang === "FR" ? "carEquipmentFR" : "carEquipmentEN",
+    carType: lang === "FR" ? "carTypeFR" : "carTypeEN",
+  } as const;
+
+  console.log("Paramètres reçus:", Object.fromEntries(searchParams));
 
   try {
     if (id) {
@@ -23,16 +34,16 @@ export const GET = async (request: NextRequest) => {
               carGeneration: true,
               carSerie: true,
               carEquipment: true,
-              carOption: true,
-              carOptionValue: true,
-              carSpecification: true,
-              carSpecificationValue: true,
+              Option: true,
+              carType: true,
             },
           },
           User: true,
           garage: true,
         },
       });
+
+      console.log("Données trouvées pour l'ID:", data);
 
       if (!data) {
         return NextResponse.json(
@@ -54,7 +65,9 @@ export const GET = async (request: NextRequest) => {
       return NextResponse.json({ data: { ...data, isLiked } });
     } else {
       const skip = (page - 1) * limit;
-      const whereClause = buildWhereClause(searchParams);
+      const whereClause = buildWhereClause(searchParams, lang);
+
+      console.log("Where clause construite:", whereClause);
 
       const [data, total] = await Promise.all([
         prisma.ad.findMany({
@@ -70,10 +83,7 @@ export const GET = async (request: NextRequest) => {
                 carGeneration: true,
                 carSerie: true,
                 carEquipment: true,
-                carOption: true,
-                carOptionValue: true,
-                carSpecification: true,
-                carSpecificationValue: true,
+                Option: true,
                 carType: true,
               },
             },
@@ -84,6 +94,9 @@ export const GET = async (request: NextRequest) => {
         }),
         prisma.ad.count({ where: whereClause }),
       ]);
+
+      console.log("Nombre total d'annonces trouvées:", total);
+      console.log("Données récupérées:", data);
 
       let dataWithLikeInfo = data;
 
@@ -118,19 +131,20 @@ export const GET = async (request: NextRequest) => {
       });
     }
   } catch (error) {
-    console.error("Erreur lors de la récupération des annonces:", error);
+    console.error("Erreur détaillée:", error);
     return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
   }
 };
 
-function buildWhereClause(searchParams: URLSearchParams) {
+function buildWhereClause(searchParams: URLSearchParams, lang: string) {
   const whereClause: any = {};
+  const carMakeModel = lang === "FR" ? "carMakeFR" : "carMakeEN";
+  const carModelModel = lang === "FR" ? "carModelFR" : "carModelEN";
 
-  // Ajoutez des conditions seulement si les paramètres sont présents
   if (searchParams.get("marque")) {
     whereClause.car = {
       ...whereClause.car,
-      carMake: {
+      [carMakeModel]: {
         name: { contains: searchParams.get("marque"), mode: "insensitive" },
       },
     };
@@ -139,7 +153,7 @@ function buildWhereClause(searchParams: URLSearchParams) {
   if (searchParams.get("model")) {
     whereClause.car = {
       ...whereClause.car,
-      carModel: {
+      [carModelModel]: {
         name: { contains: searchParams.get("model"), mode: "insensitive" },
       },
     };

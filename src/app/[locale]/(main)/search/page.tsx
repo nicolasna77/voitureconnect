@@ -92,15 +92,17 @@ const SearchPage = () => {
               <LayoutGrid className="h-4 w-4 data-[state=unchecked]:hidden data-[state=checked]:block" />
               <span className="sr-only">Changer l&apos;orientation</span>
             </Switch>
-            <Button
-              variant="outline"
-              size="icon"
-              className="rounded-full"
-              onClick={toggleFilters}
-            >
-              <FilterIcon className="h-4 w-4" />
-              <span className="sr-only">Filtrer</span>
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="rounded-full h-10 w-10"
+                onClick={toggleFilters}
+              >
+                <FilterIcon className="h-4 w-4" />
+                <span className="sr-only">Filtrer</span>
+              </Button>
+            </div>
             <Select>
               <SelectTrigger className="bg-background w-full">
                 <SelectValue placeholder="Trier par" />

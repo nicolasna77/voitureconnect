@@ -1,0 +1,83 @@
+{
+  "HomePage": {
+    "hero": {
+      "title": "Trouvez votre voiture idéale",
+      "description": "Découvrez notre sélection de véhicules et trouvez celui qui vous convient."
+    },
+    "categories": {
+      "title": "Categories de voiture",
+      "description": "Trouvez la catégorie de voiture qui vous convient parmi nos catégories de voitures.",
+      "types": {
+        "suv": "SUV",
+        "berline": "Berline",
+        "coupe": "Coupé",
+        "cabriolet": "Cabriolet",
+        "citadine": "Citadine",
+        "break": "Break"
+      }
+    },
+    "features": {
+      "title": "Fonctionnalités Clés",
+      "description": "Garage Finder offre un ensemble complet de fonctionnalités pour rationaliser la gestion de votre garage et l'expérience d'achat/vente.",
+      "feature1": {
+        "title": "Fonctionnalité 1",
+        "description": "Description de la première fonctionnalité"
+      },
+      "feature2": {
+        "title": "Fonctionnalité 2",
+        "description": "Description de la deuxième fonctionnalité"
+      },
+      "feature3": {
+        "title": "Fonctionnalité 3",
+        "description": "Description de la troisième fonctionnalité"
+      },
+      "feature4": {
+        "title": "Fonctionnalité 4",
+        "description": "Description de la quatrième fonctionnalité"
+      }
+    },
+    "benefits": {
+      "title": "Avantages de l'Utilisation de Garage Finder",
+      "description": "Garage Finder offre une gamme d'avantages pour vous aider à rationaliser les opérations de votre garage et à vous connecter avec les acheteurs.",
+      "visibility": {
+        "title": "Visibilité Accrue",
+        "description": "Atteignez un public plus large et obtenez plus de visibilité pour votre garage et vos pièces."
+      },
+      "tools": {
+        "title": "Outils de Gain de Temps",
+        "description": "Rationalisez les opérations de votre garage avec notre suite d'outils de gestion."
+      },
+      "efficiency": {
+        "title": "Efficacité Améliorée",
+        "description": "Optimisez le flux de travail de votre garage et concentrez-vous sur le service à vos clients."
+      }
+    }
+  },
+  "Header": {
+    "navigation": {
+      "pro": "Pro",
+      "specs": "Fiche technique",
+      "services": "Services",
+      "search": "Recherche",
+      "favorites": "Mes favoris",
+      "postAd": "Déposer une annonce",
+      "menu": "Menu"
+    },
+    "services": {
+      "title": "Nos services",
+      "description": "Nos services sont disponibles pour vous aider à trouver ou vendre votre véhicule",
+      "accidentCheck": {
+        "title": "Vérification sinistre ou Km",
+        "description": "Vérifiez si votre véhicule a déjà eu un sinistre"
+      },
+      "registrationPrice": {
+        "title": "Prix carte grise",
+        "description": "Calculez le prix de votre carte grise"
+      }
+    }
+  },
+  "LocaleSwitcher": {
+    "label": "Changer de langue",
+    "locale": "{locale, select, fr {Français} en {Anglais} other {Inconnu}}"
+  }
+}

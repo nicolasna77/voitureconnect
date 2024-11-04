@@ -1,17 +1,19 @@
 import Image from "next/image";
 import SearchForm from "./search-form";
+import { useTranslations } from "next-intl";
 
 const HeroSection = () => {
+  const t = useTranslations("HomePage.hero");
+
   return (
-    <div className="bg-[#f2f2f2]  relative">
-      <div className="grid max-w-screen-xl  px-4 mx-auto lg:gap-8 xl:gap-0 py-12 md:py-24 lg:py-32 lg:grid-cols-12">
-        <div className=" place-self-center lg:col-span-6">
-          <h1 className="scroll-m-20 text-4xl text-secondary-foreground font-extrabold tracking-tight lg:text-5xl ">
-            Trouvez votre voiture idéale
+    <div className="bg-[#f2f2f2] relative">
+      <div className="grid max-w-screen-xl px-4 mx-auto lg:gap-8 xl:gap-0 py-12 md:py-24 lg:py-32 lg:grid-cols-12">
+        <div className="place-self-center lg:col-span-6">
+          <h1 className="scroll-m-20 text-4xl text-secondary-foreground font-extrabold tracking-tight lg:text-5xl">
+            {t("title")}
           </h1>
           <p className="mt-3 text-lg text-secondary-foreground">
-            Découvrez notre sélection de véhicules et trouvez celui qui vous
-            convient.
+            {t("description")}
           </p>
           <div className="mt-7 sm:mt-12 mx-auto z-10 max-w-xl relative">
             <SearchForm />
@@ -78,4 +80,5 @@ const HeroSection = () => {
     </div>
   );
 };
+
 export default HeroSection;

@@ -1,58 +1,50 @@
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/../prisma";
-
-import { authConfig } from "../../auth.config";
+import authConfig from "../../auth.config";
 import NextAuth from "next-auth";
-import { Role } from "@prisma/client";
-import Resend from "next-auth/providers/resend";
+import { PrismaClient, Role } from "@prisma/client";
+const prisma = new PrismaClient();
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  ...authConfig,
   adapter: PrismaAdapter(prisma),
-  providers: [
-    Resend({
-      from: "onboarding@resend.dev",
-    }),
-  ],
-
   session: {
     strategy: "jwt",
   },
+  secret: process.env.AUTH_SECRET,
+  pages: {
+    signIn: "/login",
+    error: "/error",
+  },
+  providers: [...authConfig.providers],
   callbacks: {
+    // Simplifier les callbacks pour déboguer
     async session({ session, token }) {
-      if (token.sub && session.user) {
-        session.user.id = token.sub;
-      }
-      if (token.role && session.user) {
-        session.user.role = token.role as Role;
-      }
       if (session.user) {
-        session.user.name = token.name;
-        session.user.email = token.email;
+        session.user.id = token.sub as string;
+        session.user.role = (token.role as Role) || "USER";
       }
       return session;
     },
+    async jwt({ token }) {
+      try {
+        if (!token.sub) return token;
 
-    async jwt({ token, trigger, session }) {
-      if (trigger === "update" && session?.name) {
-        // Note, that `session` can be any arbitrary object, remember to validate it!
-        token.name = session.name;
-      }
+        const user = await prisma.user.findUnique({
+          where: { id: token.sub },
+          select: { id: true, role: true, name: true, email: true },
+        });
 
-      if (!token.sub) {
+        if (!user) return token;
+
+        return {
+          ...token,
+          role: user.role,
+          name: user.name,
+          email: user.email,
+        };
+      } catch (error) {
+        console.error("JWT Callback Error:", error);
         return token;
       }
-      const existingUser = await prisma.user.findUnique({
-        where: { id: token.sub },
-      });
-      if (!existingUser) {
-        return token;
-      }
-      token.role = existingUser.role;
-      token.id = existingUser.id;
-      token.name = existingUser.name;
-      token.email = existingUser.email;
-      return token;
     },
   },
 });

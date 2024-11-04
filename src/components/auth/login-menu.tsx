@@ -15,7 +15,6 @@ import { Session } from "next-auth";
 
 export default function LoginMenu({ session }: { session: Session }) {
   const router = useRouter();
-
   if (!session)
     return (
       <Button variant="outline" onClick={() => router.push("/login")}>

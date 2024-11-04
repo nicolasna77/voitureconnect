@@ -2,12 +2,9 @@ import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
 import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import { PrismaClient } from "@prisma/client";
-export const authConfig: NextAuthConfig = {
-  pages: {
-    signIn: "/login",
-    verifyRequest: "/verify-request",
-  },
+import { prisma } from "@/lib/prisma";
+
+export default {
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
@@ -22,7 +19,6 @@ export const authConfig: NextAuthConfig = {
         if (!credentials) {
           throw new Error("Identifiants non fournis");
         }
-        const prisma = new PrismaClient();
 
         const { email, password } = credentials;
         try {
@@ -52,4 +48,4 @@ export const authConfig: NextAuthConfig = {
       },
     }),
   ],
-};
+} satisfies NextAuthConfig;

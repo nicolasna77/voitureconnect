@@ -18,24 +18,28 @@ import { FcServices } from "react-icons/fc";
 import { Separator } from "./ui/separator";
 import LoginMenu from "./auth/login-menu";
 import { Session } from "next-auth";
+import { getTranslations } from "next-intl/server";
 import { auth } from "@/lib/auth";
+import LocaleSwitcher from "./local-switcher";
 
 const Header = async () => {
   const session = await auth();
+  const t = await getTranslations("Header");
+
   const link = [
-    { name: "Pro", href: "/pro" },
-    { name: "Fiche technique", href: "/specification" },
+    { name: t("navigation.pro"), href: "/pro" },
+    { name: t("navigation.specs"), href: "/specification" },
   ];
   return (
     <header className="sticky z-40 top-0 flex h-16 items-center gap-4 border-b bg-white px-4 md:px-6">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+          <Button variant="outline" size="icon" className="shrink-0 lg:hidden">
             <Menu className="h-5 w-5" />
-            <span className="sr-only">Menu de navigation</span>
+            <span className="sr-only">{t("navigation.menu")}</span>
           </Button>
         </SheetTrigger>
-        <SheetContent side="left">
+        <SheetContent side="left" className="flex flex-col">
           <nav className="grid gap-6 text-lg font-medium">
             <Link
               href="/"
@@ -53,32 +57,31 @@ const Header = async () => {
               </Link>
             ))}
 
-            <Link href={"/search"} prefetch={false} className="flex  gap-2">
+            <Link href={"/search"} prefetch={false} className="flex gap-2">
               <SearchIcon className="h-5 w-5" />
-              <span>Recherche</span>
+              <span>{t("navigation.search")}</span>
             </Link>
-            <Link
-              href="/user/favorite"
-              className="flex  gap-2"
-              prefetch={false}
-            >
+            <Link href="/user/favorite" className="flex gap-2" prefetch={false}>
               <Heart className="h-5 w-5" />
-              <span>Mes favoris</span>
+              <span>{t("navigation.favorites")}</span>
             </Link>
             <Link
               href="/postProduct"
               prefetch={false}
               className="w-full rounded-md border border-border text-center py-2 px-4"
             >
-              Déposer une annonce
+              {t("navigation.postAd")}
             </Link>
           </nav>
+          <div className="flex bottom-4  justify-center">
+            <LocaleSwitcher />
+          </div>
         </SheetContent>
       </Sheet>
       <Link href="/" className="text-primary font-extrabold text-2xl">
         CarConnect
       </Link>
-      <nav className="hidden md:flex md:items-center md:gap-5 lg:gap-6">
+      <nav className="hidden lg:flex lg:items-center lg:gap-5">
         <NavigationMenu>
           <NavigationMenuList>
             {link.map((item, index) => (
@@ -92,7 +95,9 @@ const Header = async () => {
             ))}
 
             <NavigationMenuItem>
-              <NavigationMenuTrigger>Services</NavigationMenuTrigger>
+              <NavigationMenuTrigger>
+                {t("navigation.services")}
+              </NavigationMenuTrigger>
               <NavigationMenuContent>
                 <ul className="grid gap-3 p-4 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
                   <li className="row-span-3">
@@ -103,20 +108,25 @@ const Header = async () => {
                       >
                         <FcServices className="h-6 w-6" />
                         <div className="mb-2 mt-4 text-lg font-medium">
-                          Nos services
+                          {t("services.title")}
                         </div>
                         <p className="text-sm leading-tight text-muted-foreground">
-                          Nos services sont disponibles pour vous aider à
-                          trouver ou vendre votre véhicule
+                          {t("services.description")}
                         </p>
                       </a>
                     </NavigationMenuLink>
                   </li>
-                  <ListItem href="/docs" title="Vérification sinistre ou Km">
-                    Vérifiez si votre véhicule a déjà eu un sinistre
+                  <ListItem
+                    href="/docs"
+                    title={t("services.accidentCheck.title")}
+                  >
+                    {t("services.accidentCheck.description")}
                   </ListItem>
-                  <ListItem href="/valorCg" title="Prix carte grise">
-                    Calculez le prix de votre carte grise
+                  <ListItem
+                    href="/valorCg"
+                    title={t("services.registrationPrice.title")}
+                  >
+                    {t("services.registrationPrice.description")}
                   </ListItem>
                 </ul>
               </NavigationMenuContent>
@@ -127,10 +137,11 @@ const Header = async () => {
 
       <div className="flex w-full items-center gap-2 md:ml-auto">
         <div className="ml-auto flex items-center gap-3 ">
-          <div className=" hidden md:flex items-center gap-3">
+          <div className=" hidden lg:flex items-center gap-3">
+            <LocaleSwitcher />
             <Button variant="outline">
               <Link href="/postProduct" prefetch={false}>
-                Déposer une annonce
+                {t("navigation.postAd")}
               </Link>
             </Button>
             <Separator

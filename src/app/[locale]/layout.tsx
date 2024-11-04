@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/header";
@@ -8,6 +10,9 @@ import { Analytics } from "@vercel/analytics/react";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "@/components/ui/toaster";
 import { auth } from "@/lib/auth";
+import { routing } from "@/i18n/routing";
+import { notFound } from "next/navigation";
+import { getMessages } from "next-intl/server";
 
 const font = Inter({
   weight: "400",
@@ -19,22 +24,31 @@ export const metadata: Metadata = {
 };
 export default async function RootLayout({
   children,
+  params: { locale },
 }: Readonly<{
   children: React.ReactNode;
+  params: { locale: string };
 }>) {
   const session = await auth();
+  if (!routing.locales.includes(locale as any)) {
+    notFound();
+  }
+  const messages = await getMessages();
+
   return (
-    <html lang="fr">
+    <html lang={locale}>
       <body className={font.className}>
-        <SessionProvider session={session}>
-          <ReactQueryProvider>
-            <Header />
-            {children}
-            <Toaster />
-            <Footer />
-            <Analytics />
-          </ReactQueryProvider>
-        </SessionProvider>
+        <NextIntlClientProvider messages={messages}>
+          <SessionProvider session={session}>
+            <ReactQueryProvider>
+              <Header />
+              {children}
+              <Toaster />
+              <Footer />
+              <Analytics />
+            </ReactQueryProvider>
+          </SessionProvider>
+        </NextIntlClientProvider>
       </body>
     </html>
   );

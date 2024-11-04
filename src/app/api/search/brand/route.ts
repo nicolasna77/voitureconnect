@@ -1,9 +1,14 @@
 import { PrismaClient } from "@prisma/client";
+import { getLocale } from "next-intl/server";
 
 const prisma = new PrismaClient();
 
 export const GET = async () => {
-  const data = await prisma.carMake.findMany({
+  const locale = await getLocale();
+
+  const tableName = locale === "fr" ? "carMakeFR" : "carMakeEN";
+
+  const data = await prisma[tableName as "carMakeFR" | "carMakeEN"].findMany({
     distinct: ["name"],
     orderBy: {
       name: "asc",
