@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 
 import { Inter } from "next/font/google";
-import "./globals.css";
+import "../globals.css";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
 import { ReactQueryProvider } from "./react-query-provider";
@@ -38,7 +38,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={font.className}>
-        <NextIntlClientProvider messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={messages}>
           <SessionProvider session={session}>
             <ReactQueryProvider>
               <Header />

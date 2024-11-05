@@ -28,6 +28,7 @@ model User {
   Ad                 Ad[]
   likes              Like[]
   Car                Car[]
+  subscription       Subscription[]
 
   @@schema("base")
 }
@@ -603,4 +604,28 @@ model CarOptionValueEN {
 
   @@map("car_option_value")
   @@schema("dataCarEN")
+}
+
+enum SubscriptionPlan {
+  BASIC
+  PRO_STANDARD
+  PRO_PREMIUM
+
+  @@schema("base")
+}
+
+model Subscription {
+  id            String           @id @default(uuid())
+  userId        String
+  user          User            @relation(fields: [userId], references: [id])
+  plan          SubscriptionPlan
+  status        String          // active, canceled, expired
+  startDate     DateTime
+  endDate       DateTime
+  isAnnual      Boolean         @default(false)
+  amount        Decimal
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@schema("base")
 }

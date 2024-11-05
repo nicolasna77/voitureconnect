@@ -19,21 +19,33 @@
     "features": {
       "title": "Fonctionnalités Clés",
       "description": "Garage Finder offre un ensemble complet de fonctionnalités pour rationaliser la gestion de votre garage et l'expérience d'achat/vente.",
-      "feature1": {
-        "title": "Fonctionnalité 1",
-        "description": "Description de la première fonctionnalité"
+      "advancedInventory": {
+        "title": "Gestion d'Inventaire Avancée",
+        "description": "Gérez facilement votre stock de véhicules et de pièces détachées."
       },
-      "feature2": {
-        "title": "Fonctionnalité 2",
-        "description": "Description de la deuxième fonctionnalité"
+      "smartSearch": {
+        "title": "Recherche Intelligente",
+        "description": "Trouvez rapidement les véhicules ou pièces dont vous avez besoin."
       },
-      "feature3": {
-        "title": "Fonctionnalité 3",
-        "description": "Description de la troisième fonctionnalité"
+      "enhancedSecurity": {
+        "title": "Sécurité Renforcée",
+        "description": "Protégez vos transactions et vos données avec notre système de sécurité avancé."
       },
-      "feature4": {
-        "title": "Fonctionnalité 4",
-        "description": "Description de la quatrième fonctionnalité"
+      "marketAnalysis": {
+        "title": "Analyses de Marché",
+        "description": "Obtenez des insights précieux sur les tendances du marché automobile."
+      },
+      "optimize": {
+        "title": "Optimisez Votre Garage",
+        "description": "Découvrez comment Garage Finder peut transformer votre entreprise.",
+        "subtitle": "Avec nos outils avancés et notre plateforme intuitive, vous pouvez :",
+        "benefits": [
+          "Augmenter vos ventes",
+          "Améliorer la satisfaction client",
+          "Optimiser votre gestion de stock",
+          "Réduire les coûts opérationnels"
+        ],
+        "cta": "Commencer maintenant"
       }
     },
     "benefits": {
@@ -50,6 +62,56 @@
       "efficiency": {
         "title": "Efficacité Améliorée",
         "description": "Optimisez le flux de travail de votre garage et concentrez-vous sur le service à vos clients."
+      },
+      "transactions": {
+        "title": "Transactions Fluides",
+        "description": "Facilitez des transactions fluides et sécurisées entre acheteurs et vendeurs."
+      },
+      "support": {
+        "title": "Support Complet",
+        "description": "Obtenez un support dédié de notre équipe pour vous aider à réussir."
+      },
+      "pricing": {
+        "title": "Tarification Compétitive",
+        "description": "Profitez de plans tarifaires abordables pour répondre aux besoins de votre garage."
+      }
+    },
+    "pricing": {
+      "title": "Nos offres",
+      "description": "Des solutions adaptées pour particuliers et professionnels",
+      "billing": {
+        "monthly": "Mensuel",
+        "annual": "Annuel",
+        "discount": "Économisez 10%"
+      },
+      "plans": {
+        "basic": {
+          "title": "Particulier Basic",
+          "price": 0,
+          "description": "Pour consulter et acheter",
+          "features": [
+            "Consultation des annonces",
+            "Achat de véhicules (particuliers et pros)"
+          ],
+          "cta": "S'inscrire"
+        },
+        "premium": {
+          "title": "Particulier Premium",
+          "price": 10,
+          "description": "Sécurité et vérifications avancées",
+          "features": ["Vérification VIN", "Historique des dommages"],
+          "cta": "S'abonner"
+        },
+        "pro": {
+          "title": "Pro",
+          "price": 50,
+          "description": "Pour les petits concessionnaires",
+          "features": ["Gestion d'annonces", "Outils de vérification basiques"],
+          "cta": "S'abonner",
+          "recommended": "Recommandé"
+        },
+
+        "featuresCount": "fonctionnalités"
       }
     }
   },

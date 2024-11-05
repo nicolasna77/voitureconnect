@@ -1,6 +1,6 @@
 import Image from "next/image";
 
-export function FeatureSection() {
+const FeatureSection = () => {
   return (
     <section className="w-full py-12 md:py-24 lg:py-32 bg-muted">
       <div className="container m-auto px-4 md:px-6">
@@ -78,4 +78,6 @@ export function FeatureSection() {
       </div>
     </section>
   );
-}
+};
+
+export default FeatureSection;

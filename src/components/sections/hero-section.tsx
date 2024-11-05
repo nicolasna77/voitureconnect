@@ -1,21 +1,54 @@
+"use client";
+
 import Image from "next/image";
-import SearchForm from "./search-form";
+import SearchForm from "../component/search-form";
 import { useTranslations } from "next-intl";
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
 
 const HeroSection = () => {
   const t = useTranslations("HomePage.hero");
+  const ref = useRef(null);
+
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const yText = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
+  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
+  const xImage = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
   return (
-    <div className="bg-[#f2f2f2] relative">
+    <div className="bg-[#f2f2f2] relative" ref={ref}>
       <div className="grid max-w-screen-xl px-4 mx-auto lg:gap-8 xl:gap-0 py-12 md:py-24 lg:py-32 lg:grid-cols-12">
-        <div className="place-self-center lg:col-span-6">
-          <h1 className="scroll-m-20 text-4xl text-secondary-foreground font-extrabold tracking-tight lg:text-5xl">
+        <motion.div
+          style={{ opacity, y: yText, scale }}
+          className="place-self-center lg:col-span-6"
+        >
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="scroll-m-20 text-4xl text-secondary-foreground font-extrabold tracking-tight lg:text-5xl"
+          >
             {t("title")}
-          </h1>
-          <p className="mt-3 text-lg text-secondary-foreground">
+          </motion.h1>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="mt-3 text-lg text-secondary-foreground"
+          >
             {t("description")}
-          </p>
-          <div className="mt-7 sm:mt-12 mx-auto z-10 max-w-xl relative">
+          </motion.p>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="mt-7 sm:mt-12 mx-auto z-10 max-w-xl relative"
+          >
             <SearchForm />
             <div className="hidden md:block absolute top-0 end-0 -translate-y-12 translate-x-20">
               <svg
@@ -63,19 +96,25 @@ const HeroSection = () => {
                 />
               </svg>
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
 
-        <div className="hidden lg:mt-0 lg:col-span-6 lg:flex items-center">
+        <motion.div
+          style={{ opacity, x: xImage }}
+          initial={{ opacity: 0, x: 100 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.7, delay: 0.3 }}
+          className="hidden lg:mt-0 lg:col-span-6 lg:flex items-center"
+        >
           <Image
-            src="/data/illustration/car-insurance.svg" // Assurez-vous que ce chemin est correct
+            src="/data/illustration/car-insurance.svg"
             alt="Fond de la section héros"
             quality={100}
             width={1200}
             height={900}
-            layout="responsive" // Ajout de cette ligne pour rendre l'image responsive
+            layout="responsive"
           />
-        </div>
+        </motion.div>
       </div>
     </div>
   );

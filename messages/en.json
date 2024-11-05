@@ -15,6 +15,100 @@
         "citadine": "City Car",
         "break": "Station Wagon"
       }
+    },
+    "pricing": {
+      "title": "Our Plans",
+      "description": "Tailored solutions for individuals and professionals",
+      "billing": {
+        "monthly": "Monthly",
+        "annual": "Annual",
+        "discount": "Save 10%"
+      },
+      "plans": {
+        "basic": {
+          "title": "Basic Individual",
+          "price": 0,
+          "description": "For browsing and buying",
+          "features": ["Browse listings", "Buy vehicles (private and dealers)"],
+          "cta": "Sign up"
+        },
+        "premium": {
+          "title": "Premium Individual",
+          "price": 10,
+          "description": "Advanced security and verification",
+          "features": ["VIN verification", "Damage history"],
+          "cta": "Subscribe"
+        },
+        "pro": {
+          "title": "Pro",
+          "price": 50,
+          "description": "For small dealerships",
+          "features": ["Listing management", "Basic verification tools"],
+          "cta": "Subscribe",
+          "recommended": "Recommended"
+        },
+        "featuresCount": "features"
+      }
+    },
+    "benefits": {
+      "title": "Benefits of Using Garage Finder",
+      "description": "Garage Finder offers a range of benefits to help you streamline your garage operations and connect with buyers.",
+      "visibility": {
+        "title": "Increased Visibility",
+        "description": "Reach a wider audience and get more visibility for your garage and parts."
+      },
+      "tools": {
+        "title": "Time-Saving Tools",
+        "description": "Streamline your garage operations with our suite of management tools."
+      },
+      "efficiency": {
+        "title": "Improved Efficiency",
+        "description": "Optimize your garage workflow and focus on serving your customers."
+      },
+      "transactions": {
+        "title": "Smooth Transactions",
+        "description": "Facilitate smooth and secure transactions between buyers and sellers."
+      },
+      "support": {
+        "title": "Complete Support",
+        "description": "Get dedicated support from our team to help you succeed."
+      },
+      "pricing": {
+        "title": "Competitive Pricing",
+        "description": "Enjoy affordable pricing plans to meet your garage's needs."
+      }
+    },
+    "features": {
+      "title": "Key Features",
+      "description": "Garage Finder offers a comprehensive set of features to streamline your garage management and buying/selling experience.",
+      "advancedInventory": {
+        "title": "Advanced Inventory",
+        "description": "Manage your inventory efficiently"
+      },
+      "smartSearch": {
+        "title": "Smart Search",
+        "description": "Find exactly what you need"
+      },
+      "enhancedSecurity": {
+        "title": "Enhanced Security",
+        "description": "Keep your data safe"
+      },
+      "marketAnalysis": {
+        "title": "Market Analysis",
+        "description": "Stay ahead of the market"
+      },
+      "optimize": {
+        "title": "Optimize Your Business",
+        "description": "Take your garage to the next level",
+        "subtitle": "Discover how our features can help you grow",
+        "benefits": [
+          "Increased efficiency",
+          "Better customer service",
+          "Higher profits",
+          "Streamlined operations"
+        ],
+        "cta": "Get Started"
+      }
     }
   },
   "Header": {

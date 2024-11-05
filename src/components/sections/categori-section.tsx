@@ -1,10 +1,10 @@
 "use client";
 import Image from "next/image";
-import { Card, CardContent } from "./ui/card";
-import { Carousel, CarouselContent, CarouselItem } from "./ui/carousel";
+import { Card, CardContent } from "./../ui/card";
+import { Carousel, CarouselContent, CarouselItem } from "../ui/carousel";
 import Autoplay from "embla-carousel-autoplay";
 import Link from "next/link";
-import { CarouselNext, CarouselPrevious } from "./ui/carousel";
+import { CarouselNext, CarouselPrevious } from "../ui/carousel";
 import { useTranslations } from "next-intl";
 
 const CategoriSection = () => {
