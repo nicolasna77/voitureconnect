@@ -1,11 +1,41 @@
 "use client";
 
 import ProductCard from "./product-card";
-import { Ad, Car } from "@prisma/client";
+import { Ad, Car, CarModelEN, CarMakeEN } from "@prisma/client";
 import LoaderComponant from "./loader";
 
-type AdWithCar = Ad & {
-  car: Car;
+type AdWithCar = {
+  id: string;
+  title: string;
+  description: string;
+  carId: string;
+  garageId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  userId: string | null;
+  car: {
+    id: string;
+    price: number | string;
+    Kms: number;
+    year: number;
+    gearbox: string;
+    fuelType: string;
+    carMake: {
+      id_car_make: number;
+      name: string;
+      date_create: number;
+      date_update: string | null;
+      id_car_type: number;
+    };
+    carModel: {
+      id_car_model: number;
+      name: string;
+      date_create: number;
+      date_update: string | null;
+      id_car_make: number;
+      id_car_type: number;
+    };
+  };
   isLiked: boolean;
   idLike: string | null;
 };

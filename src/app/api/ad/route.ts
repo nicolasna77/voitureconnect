@@ -26,8 +26,10 @@ export const GET = async (request: NextRequest) => {
       const data = await prisma.ad.findUnique({
         where: { id },
         include: {
+          address: true,
           car: {
             include: {
+              pictures: true,
               carMake: true,
               carModel: true,
               carTrim: true,
@@ -38,8 +40,19 @@ export const GET = async (request: NextRequest) => {
               carType: true,
             },
           },
-          User: true,
-          garage: true,
+          User: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          garage: {
+            select: {
+              id: true,
+              name: true,
+              Adresse: true,
+            },
+          },
         },
       });
 
@@ -77,6 +90,7 @@ export const GET = async (request: NextRequest) => {
           include: {
             car: {
               include: {
+                pictures: true,
                 carMake: true,
                 carModel: true,
                 carTrim: true,
@@ -88,7 +102,12 @@ export const GET = async (request: NextRequest) => {
               },
             },
             garage: true,
-            User: true,
+            User: {
+              select: {
+                id: true,
+                name: true,
+              },
+            },
           },
           orderBy: { createdAt: "desc" },
         }),
@@ -138,25 +157,58 @@ export const GET = async (request: NextRequest) => {
 
 function buildWhereClause(searchParams: URLSearchParams, lang: string) {
   const whereClause: any = {};
-  const carMakeModel = lang === "FR" ? "carMakeFR" : "carMakeEN";
-  const carModelModel = lang === "FR" ? "carModelFR" : "carModelEN";
 
+  // Filtre de base pour la voiture
+  whereClause.car = {
+    AND: [],
+  };
+
+  // Filtre par marque
   if (searchParams.get("marque")) {
-    whereClause.car = {
-      ...whereClause.car,
-      [carMakeModel]: {
-        name: { contains: searchParams.get("marque"), mode: "insensitive" },
+    whereClause.car.AND.push({
+      carMake: {
+        name: {
+          contains: searchParams.get("marque"),
+          mode: "insensitive",
+        },
       },
-    };
+    });
   }
 
+  // Filtre par modèle
   if (searchParams.get("model")) {
-    whereClause.car = {
-      ...whereClause.car,
-      [carModelModel]: {
-        name: { contains: searchParams.get("model"), mode: "insensitive" },
+    whereClause.car.AND.push({
+      carModel: {
+        name: {
+          contains: searchParams.get("model"),
+          mode: "insensitive",
+        },
       },
-    };
+    });
+  }
+
+  // Filtre par année
+  if (searchParams.get("year")) {
+    whereClause.car.AND.push({
+      year: parseInt(searchParams.get("year")!),
+    });
+  }
+
+  // Filtre par prix
+  if (searchParams.get("minPrice") || searchParams.get("maxPrice")) {
+    const priceFilter: any = {};
+    if (searchParams.get("minPrice")) {
+      priceFilter.gte = parseFloat(searchParams.get("minPrice")!);
+    }
+    if (searchParams.get("maxPrice")) {
+      priceFilter.lte = parseFloat(searchParams.get("maxPrice")!);
+    }
+    whereClause.car.AND.push({ price: priceFilter });
+  }
+
+  // Si aucun filtre n'est appliqué, supprimez le tableau AND vide
+  if (whereClause.car.AND.length === 0) {
+    delete whereClause.car.AND;
   }
 
   return whereClause;

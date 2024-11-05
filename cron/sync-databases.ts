@@ -192,24 +192,8 @@ async function runSync() {
 // Optimisation de startSync
 async function startSync(table: string): Promise<boolean> {
   try {
-    // Vérification des dépendances en parallèle
-    const deps = tableConfig[table]?.dependencies || [];
-    const depChecks = await Promise.all(
-      deps.map(async (dep) => ({
-        dep,
-        exists: await checkTableHasData(dep),
-      }))
-    );
-
-    const missingDeps = depChecks.filter(({ exists }) => !exists);
-    if (missingDeps.length) {
-      missingDeps.forEach(({ dep }) =>
-        console.log(
-          `Attention: La table ${dep} doit être synchronisée avant ${table}`
-        )
-      );
-      return false;
-    }
+    // Obtenir la dernière date de mise à jour pour cette table
+    const lastUpdate = await getLastUpdateTimestamp(table);
 
     // Lecture parallèle des fichiers
     const [frRecords, enRecords] = await Promise.all([
@@ -233,17 +217,115 @@ async function startSync(table: string): Promise<boolean> {
       ),
     ]);
 
-    // Traitement parallèle des insertions
-    await Promise.all([
-      frRecords.length && insertBatch("dataCarFR", table, frRecords),
-      enRecords.length && insertBatch("dataCarEN", table, enRecords),
-    ]);
+    // Vérifier et filtrer les enregistrements valides
+    const validFrRecords = await Promise.all(
+      frRecords.filter(async (record) => {
+        const updateTimestamp =
+          record.date_update !== "NULL"
+            ? parseInt(record.date_update)
+            : parseInt(record.date_create);
 
+        // Vérifier si l'enregistrement nécessite une mise à jour
+        if (updateTimestamp <= lastUpdate) return false;
+
+        // Vérifier les dépendances
+        return await validateDependencies(record, table, "dataCarFR");
+      })
+    );
+
+    const validEnRecords = await Promise.all(
+      enRecords.filter(async (record) => {
+        const updateTimestamp =
+          record.date_update !== "NULL"
+            ? parseInt(record.date_update)
+            : parseInt(record.date_create);
+
+        if (updateTimestamp <= lastUpdate) return false;
+        return await validateDependencies(record, table, "dataCarEN");
+      })
+    );
+
+    // Traitement parallèle des insertions
+    if (validFrRecords.length > 0) {
+      await insertBatch("dataCarFR", table, validFrRecords);
+    }
+    if (validEnRecords.length > 0) {
+      await insertBatch("dataCarEN", table, validEnRecords);
+    }
+
+    await updateLastSyncTimestamp(table);
     return true;
   } catch (error) {
     console.error(`Erreur lors de la synchronisation de ${table}:`, error);
     return false;
   }
+}
+
+// Nouvelle fonction pour valider les dépendances
+async function validateDependencies(
+  record: any,
+  table: string,
+  schema: string
+): Promise<boolean> {
+  const dependencies = {
+    car_make: ["car_type"],
+    car_model: ["car_make", "car_type"],
+    car_generation: ["car_model", "car_type"],
+    car_serie: ["car_model", "car_generation", "car_type"],
+    car_trim: ["car_serie", "car_model", "car_type"],
+    car_specification: ["car_type"],
+    car_equipment: ["car_trim", "car_type"],
+    car_option: ["car_type"],
+    car_specification_value: ["car_specification", "car_trim", "car_type"],
+    car_option_value: ["car_option", "car_equipment", "car_type"],
+  };
+
+  const tableDeps = dependencies[table] || [];
+
+  for (const dep of tableDeps) {
+    const foreignKey = `id_${dep}`;
+    if (!record[foreignKey]) continue;
+
+    const exists = await prisma.$queryRawUnsafe(`
+      SELECT EXISTS (
+        SELECT 1 FROM "${schema}"."${dep}"
+        WHERE ${getPrimaryKey(dep)} = ${record[foreignKey]}
+      );
+    `);
+
+    if (!exists[0].exists) {
+      console.log(
+        `Dépendance manquante pour ${table}: ${dep} avec ID ${record[foreignKey]}`
+      );
+      return false;
+    }
+  }
+
+  return true;
+}
+
+// Fonction pour obtenir le dernier timestamp de mise à jour
+async function getLastUpdateTimestamp(table: string): Promise<number> {
+  try {
+    // Vous pouvez stocker cela dans une table de métadonnées ou un fichier
+    const result = await prisma.$queryRaw<[{ last_sync: number }]>`
+      SELECT COALESCE(MAX(date_update::integer), 0) as last_sync 
+      FROM "dataCarFR".${Prisma.raw(table)}
+      WHERE date_update != 'NULL'`;
+    return result[0].last_sync;
+  } catch (error) {
+    console.error(
+      `Erreur lors de la récupération du dernier timestamp pour ${table}:`,
+      error
+    );
+    return 0;
+  }
+}
+
+// Fonction pour mettre à jour le timestamp de dernière synchronisation
+async function updateLastSyncTimestamp(table: string): Promise<void> {
+  const currentTimestamp = Math.floor(Date.now() / 1000);
+  // Stockez ce timestamp dans votre système de métadonnées
 }
 
 // Optimisation de checkTableHasData avec cache

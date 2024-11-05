@@ -7,7 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
-import { Ad, Car } from "@prisma/client";
+import { CarMakeEN, CarModelEN, Picture } from "@prisma/client";
 import {
   CalendarIcon,
   Cog,
@@ -26,7 +26,37 @@ import { Badge } from "../ui/badge";
 import { useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 
-type AdWithCar = Ad & { car: Car; isLiked: boolean; idLike: string | null };
+type AdWithCar = {
+  id: string;
+  title: string;
+  updatedAt: string;
+  garageId?: string | null;
+  car: {
+    pictures: Picture[];
+    price: string | number;
+    Kms: number;
+    year: number;
+    gearbox: string;
+    fuelType: string;
+    carMake: {
+      id_car_make: number;
+      name: string;
+      date_create: number;
+      date_update: string | null;
+      id_car_type: number;
+    } | null;
+    carModel: {
+      id_car_model: number;
+      name: string;
+      date_create: number;
+      date_update: string | null;
+      id_car_make: number;
+      id_car_type: number;
+    } | null;
+  };
+  isLiked?: boolean;
+  idLike?: string | null;
+};
 
 const ProductCard = ({
   item,
@@ -93,7 +123,6 @@ const ProductCard = ({
     Math.floor(num)
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-
   return (
     <Card
       key={item?.id}
@@ -101,16 +130,19 @@ const ProductCard = ({
         orientation === "list" ? "sm:flex" : " "
       }`}
     >
-      <Link href={item?.id ? `/search/${item.id}` : "#"}>
-        <div className="max-h-full max-w-lg">
+      <Link
+        href={item?.id ? `/search/${item.id}` : "#"}
+        className={orientation === "list" ? "sm:w-[45%]" : "w-full"}
+      >
+        <div className={`h-[230px] `}>
           <Image
-            src="/AdobeStock_590625806_Preview.png"
-            alt="car"
-            width={400}
-            height={300}
-            priority
-            className="rounded-lg object-cover aspect-square w-full group-hover:opacity-50 transition-opacity"
-            style={{ aspectRatio: "400/300", objectFit: "cover" }}
+            src={item.car?.pictures[0]?.url}
+            alt={item.car?.pictures[0]?.alt}
+            width={150}
+            sizes="100vw"
+            height={150}
+            quality={100}
+            className="w-full h-full rounded-lg object-cover"
           />
         </div>
       </Link>
@@ -142,7 +174,7 @@ const ProductCard = ({
         </Badge>
       )}
 
-      <div className={orientation === "list" ? "w-full" : "w-full"}>
+      <div className={orientation === "list" ? "sm:w-2/3" : "w-full"}>
         <Link href={item?.id ? `/search/${item.id}` : "#"}>
           <CardHeader>
             <div className="grid gap-2 grid-cols-3 items-center w-full  justify-between">
@@ -212,7 +244,7 @@ const ProductCard = ({
             <Trash className="w-5 h-5 mr-1 fill-current" />
             Retirer des favoris
           </Button>
-          <Button>Voir l&apos;annonce</Button>
+          <Button variant={"secondary"}>Voir l&apos;annonce</Button>
         </CardFooter>
       )}
     </Card>

@@ -70,16 +70,12 @@ const SearchPage = () => {
     setShowFilters((prev) => !prev);
   }, []);
 
-  if (data?.total && total !== data.total) {
-    setTotal(data.total);
-  }
-
   return (
     <div className="py-8">
       <SearchForm />
       <div className="mx-auto py-12">
         <div className="flex items-center justify-between">
-          <div className="py-4">Total résultat: {total}</div>
+          <div className="py-4">Total résultat: {data?.total}</div>
           <div className="flex items-center gap-2">
             <Switch
               checked={orientation === "list"}

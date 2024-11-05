@@ -1,14 +1,16 @@
-version: "3.8"
-
 services:
-  localstack:
-    container_name: "${LOCALSTACK_DOCKER_NAME:-localstack-main}"
-    image: localstack/localstack
-    ports:
-      - "4566:4566" # LocalStack Gateway
+  minio:
+    image: minio/minio:latest
+
     environment:
-      # LocalStack configuration: https://docs.localstack.cloud/references/configuration/
-      - DEBUG=${DEBUG:-0}
+      - MINIO_ROOT_USER= minio
+      - MINIO_ROOT_PASSWORD= password
+    ports:
+      - "9000:9000"
+      - "8900:8900"
     volumes:
-      - "${LOCALSTACK_VOLUME_DIR:-./volume}:/var/lib/localstack"
-      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "minio:/data/minio"
+    command: 'minio server /data/minio --console-address ":8900"'
+volumes:
+  minio:
+    driver: local

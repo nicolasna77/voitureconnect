@@ -23,7 +23,6 @@ import SearchDetail from "./search-detail";
 type FormState = {
   marque: string;
   model: string;
-  moteur: string;
   generation: string;
   input: string;
   localisation: string;
@@ -37,7 +36,6 @@ const SearchForm: React.FC = () => {
   const [formState, setFormState] = useState<FormState>({
     marque: searchParams.get("marque") || "",
     model: searchParams.get("model") || "",
-    moteur: searchParams.get("moteur") || "",
     generation: searchParams.get("generation") || "",
     input: searchParams.get("q") || "",
     localisation: searchParams.get("localisation") || "",
@@ -57,8 +55,7 @@ const SearchForm: React.FC = () => {
         q: formState.input,
         marque: formState.marque,
         model: formState.model,
-        version: formState.generation,
-        moteur: formState.moteur,
+        generation: formState.generation,
         page: "1",
         type: formState.vehicleType,
       }).toString();
@@ -210,9 +207,7 @@ const SearchForm: React.FC = () => {
       </form>
 
       <div className="mt-4 flex flex-wrap gap-2">
-        {(
-          ["marque", "model", "moteur", "generation", "localisation"] as const
-        ).map(
+        {(["marque", "model", "generation", "localisation"] as const).map(
           (param) =>
             formState[param] && (
               <Badge key={param} variant="secondary" className="text-sm">

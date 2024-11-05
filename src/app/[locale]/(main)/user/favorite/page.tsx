@@ -1,12 +1,44 @@
 "use client";
 import LoaderComponant from "@/components/component/loader";
 import ProductCard from "@/components/component/product-card";
-import { Ad, Car, Like } from "@prisma/client";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { Ad, Car } from "@prisma/client";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 
-type AdWithCar = Ad & { car: Car; likes: Like[]; ad: Ad };
+type Like = {
+  id: string;
+  ad: {
+    id: string;
+    title: string;
+    updatedAt: string;
+    garageId?: string | null;
+    car: {
+      price: string | number;
+      Kms: number;
+      year: number;
+      gearbox: string;
+      fuelType: string;
+      carMake: {
+        id_car_make: number;
+        name: string;
+        date_create: number;
+        date_update: string | null;
+        id_car_type: number;
+      };
+      carModel: {
+        id_car_model: number;
+        name: string;
+        date_create: number;
+        date_update: string | null;
+        id_car_make: number;
+        id_car_type: number;
+      };
+    };
+  };
+  isLiked?: boolean;
+  idLike?: string | null;
+};
 
 const FavoritePage = () => {
   const { data: session } = useSession();
@@ -39,9 +71,9 @@ const FavoritePage = () => {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data && data.length > 0 ? (
-            data.map((favorite: AdWithCar) => (
+            data.map((favorite: Like) => (
               <ProductCard
-                key={favorite.ad.id}
+                key={favorite.id}
                 item={favorite.ad}
                 favorite={true}
                 me={false}

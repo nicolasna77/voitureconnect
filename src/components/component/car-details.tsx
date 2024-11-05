@@ -8,25 +8,40 @@ import {
   CardContent,
   CardFooter,
 } from "../ui/card";
-import { Avatar } from "@radix-ui/react-avatar";
-import { AvatarFallback } from "../ui/avatar";
-import Link from "next/link";
-import CityMap from "../cityMap";
 import { Separator } from "../ui/separator";
-import { ArrowRight, ArrowRightIcon } from "lucide-react";
 import DynamicCityMap from "../dynamicCityMap";
+import { useTranslations } from "next-intl";
+import GarageInfo from "./garage-info";
+import UserInfo from "./user-info";
+import {
+  Ad,
+  Address,
+  Car,
+  Garage,
+  CarMakeFR,
+  CarModelFR,
+  User,
+} from "@prisma/client";
 
-const item = {
-  // ... autres propriétés ...
-  location: "Paris", // Ajoutez cette ligne
-};
-const CarDetails = ({ item }: any) => {
+const CarDetails = ({
+  item,
+}: {
+  item: Ad & {
+    car: Car & { carMake: CarMakeFR; carModel: CarModelFR };
+  } & {
+    User: User;
+  } & {
+    garage: Garage & { Adresse: Address };
+  };
+}) => {
+  const t = useTranslations();
+
   return (
     <>
       <div className="grid gap-4 lg:grid-cols-[1fr_250px] xl:grid-cols-4  lg:gap-8">
         <div className="grid auto-rows-max items-start gap-4 xl:col-span-3 lg:gap-8">
           <div className="col-span-4">
-            <CarouselDetail />
+            <CarouselDetail item={item} />
           </div>
 
           <Card className="overflow-hidden bg-card col-span-4  ">
@@ -36,7 +51,7 @@ const CarDetails = ({ item }: any) => {
                   {item.title}
                 </h3>
                 <CardDescription>
-                  Mise à jour :
+                  {t("CardDetails.lastUpdate")}:{" "}
                   {new Date(item.updatedAt).toLocaleDateString("fr-FR")}
                 </CardDescription>
               </div>
@@ -49,18 +64,24 @@ const CarDetails = ({ item }: any) => {
             </CardHeader>
             <CardContent className="p-6 text-md">
               <div className="grid gap-3">
-                <div className="font-semibold">Détails</div>
+                <div className="font-semibold">{t("CardDetails.details")}</div>
                 <ul className="grid gap-3">
                   <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Marque</span>
+                    <span className="text-muted-foreground">
+                      {t("CardDetails.brand")}
+                    </span>
                     <span>{item.car.carMake.name}</span>
                   </li>
                   <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Model</span>
+                    <span className="text-muted-foreground">
+                      {t("CardDetails.model")}
+                    </span>
                     <span>{item.car.carModel.name}</span>
                   </li>
                   <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Kilométrage</span>
+                    <span className="text-muted-foreground">
+                      {t("CardDetails.mileage")}
+                    </span>
                     <span>
                       {item.car.Kms.toString().replace(
                         /\B(?=(\d{3})+(?!\d))/g,
@@ -70,12 +91,14 @@ const CarDetails = ({ item }: any) => {
                     </span>
                   </li>
                   <li className="flex items-center justify-between">
-                    <span className="text-muted-foreground">Année</span>
+                    <span className="text-muted-foreground">
+                      {t("CardDetails.year")}
+                    </span>
                     <span>{item.car.year}</span>
                   </li>{" "}
                   <li className="flex items-center justify-between">
                     <span className="text-muted-foreground">
-                      Boite de vitesse
+                      {t("CardDetails.gearbox")}
                     </span>
                     <span>{item.car.gearbox}</span>
                   </li>
@@ -106,36 +129,23 @@ const CarDetails = ({ item }: any) => {
           </Card>
         </div>
         <div className="grid auto-rows-max items-start gap-4 lg:gap-8">
-          <Card className=" bg-card border border-border">
-            <Link href={`/profile/${item.User.id}`}>
-              <div className="group flex items-center space-x-4 py-4 px-4  ">
-                <Avatar className="w-10 h-10">
-                  <AvatarFallback>{item.User.name.slice(0, 2)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1 space-y-1">
-                  <p className="text-md group-hover:underline font-medium leading-none">
-                    {item.User.name}
-                  </p>
-                  <p className="text-sm text-muted-foreground">3 annonces</p>
-                </div>
-                <Button size="icon" variant="ghost">
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-              </div>
-            </Link>
-            <DynamicCityMap city={item.location} />
+          <Card className="w-full  mx-auto">
+            <CardContent className="">
+              {item.garage ? (
+                <GarageInfo garage={item.garage} />
+              ) : item.User ? (
+                <UserInfo item={item} />
+              ) : null}
 
-            <CardFooter className="flex flex-col  gap-4 justify-center m-auto items-center border-t bg-muted/50  py-4">
-              <div className="w-full sm:w-auto">
-                <Button size="lg" className="w-full">
-                  Contacter le vendeur
-                </Button>
-              </div>
-              <div className="w-full sm:w-auto">
-                <Button size="lg" variant="outline" className="w-full">
-                  Envoyer un message
-                </Button>
-              </div>
+              <DynamicCityMap city={item.garage?.Adresse.city || "paris"} />
+            </CardContent>
+            <CardFooter className="flex flex-col sm:flex-row gap-4 justify-center items-center border-t bg-muted/50 p-6">
+              <Button size="lg" className="w-full sm:w-auto">
+                {t("CardDetails.contactSeller")}
+              </Button>
+              <Button size="lg" variant="outline" className="w-full sm:w-auto">
+                {t("CardDetails.sendMessage")}
+              </Button>
             </CardFooter>
           </Card>
         </div>

@@ -6,50 +6,28 @@ export const GET = async (req: Request) => {
   const model = searchParams.get("model");
   const locale = await getLocale();
 
+  const tableName = locale === "fr" ? "carGenerationFR" : "carGenerationEN";
+
   try {
-    if (locale === "fr") {
-      const data = await prisma.carGenerationFR.findMany({
-        where: model
-          ? {
-              carModel: {
-                name: model,
-              },
-            }
-          : undefined,
-        include: {
-          carModel: {
-            select: {
-              name: true,
+    const data = await (
+      prisma[tableName as "carGenerationFR" | "carGenerationEN"] as any
+    ).findMany({
+      where: model
+        ? {
+            carModel: {
+              name: model,
             },
-          },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
-      return Response.json({ data });
-    } else {
-      const data = await prisma.carGenerationEN.findMany({
-        where: model
-          ? {
-              carModel: {
-                name: model,
-              },
-            }
-          : undefined,
-        include: {
-          carModel: {
-            select: {
-              name: true,
-            },
-          },
-        },
-        orderBy: {
-          name: "asc",
-        },
-      });
-      return Response.json({ data });
-    }
+          }
+        : undefined,
+      select: {
+        name: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    });
+
+    return Response.json({ data });
   } catch (error) {
     console.error("Erreur lors de la récupération des générations:", error);
     return Response.json(

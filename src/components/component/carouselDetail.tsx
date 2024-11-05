@@ -9,27 +9,80 @@ import {
   CarouselThumbsContainer,
   SliderThumbItem,
 } from "./carousel";
-import { useState } from "react";
-import { Fullscreen, X } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Fullscreen } from "lucide-react";
 import { Button } from "../ui/button";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogTrigger,
-} from "../ui/dialog";
-import { cn } from "@/lib/utils";
+import { Dialog, DialogContent } from "../ui/dialog";
 
-function CarouselDetail() {
+function CarouselDetail({ item }: any) {
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
 
-  const openFullscreen = (imageSrc: string) => {
+  const openFullscreen = useCallback((imageSrc: string) => {
     setFullscreenImage(imageSrc);
-  };
+  }, []);
 
-  const closeFullscreen = () => {
+  const closeFullscreen = useCallback(() => {
     setFullscreenImage(null);
-  };
+  }, []);
+
+  const renderMainImage = useCallback(
+    (index: number) => (
+      <SliderMainItem key={index} className="bg-transparent relative group">
+        <Image
+          src={item.car?.pictures[index]?.url}
+          alt={item.car?.pictures[index]?.alt}
+          width={600}
+          height={400}
+          className="object-cover rounded-xl w-full"
+          quality={75}
+          loading={index === 0 ? "eager" : "lazy"}
+          placeholder="blur"
+          blurDataURL="data:image/jpeg;base64,/9j..."
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
+          onClick={() => openFullscreen(item.car?.pictures[index]?.url)}
+        />
+      </SliderMainItem>
+    ),
+    [openFullscreen, item.car?.pictures]
+  );
+
+  const renderThumbnail = useCallback(
+    (index: number) => (
+      <SliderThumbItem key={index} index={index} className="bg-transparent ">
+        <Image
+          src={item.car?.pictures[index]?.url}
+          alt={item.car?.pictures[index]?.alt}
+          loading={index === 0 ? "eager" : "lazy"}
+          className="object-cover border h-32 bg-white border-border rounded-xl w-full"
+          width={100}
+          sizes="100vw"
+          height={20}
+          quality={100}
+        />
+      </SliderThumbItem>
+    ),
+    [item.car?.pictures]
+  );
+
+  const renderFullscreenImage = useCallback(
+    (index: number) => (
+      <SliderMainItem key={index} className="bg-transparent relative group">
+        <Image
+          src={item.car?.pictures[index]?.url}
+          alt={item.car?.pictures[index]?.alt}
+          className="object-contain w-full h-full"
+          quality={100}
+          width={800}
+          height={400}
+          priority
+          sizes="90vw"
+        />
+      </SliderMainItem>
+    ),
+    [item.car?.pictures]
+  );
+
+  const totalImages = item.car?.pictures?.length || 0;
 
   return (
     <>
@@ -41,86 +94,46 @@ function CarouselDetail() {
             className="rounded-full"
             variant="outline"
             size="icon"
-            onClick={() => openFullscreen("/AdobeStock_590625806_Preview.png")}
+            onClick={() => openFullscreen(item.car?.pictures[0]?.url)}
           >
             <Fullscreen className="w-6 h-6" />
           </Button>
         </div>
-        <CarouselMainContainer className="max-h-[40rem]">
-          {Array.from({ length: 5 }).map((_, index) => (
-            <SliderMainItem
-              key={index}
-              className="bg-transparent relative group"
-            >
-              <Image
-                src="/AdobeStock_590625806_Preview.png"
-                alt={`Image ${index + 1}`}
-                width={1920}
-                height={1080}
-                className="object-cover w-full h-full cursor-pointer"
-                quality={85}
-                priority
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
-                onClick={() =>
-                  openFullscreen("/AdobeStock_590625806_Preview.png")
-                }
-              />
-            </SliderMainItem>
-          ))}
+        <CarouselMainContainer>
+          {Array.from({ length: totalImages }).map((_, index) =>
+            renderMainImage(index)
+          )}
         </CarouselMainContainer>
-        <CarouselThumbsContainer>
-          {Array.from({ length: 5 }).map((_, index) => (
-            <SliderThumbItem
-              key={index}
-              index={index}
-              className=" bg-transparent "
-            >
-              <Image
-                src="/AdobeStock_590625806_Preview.png"
-                alt={`Image ${index + 1}`}
-                className="object-cover border  bg-white border-border rounded-xl w-full"
-                quality={100}
-                width={800}
-                height={400}
-              />
-            </SliderThumbItem>
-          ))}
+        <CarouselThumbsContainer className="h-36 ">
+          {Array.from({ length: totalImages }).map((_, index) =>
+            renderThumbnail(index)
+          )}
         </CarouselThumbsContainer>
       </Carousel>
 
       <Dialog open={!!fullscreenImage} onOpenChange={closeFullscreen}>
-        <DialogContent className="max-w-[95vw] max-h-[95vh]  bg-white border-border">
+        <DialogContent className="max-w-[95vw] max-h-[95vh] bg-white border-border">
           <Carousel
-            className=" max-w-[90vw] max-h-[90vh]"
+            className="max-w-[90vw] max-h-[90vh]"
             onClick={(e) => e.stopPropagation()}
           >
             <CarouselNext className="absolute top-1/2 right-2 h-10 w-10 -translate-y-1/2" />
             <CarouselPrevious className="absolute top-1/2 left-2 h-10 w-10 -translate-y-1/2" />
             <CarouselMainContainer className="max-h-[90vh]">
-              {Array.from({ length: 5 }).map((_, index) => (
-                <SliderMainItem
-                  key={index}
-                  className="bg-transparent relative group"
-                >
-                  <Image
-                    src="/AdobeStock_590625806_Preview.png"
-                    alt={`Image ${index + 1}`}
-                    className="object-contain w-full h-full"
-                    quality={100}
-                    width={800}
-                    height={400}
-                    priority
-                    sizes="90vw"
-                  />
-                </SliderMainItem>
-              ))}
+              {Array.from({ length: totalImages }).map((_, index) =>
+                renderFullscreenImage(index)
+              )}
             </CarouselMainContainer>
             <CarouselThumbsContainer>
-              {Array.from({ length: 10 }).map((_, index) => (
+              {Array.from({ length: totalImages }).map((_, index) => (
                 <SliderThumbItem key={index} index={index} className="bg-white">
-                  <div className="outline outline-1 outline-border size-full flex items-center justify-center rounded-xl bg-background">
-                    Slide {index + 1}
-                  </div>
+                  <Image
+                    src={item.car?.pictures[index]?.url}
+                    alt={item.car?.pictures[index]?.alt}
+                    width={100}
+                    height={100}
+                    className="object-cover rounded-xl"
+                  />
                 </SliderThumbItem>
               ))}
             </CarouselThumbsContainer>

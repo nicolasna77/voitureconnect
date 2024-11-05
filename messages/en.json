@@ -40,6 +40,17 @@
       }
     }
   },
+  "CardDetails": {
+    "lastUpdate": "Last update",
+    "details": "Details",
+    "brand": "Brand",
+    "model": "Model",
+    "mileage": "Mileage",
+    "year": "Year",
+    "gearbox": "Gearbox",
+    "contactSeller": "Contact seller",
+    "sendMessage": "Send message"
+  },
   "LocaleSwitcher": {
     "label": "Change language",
     "locale": "{locale, select, fr {French} en {English} other {Unknown}}"
