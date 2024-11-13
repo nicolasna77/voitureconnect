@@ -16,11 +16,22 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { CheckIcon, Sparkles } from "lucide-react";
+import type { SubscriptionPriceType } from "@/types/subscription";
+import axios from "axios";
+import { useQuery } from "@tanstack/react-query";
 
 export default function SectionTarifs() {
   const t = useTranslations("HomePage.pricing");
   const [isAnnual, setIsAnnual] = useState(false);
   const ref = useRef(null);
+
+  const { data: prices = [] } = useQuery<SubscriptionPriceType[]>({
+    queryKey: ["prices"],
+    queryFn: async () => {
+      const { data } = await axios.get("/api/subscriptions/prices");
+      return data;
+    },
+  });
 
   const { scrollYProgress } = useScroll({
     target: ref,
@@ -33,24 +44,15 @@ export default function SectionTarifs() {
   const cardOpacity = useTransform(scrollYProgress, [0.1, 0.3], [0, 1]);
   const cardY = useTransform(scrollYProgress, [0.1, 0.3], [100, 0]);
 
-  const plans = [
-    {
-      key: "basic",
-      price: 0,
-      variant: "outline" as const,
-    },
-    {
-      key: "premium",
-      price: isAnnual ? 108 : 10,
-      variant: "default" as const,
-    },
-    {
-      key: "pro",
-      price: isAnnual ? 540 : 50,
-      variant: "outline" as const,
-      recommended: true,
-    },
-  ];
+  const plans = prices.map((price) => ({
+    key: price.plan.toLowerCase(),
+    price: isAnnual ? price.annualPrice : price.monthlyPrice,
+    variant:
+      price.plan === "PRO_STANDARD"
+        ? ("default" as const)
+        : ("outline" as const),
+    recommended: price.plan === "PRO_STANDARD",
+  }));
 
   return (
     <section
@@ -95,7 +97,11 @@ export default function SectionTarifs() {
               }`}
             >
               {t("billing.annual")}
-              <span className="ml-1 text-xs font-bold text-green-500">
+              <span
+                className={`ml-1 text-xs font-bold ${
+                  isAnnual ? "text-primary-foreground" : "text-primary"
+                }`}
+              >
                 {t("billing.discount")}
               </span>
             </Label>
@@ -103,7 +109,7 @@ export default function SectionTarifs() {
         </motion.div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 lg:items-stretch">
-          {plans.map((plan, index) => (
+          {plans.map((plan) => (
             <motion.div
               key={plan.key}
               style={{

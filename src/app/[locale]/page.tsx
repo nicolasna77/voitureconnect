@@ -1,5 +1,3 @@
-import { Button } from "@/components/ui/button";
-
 import PricingSection from "@/components/sections/price-section";
 import HeroSection from "@/components/sections/hero-section";
 

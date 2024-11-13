@@ -11,6 +11,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslations } from "next-intl";
 
 const LoginSocial = dynamic(() => import("./login-social"), { ssr: false });
 
@@ -28,6 +29,7 @@ const RegisterForm = () => {
   const [error, setError] = useState("");
   const router = useRouter();
   const { toast } = useToast();
+  const t = useTranslations("RegisterForm");
 
   const {
     register,
@@ -47,7 +49,7 @@ const RegisterForm = () => {
         body: JSON.stringify(data),
       });
       if (res.status === 500) {
-        setError("Erreur, veuillez réessayer");
+        setError(t("errors.default"));
       }
       if (res.status === 400) {
         const errorMessage = await res.text();
@@ -55,14 +57,14 @@ const RegisterForm = () => {
       }
       if (res.status === 200) {
         toast({
-          title: "Inscription réussie",
+          title: t("success.title"),
           variant: "default",
-          description: "Vous pouvez maintenant vous connecter",
+          description: t("success.description"),
         });
         router.push("/login");
       }
     } catch (error) {
-      setError("Erreur, veuillez réessayer");
+      setError(t("errors.default"));
       console.log(error);
     }
   };
@@ -70,7 +72,7 @@ const RegisterForm = () => {
   return (
     <Card className="grid gap-6 rounded-lg  px-6 pb-4 pt-8">
       <CardHeader>
-        <CardTitle className="text-2xl">Créer un compte</CardTitle>
+        <CardTitle className="text-2xl">{t("title")}</CardTitle>
       </CardHeader>
       <CardContent>
         <LoginSocial />
@@ -79,7 +81,9 @@ const RegisterForm = () => {
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Ou</span>
+            <span className="bg-background px-2 text-muted-foreground">
+              {t("or")}
+            </span>
           </div>
         </div>
 
@@ -91,14 +95,14 @@ const RegisterForm = () => {
                 className="mb-3 mt-5 block text-xs font-medium text-gray-900"
                 htmlFor="name"
               >
-                {"Nom d'utilisateur"}
+                {t("username")}
               </Label>
               <div className="relative">
                 <Input
                   className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                   id="name"
                   type="text"
-                  placeholder="Entrez votre nom d'utilisateur"
+                  placeholder={t("usernamePlaceholder")}
                   {...register("name")}
                 />
                 <User className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -114,14 +118,14 @@ const RegisterForm = () => {
                 className="mb-3 mt-5 block text-xs font-medium text-gray-900"
                 htmlFor="email"
               >
-                Email
+                {t("email")}
               </Label>
               <div className="relative">
                 <Input
                   className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                   id="email"
                   type="email"
-                  placeholder="Entrez votre email"
+                  placeholder={t("emailPlaceholder")}
                   {...register("email")}
                 />
                 <AtSign className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -137,14 +141,14 @@ const RegisterForm = () => {
                 className="mb-3 mt-5 block text-xs font-medium text-gray-900"
                 htmlFor="password"
               >
-                Mot de passe
+                {t("password")}
               </Label>
               <div className="relative">
                 <Input
                   className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
                   id="password"
                   type="password"
-                  placeholder="********"
+                  placeholder={t("passwordPlaceholder")}
                   {...register("password")}
                 />
                 <Key className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
@@ -163,7 +167,7 @@ const RegisterForm = () => {
               className="m-auto justify-center flex "
               type="submit"
             >
-              S&apos;inscrire
+              {t("submit")}
             </Button>
           </div>
         </form>

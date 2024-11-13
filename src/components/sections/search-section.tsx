@@ -1,4 +1,4 @@
-import SearchForm from "../component/search-form";
+import SearchForm from "../search/search-form";
 
 const SearchSection = () => {
   return (

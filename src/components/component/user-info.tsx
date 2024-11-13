@@ -8,8 +8,12 @@ import Link from "next/link";
 const UserInfo = ({
   item,
 }: {
-  item: Ad & { User: User } & { Address: Address };
+  item: Ad & {
+    User: User;
+    address: Address;
+  };
 }) => {
+  console.log(item);
   return (
     <Link href={`/profile/${item.id}`} className="block group">
       <div className="flex items-center space-x-4 p-4 rounded-lg transition-colors duration-200 hover:bg-accent/50">
@@ -23,11 +27,11 @@ const UserInfo = ({
           <div className="flex items-center gap-2 text-muted-foreground">
             <MapPin className="w-4 h-4 flex-shrink-0" />
             <span className="text-sm truncate">
-              {item.Address?.city}, {item.Address?.state}
+              {item.address?.city}, {item.address?.state}
             </span>
           </div>
           <p className="text-sm text-muted-foreground mt-1 truncate">
-            {item.Address?.street}, {item.Address?.zip}
+            {item.address?.street}, {item.address?.zip}
           </p>
 
           <p className="text-sm text-muted-foreground mt-1">Particulier</p>

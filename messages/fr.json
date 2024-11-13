@@ -86,8 +86,7 @@
       },
       "plans": {
         "basic": {
-          "title": "Particulier Basic",
-          "price": 0,
+          "title": "Basic",
           "description": "Pour consulter et acheter",
           "features": [
             "Consultation des annonces",
@@ -95,22 +94,28 @@
           ],
           "cta": "S'inscrire"
         },
-        "premium": {
-          "title": "Particulier Premium",
-          "price": 10,
+        "pro_standard": {
+          "title": "Pro Standard",
           "description": "Sécurité et vérifications avancées",
-          "features": ["Vérification VIN", "Historique des dommages"],
-          "cta": "S'abonner"
-        },
-        "pro": {
-          "title": "Pro",
-          "price": 50,
-          "description": "Pour les petits concessionnaires",
-          "features": ["Gestion d'annonces", "Outils de vérification basiques"],
+          "features": [
+            "Vérification VIN",
+            "Historique des dommages",
+            "Support premium"
+          ],
           "cta": "S'abonner",
           "recommended": "Recommandé"
         },
-
+        "pro_premium": {
+          "title": "Pro Premium",
+          "description": "Pour les professionnels",
+          "features": [
+            "Toutes les fonctionnalités Pro Standard",
+            "Analyses avancées",
+            "Support prioritaire",
+            "Personnalisation de marque"
+          ],
+          "cta": "S'abonner"
+        },
         "featuresCount": "fonctionnalités"
       }
     }
@@ -139,18 +144,48 @@
     }
   },
   "CardDetails": {
+    "description": "Description",
     "lastUpdate": "Mise à jour",
     "details": "Détails",
+    "trim": "Moteur",
+    "specifications": "Caractéristiques techniques",
+    "equipment": "Équipement",
+    "fuelType": "Carburant",
+    "color": "Couleur",
+    "generation": "Génération",
+    "serie": "Série",
+    "options": "Options",
     "brand": "Marque",
     "model": "Modèle",
     "mileage": "Kilométrage",
     "year": "Année",
-    "gearbox": "Boite de vitesse",
+    "gearbox": "Boîte de vitesses",
     "contactSeller": "Contacter le vendeur",
     "sendMessage": "Envoyer un message"
   },
   "LocaleSwitcher": {
     "label": "Changer de langue",
     "locale": "{locale, select, fr {Français} en {Anglais} other {Inconnu}}"
+  },
+  "RegisterForm": {
+    "title": "Créer un compte",
+    "or": "Ou",
+    "username": "Nom d'utilisateur",
+    "usernamePlaceholder": "Entrez votre nom d'utilisateur",
+    "email": "Email",
+    "emailPlaceholder": "Entrez votre email",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "********",
+    "submit": "S'inscrire",
+    "errors": {
+      "usernameRequired": "Le nom d'utilisateur est requis",
+      "invalidEmail": "Email invalide",
+      "passwordLength": "Le mot de passe doit contenir au moins 8 caractères",
+      "default": "Erreur, veuillez réessayer"
+    },
+    "success": {
+      "title": "Inscription réussie",
+      "description": "Vous pouvez maintenant vous connecter"
+    }
   }
 }

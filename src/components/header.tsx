@@ -1,7 +1,7 @@
 "use server";
 import { Heart, Menu, SearchIcon } from "lucide-react";
 import Link from "next/link";
-import { Button } from "./ui/button";
+import { Button, buttonVariants } from "./ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import {
   NavigationMenu,
@@ -27,7 +27,12 @@ const Header = async () => {
   const t = await getTranslations("Header");
 
   const link = [
-    { name: t("navigation.pro"), href: "/pro" },
+    { name: t("navigation.pro"), href: "/pro", isAdmin: false },
+    {
+      name: "admin",
+      href: "/admin",
+      isAdmin: session?.user?.role === "ADMIN",
+    },
     { name: t("navigation.specs"), href: "/specification" },
   ];
   return (
@@ -47,15 +52,17 @@ const Header = async () => {
             >
               CarConnect
             </Link>
-            {link.map((item, index) => (
-              <Link
-                href={item.href}
-                key={index}
-                className="hover:text-foreground"
-              >
-                {item.name}
-              </Link>
-            ))}
+            {link
+              .filter((item) => !item.hasOwnProperty("isAdmin") || item.isAdmin)
+              .map((item, index) => (
+                <Link
+                  href={item.href}
+                  key={index}
+                  className="hover:text-foreground"
+                >
+                  {item.name}
+                </Link>
+              ))}
 
             <Link href={"/search"} prefetch={false} className="flex gap-2">
               <SearchIcon className="h-5 w-5" />
@@ -84,15 +91,19 @@ const Header = async () => {
       <nav className="hidden lg:flex lg:items-center lg:gap-5">
         <NavigationMenu>
           <NavigationMenuList>
-            {link.map((item, index) => (
-              <NavigationMenuItem key={index}>
-                <Link href={item.href} legacyBehavior passHref>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()}>
-                    {item.name}
-                  </NavigationMenuLink>
-                </Link>
-              </NavigationMenuItem>
-            ))}
+            {link
+              .filter((item) => !item.hasOwnProperty("isAdmin") || item.isAdmin)
+              .map((item, index) => (
+                <NavigationMenuItem key={index}>
+                  <Link href={item.href} legacyBehavior passHref>
+                    <NavigationMenuLink
+                      className={navigationMenuTriggerStyle()}
+                    >
+                      {item.name}
+                    </NavigationMenuLink>
+                  </Link>
+                </NavigationMenuItem>
+              ))}
 
             <NavigationMenuItem>
               <NavigationMenuTrigger>
@@ -139,21 +150,29 @@ const Header = async () => {
         <div className="ml-auto flex items-center gap-3 ">
           <div className=" hidden lg:flex items-center gap-3">
             <LocaleSwitcher />
-            <Button variant="outline">
-              <Link href="/postProduct" prefetch={false}>
-                {t("navigation.postAd")}
-              </Link>
-            </Button>
+            <Link
+              href="/postProduct"
+              prefetch={false}
+              className={cn(buttonVariants({ variant: "outline" }))}
+            >
+              {t("navigation.postAd")}
+            </Link>
             <Separator
               orientation="vertical"
               className="h-6 w-0.5 bg-primary"
             />
-            <Button size="icon" className="rounded-full" variant="ghost">
-              <Link href="/search" prefetch={false}>
-                <SearchIcon className="h-5 w-5" />
-                <span className="sr-only">Recherche</span>
-              </Link>
-            </Button>
+
+            <Link
+              href="/search"
+              prefetch={false}
+              className={cn(
+                buttonVariants({ variant: "ghost" }),
+                "rounded-full"
+              )}
+            >
+              <SearchIcon className="h-5 w-5" />
+              <span className="sr-only">Recherche</span>
+            </Link>
           </div>
           <div className="flex justify-end ml-auto">
             <LoginMenu session={session as Session} />

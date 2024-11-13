@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,20 +12,25 @@ import SignoutButton from "./signout-button";
 import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Session } from "next-auth";
+import { cn } from "@/lib/utils";
 
 export default function LoginMenu({ session }: { session: Session }) {
   const router = useRouter();
   if (!session)
     return (
-      <Button variant="outline" onClick={() => router.push("/login")}>
+      <Link
+        href="/login"
+        prefetch={false}
+        className={cn(buttonVariants({ variant: "outline" }))}
+      >
         Connexion
-      </Button>
+      </Link>
     );
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar>
+        <Avatar className="cursor-pointer">
           <AvatarImage src="/placeholder-user.jpg" />
           <AvatarFallback>
             {session?.user?.name?.charAt(0).toUpperCase()}

@@ -1,6 +1,8 @@
 import { faker } from "@faker-js/faker";
 import bcrypt from "bcryptjs";
 import prisma from "./client";
+import { Prisma, SubscriptionPlan } from "@prisma/client";
+import { Decimal } from "@prisma/client/runtime/library";
 
 // Constantes pour le nombre d'entrées à générer
 const NUM_USERS = 50;
@@ -10,6 +12,26 @@ const NUM_ADS = 80;
 const NUM_OFFERS = 150;
 const NUM_TRANSACTIONS = 30;
 const NUM_PICTURES_PER_CAR = 3;
+
+// Ajout des constantes pour les plans
+const SUBSCRIPTION_PLANS = [
+  {
+    name: "BASIC",
+    price: 0,
+    isAnnual: false,
+  },
+  {
+    name: "PRO_STANDARD",
+    price: 29.99,
+
+    isAnnual: false,
+  },
+  {
+    name: "PRO_PREMIUM",
+    price: 49.99,
+    isAnnual: false,
+  },
+];
 
 async function main() {
   try {
@@ -267,7 +289,7 @@ async function main() {
               carId: randomCar.id,
               userId: faker.helpers.arrayElement(users).id,
               title: `${faker.vehicle.manufacturer()} ${faker.vehicle.model()}`,
-              description: faker.lorem.paragraphs(2),
+              description: faker.lorem.paragraph(8),
               garageId: randomCar.garageId,
               addressId: address.id, // Ajouter l'ID de l'adresse
             },
@@ -316,6 +338,55 @@ async function main() {
         })
     );
     console.log(`✅ ${NUM_OFFERS} offres créées`);
+
+    // Création des abonnements
+    console.log("Création des abonnements...");
+
+    // Créer un abonnement pour chaque type de plan
+    const subscriptions = await Promise.all(
+      Object.values(SubscriptionPlan).map(async (planType) => {
+        try {
+          // Sélectionner un utilisateur aléatoire
+          const randomUser = faker.helpers.arrayElement(users);
+          const plan = SUBSCRIPTION_PLANS.find((p) => p.name === planType);
+
+          if (!plan) {
+            console.error(`Plan non trouvé pour le type ${planType}`);
+            return null;
+          }
+
+          const isAnnual = faker.datatype.boolean();
+          const startDate = faker.date.past();
+
+          return await prisma.subscription.create({
+            data: {
+              userId: randomUser.id,
+              plan: planType,
+              status: "active", // On met actif par défaut pour les tests
+              startDate: startDate,
+              endDate: faker.date.future({ refDate: startDate }),
+              isAnnual: isAnnual,
+              amount: new Prisma.Decimal(
+                isAnnual ? plan.price * 10 : plan.price
+              ),
+              createdAt: startDate,
+              updatedAt: faker.date.recent(),
+            },
+          });
+        } catch (error) {
+          console.error(
+            `Erreur lors de la création de l'abonnement pour le plan ${planType}:`,
+            error
+          );
+          return null;
+        }
+      })
+    );
+
+    const validSubscriptions = subscriptions.filter((sub) => sub !== null);
+    console.log(
+      `✅ ${validSubscriptions.length} abonnements créés (un par type de plan)`
+    );
 
     console.log("✨ Seeding terminé avec succès!");
   } catch (error) {

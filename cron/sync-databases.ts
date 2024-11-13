@@ -5,8 +5,14 @@ import path from "path";
 
 const prisma = new PrismaClient();
 
-// Configuration des tables avec leurs dépendances
-const tableConfig = {
+interface TableConfigType {
+  [key: string]: {
+    requiredFields: string[];
+    dependencies: string[];
+  };
+}
+
+const tableConfig: TableConfigType = {
   car_type: {
     requiredFields: ["id_car_type", "name", "date_create"],
     dependencies: [],
@@ -44,14 +50,15 @@ async function readCSVFile(filePath: string): Promise<any[]> {
           trim: true,
           relax_quotes: true,
           on_record: (record) => {
-            const cleanedRecord: any = {};
+            const cleanedRecord: Record<string, string | null> = {};
             Object.entries(record).forEach(([key, value]) => {
               // Nettoyer les clés et les valeurs
               const cleanKey = key.replace(/^['"]|['"]$/g, "").trim();
-              let cleanValue = String(value)
+              const rawValue = String(value)
                 .replace(/^['"]|['"]$/g, "")
                 .trim();
-              cleanValue = cleanValue === "NULL" ? null : cleanValue;
+              const cleanValue: string | null =
+                rawValue === "NULL" ? null : rawValue;
               cleanedRecord[cleanKey] = cleanValue;
             });
             return cleanedRecord;
@@ -267,7 +274,7 @@ async function validateDependencies(
   table: string,
   schema: string
 ): Promise<boolean> {
-  const dependencies = {
+  const dependencies: Record<string, string[]> = {
     car_make: ["car_type"],
     car_model: ["car_make", "car_type"],
     car_generation: ["car_model", "car_type"],
@@ -280,13 +287,13 @@ async function validateDependencies(
     car_option_value: ["car_option", "car_equipment", "car_type"],
   };
 
-  const tableDeps = dependencies[table] || [];
+  const tableDeps = dependencies[table as keyof typeof dependencies] || [];
 
   for (const dep of tableDeps) {
     const foreignKey = `id_${dep}`;
     if (!record[foreignKey]) continue;
 
-    const exists = await prisma.$queryRawUnsafe(`
+    const exists = await prisma.$queryRawUnsafe<[{ exists: boolean }]>(`
       SELECT EXISTS (
         SELECT 1 FROM "${schema}"."${dep}"
         WHERE ${getPrimaryKey(dep)} = ${record[foreignKey]}
@@ -377,7 +384,7 @@ async function validateData(
         );
       `;
 
-      const exists = await prisma.$queryRaw`${query}`;
+      const exists = await prisma.$queryRaw<[{ exists: boolean }]>`${query}`;
 
       if (!exists[0].exists) {
         console.log(

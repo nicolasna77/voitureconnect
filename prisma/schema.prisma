@@ -200,16 +200,25 @@ model Car {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  // Relations avec les données de référence
-  carType       CarTypeFR       @relation(fields: [carTypeId], references: [id_car_type])
-  carMake       CarMakeFR       @relation(fields: [carMakeId], references: [id_car_make])
-  carModel      CarModelFR      @relation(fields: [carModelId], references: [id_car_model])
-  carGeneration CarGenerationFR @relation(fields: [carGenerationId], references: [id_car_generation])
-  carSerie      CarSerieFR      @relation(fields: [carSerieId], references: [id_car_serie])
-  carTrim       CarTrimFR       @relation(fields: [carTrimId], references: [id_car_trim])
-  carEquipment  CarEquipmentFR  @relation(fields: [carEquipmentId], references: [id_car_equipment])
+  // Relations avec les données de référence (une seule relation par type)
+  carType       CarTypeFR?       @relation("CarToCarTypeFR", fields: [carTypeId], references: [id_car_type], map: "Car_carTypeId_FR_fkey")
+  carMake       CarMakeFR?       @relation("CarToCarMakeFR", fields: [carMakeId], references: [id_car_make], map: "Car_carMakeId_FR_fkey")
+  carModel      CarModelFR?      @relation("CarToCarModelFR", fields: [carModelId], references: [id_car_model], map: "Car_carModelId_FR_fkey")
+  carGeneration CarGenerationFR? @relation("CarToCarGenerationFR", fields: [carGenerationId], references: [id_car_generation], map: "Car_carGenerationId_FR_fkey")
+  carSerie      CarSerieFR?      @relation("CarToCarSerieFR", fields: [carSerieId], references: [id_car_serie], map: "Car_carSerieId_FR_fkey")
+  carTrim       CarTrimFR?       @relation("CarToCarTrimFR", fields: [carTrimId], references: [id_car_trim], map: "Car_carTrimId_FR_fkey")
+  carEquipment  CarEquipmentFR?  @relation("CarToCarEquipmentFR", fields: [carEquipmentId], references: [id_car_equipment], map: "Car_carEquipmentId_FR_fkey")
 
-  // IDs des données de référence
+  // Relations EN
+  carTypeEN       CarTypeEN?       @relation("CarToCarTypeEN", fields: [carTypeId], references: [id_car_type], map: "Car_carTypeId_EN_fkey")
+  carMakeEN       CarMakeEN?       @relation("CarToCarMakeEN", fields: [carMakeId], references: [id_car_make], map: "Car_carMakeId_EN_fkey")
+  carModelEN      CarModelEN?      @relation("CarToCarModelEN", fields: [carModelId], references: [id_car_model], map: "Car_carModelId_EN_fkey")
+  carGenerationEN CarGenerationEN? @relation("CarToCarGenerationEN", fields: [carGenerationId], references: [id_car_generation], map: "Car_carGenerationId_EN_fkey")
+  carSerieEN      CarSerieEN?      @relation("CarToCarSerieEN", fields: [carSerieId], references: [id_car_serie], map: "Car_carSerieId_EN_fkey")
+  carTrimEN       CarTrimEN?       @relation("CarToCarTrimEN", fields: [carTrimId], references: [id_car_trim], map: "Car_carTrimId_EN_fkey")
+  carEquipmentEN  CarEquipmentEN?  @relation("CarToCarEquipmentEN", fields: [carEquipmentId], references: [id_car_equipment], map: "Car_carEquipmentId_EN_fkey")
+
+  // IDs des données de référence (avec contraintes)
   carTypeId       Int
   carMakeId       Int
   carModelId      Int
@@ -218,6 +227,7 @@ model Car {
   carTrimId       Int
   carEquipmentId  Int
 
+  @@index([carTypeId, carMakeId, carModelId]) // Ajout d'index pour améliorer les performances
   @@schema("base")
 }
 
@@ -238,7 +248,6 @@ model CarTypeFR {
   name                    String
   date_create             Int
   date_update             String?                   @default("NULL")
-  cars                    Car[]
   carMakes                CarMakeFR[]
   carModels               CarModelFR[]
   carGenerations         CarGenerationFR[]
@@ -249,6 +258,7 @@ model CarTypeFR {
   carOptions             CarOptionFR[]
   carOptionValues        CarOptionValueFR[]
   carEquipments          CarEquipmentFR[]
+  cars Car[] @relation("CarToCarTypeFR")
 
   @@map("car_type")
   @@schema("dataCarFR")
@@ -260,9 +270,10 @@ model CarMakeFR {
   name        String
   date_create Int
   date_update String?      @default("NULL")
-  Car         Car[]
-  carType     CarTypeFR    @relation(fields: [id_car_type], references: [id_car_type], onDelete: Cascade)
-  carModels   CarModelFR[]
+  cars Car[] @relation("CarToCarMakeFR")
+  carType CarTypeFR @relation(fields: [id_car_type], references: [id_car_type])
+
+  carModels CarModelFR[]
 
   @@map("car_make")
   @@schema("dataCarFR")
@@ -275,30 +286,30 @@ model CarModelFR {
   date_create  Int
   date_update  String?           @default("NULL")
   id_car_type  Int
-  Car          Car[]
   carMake      CarMakeFR         @relation(fields: [id_car_make], references: [id_car_make])
   generations  CarGenerationFR[]
   series       CarSerieFR[]
   trims        CarTrimFR[]
   carType      CarTypeFR         @relation(fields: [id_car_type], references: [id_car_type])
+  cars Car[] @relation("CarToCarModelFR")
 
   @@map("car_model")
   @@schema("dataCarFR")
 }
 
 model CarGenerationFR {
-  id_car_generation Int          @id @default(autoincrement())
+  id_car_generation Int              @id @default(autoincrement())
   id_car_model      Int
   id_car_type       Int
   name              String
-  year_begin        String?      @default("NULL")
-  year_end          String?      @default("NULL")
-  date_update       String?      @default("NULL")
+  year_begin        String?          @default("NULL")
+  year_end          String?          @default("NULL")
+  date_update       String?          @default("NULL")
   date_create       Int
-  Car               Car[]
-  carModel          CarModelFR   @relation(fields: [id_car_model], references: [id_car_model])
-  carType           CarTypeFR    @relation(fields: [id_car_type], references: [id_car_type])
+  carModel          CarModelFR       @relation(fields: [id_car_model], references: [id_car_model])
+  carType           CarTypeFR        @relation(fields: [id_car_type], references: [id_car_type])
   series            CarSerieFR[]
+  cars              Car[]            @relation("CarToCarGenerationFR")
 
   @@map("car_generation")
   @@schema("dataCarFR")
@@ -312,11 +323,11 @@ model CarSerieFR {
   name              String
   date_create       Int
   date_update       String?          @default("NULL")
-  Car               Car[]
   carModel          CarModelFR       @relation(fields: [id_car_model], references: [id_car_model])
   generation        CarGenerationFR? @relation(fields: [id_car_generation], references: [id_car_generation])
   carType           CarTypeFR        @relation(fields: [id_car_type], references: [id_car_type])
   trims             CarTrimFR[]
+  cars              Car[]            @relation("CarToCarSerieFR")
 
   @@map("car_serie")
   @@schema("dataCarFR")
@@ -332,12 +343,12 @@ model CarTrimFR {
   end_production_year   String?                   @default("NULL")
   date_create           Int
   date_update           String?                   @default("NULL")
-  Car                   Car[]
   carModel              CarModelFR                @relation(fields: [id_car_model], references: [id_car_model])
-  serie                 CarSerieFR?               @relation(fields: [id_car_serie], references: [id_car_serie])
+  carSerie              CarSerieFR?               @relation(fields: [id_car_serie], references: [id_car_serie])
   carType               CarTypeFR                 @relation(fields: [id_car_type], references: [id_car_type])
   equipments            CarEquipmentFR[]
   specifications        CarSpecificationValueFR[]
+  cars                  Car[]                     @relation("CarToCarTrimFR")
 
   @@map("car_trim")
   @@schema("dataCarFR")
@@ -351,10 +362,10 @@ model CarEquipmentFR {
   date_create      Int
   date_update      String?            @default("NULL")
   id_car_type      Int
-  Car              Car[]
   carTrim          CarTrimFR          @relation(fields: [id_car_trim], references: [id_car_trim])
   optionValues     CarOptionValueFR[]
   carType          CarTypeFR          @relation(fields: [id_car_type], references: [id_car_type])
+  cars Car[] @relation("CarToCarEquipmentFR")
 
   @@map("car_equipment")
   @@schema("dataCarFR")
@@ -438,6 +449,7 @@ model CarTypeEN {
   CarSpecificationValueEN CarSpecificationValueEN[]
   CarOptionEN             CarOptionEN[]
   CarOptionValueEN        CarOptionValueEN[]
+  cars Car[] @relation("CarToCarTypeEN")
 
   @@map("car_type")
   @@schema("dataCarEN")
@@ -452,6 +464,7 @@ model CarMakeEN {
   carType     CarTypeEN @relation(fields: [id_car_type], references: [id_car_type])
 
   carModels CarModelEN[]
+  cars Car[] @relation("CarToCarMakeEN")
 
   @@map("car_make")
   @@schema("dataCarEN")
@@ -469,6 +482,7 @@ model CarModelEN {
   generations  CarGenerationEN[]
   series       CarSerieEN[]
   trims        CarTrimEN[]
+  cars Car[] @relation("CarToCarModelEN")
 
   @@map("car_model")
   @@schema("dataCarEN")
@@ -486,6 +500,7 @@ model CarGenerationEN {
   carModel CarModelEN   @relation(fields: [id_car_model], references: [id_car_model])
   carType           CarTypeEN    @relation(fields: [id_car_type], references: [id_car_type])
   series            CarSerieEN[]
+  cars Car[] @relation("CarToCarGenerationEN")
 
   @@map("car_generation")
   @@schema("dataCarEN")
@@ -503,6 +518,7 @@ model CarSerieEN {
   generation        CarGenerationEN? @relation(fields: [id_car_generation], references: [id_car_generation])
   trims             CarTrimEN[]
   carType           CarTypeEN        @relation(fields: [id_car_type], references: [id_car_type])
+  cars Car[] @relation("CarToCarSerieEN")
 
   @@map("car_serie")
   @@schema("dataCarEN")
@@ -523,6 +539,7 @@ model CarTrimEN {
   carType               CarTypeEN                 @relation(fields: [id_car_type], references: [id_car_type])
   equipments            CarEquipmentEN[]
   specifications        CarSpecificationValueEN[]
+  cars Car[] @relation("CarToCarTrimEN")
 
   @@map("car_trim")
   @@schema("dataCarEN")
@@ -538,6 +555,7 @@ model CarEquipmentEN {
   id_car_type      Int
   carTrim          CarTrimEN @relation(fields: [id_car_trim], references: [id_car_trim])
   carType          CarTypeEN @relation(fields: [id_car_type], references: [id_car_type])
+  cars Car[] @relation("CarToCarEquipmentEN")
 
   carOptionValues CarOptionValueEN[]
 
@@ -615,17 +633,18 @@ enum SubscriptionPlan {
 }
 
 model Subscription {
-  id            String           @id @default(uuid())
-  userId        String
-  user          User            @relation(fields: [userId], references: [id])
-  plan          SubscriptionPlan
-  status        String          // active, canceled, expired
-  startDate     DateTime
-  endDate       DateTime
-  isAnnual      Boolean         @default(false)
-  amount        Decimal
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id        String           @id @default(uuid())
+  userId    String
+  user      User            @relation(fields: [userId], references: [id])
+  plan      SubscriptionPlan
+  status    String          
+  startDate DateTime
+  endDate   DateTime
+  isAnnual  Boolean         @default(false)
+  amount    Decimal
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 
+  @@map("subscriptions")
   @@schema("base")
 }

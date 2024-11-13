@@ -14,7 +14,9 @@ export const GET = async (req: NextRequest) => {
 
   if (marque) {
     whereClause.carModel = {
-      carMake: { name: { contains: marque, mode: "insensitive" } },
+      carMake: {
+        name: { contains: marque, mode: "insensitive" },
+      },
     };
   }
 
@@ -32,10 +34,10 @@ export const GET = async (req: NextRequest) => {
   const skip = (page - 1) * limit;
 
   const [totalCars, data] = await Promise.all([
-    prisma.carGeneration.count({
+    prisma.carGenerationFR.count({
       where: whereClause,
     }),
-    prisma.carGeneration.findMany({
+    prisma.carGenerationFR.findMany({
       where: whereClause,
       include: {
         carModel: {
@@ -44,7 +46,6 @@ export const GET = async (req: NextRequest) => {
           },
         },
       },
-      distinct: "id_car_generation",
       orderBy: {
         name: "asc",
       },

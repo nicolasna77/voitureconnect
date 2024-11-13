@@ -20,7 +20,7 @@ export default function MainLayout({
   const pathSegments = pathname.split("/").filter((segment) => segment !== "");
 
   return (
-    <div className="  min-h-screen bg-[#f2f2f2]">
+    <div className="min-h-screen bg-[#f2f2f2]">
       <div className="px-12 py-4 hidden md:flex mx-auto">
         <Breadcrumb>
           <BreadcrumbList>

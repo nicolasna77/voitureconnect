@@ -32,7 +32,7 @@ export default function Page() {
       <h1 className="text-2xl font-bold mb-6">Mes Abonnements</h1>
 
       {subscriptions.length === 0 ? (
-        <p className="text-gray-500">Vous n'avez aucun abonnement actif.</p>
+        <p className="text-gray-500">{"Vous n'avez aucun abonnement actif."}</p>
       ) : (
         <div className="grid gap-4">
           {subscriptions.map((sub) => (

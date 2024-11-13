@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import SearchDetail from "@/components/component/search-detail";
+import SearchDetail from "@/components/search/search-detail";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import Title from "@/components/title";
 import PaginationComponant from "@/components/component/pagination";
-import ListSpecification from "@/components/component/list-specification";
+import ListSpecification from "@/components/list/list-specification";
 import { useRouter, useSearchParams } from "next/navigation";
 
 const fetchCarData = async (params: URLSearchParams) => {

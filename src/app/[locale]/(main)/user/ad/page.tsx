@@ -1,15 +1,10 @@
 "use client";
 import LoaderComponant from "@/components/component/loader";
 import ProductCard from "@/components/component/product-card";
-import { Ad, Car } from "@prisma/client";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useSession } from "next-auth/react";
 import React from "react";
-
-type AdWithCar = Ad & {
-  car: Car;
-};
 
 const AdPage = () => {
   const { data: session } = useSession();
@@ -36,8 +31,13 @@ const AdPage = () => {
           <LoaderComponant />
         ) : (
           ads &&
-          ads.map((ad: AdWithCar) => (
-            <ProductCard key={ad.id} item={ad} favorite={false} me={true} />
+          ads.map((ad: any) => (
+            <ProductCard
+              key={ad.id}
+              item={{ ...ad, updatedAt: ad.updatedAt.toString() }}
+              favorite={false}
+              me={true}
+            />
           ))
         )}
       </div>

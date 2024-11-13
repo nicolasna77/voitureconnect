@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import SearchForm from "../component/search-form";
+import SearchForm from "../search/search-form";
 import { useTranslations } from "next-intl";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { useRef } from "react";
+import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {
   const t = useTranslations("HomePage.hero");
@@ -21,102 +22,65 @@ const HeroSection = () => {
   const xImage = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
 
   return (
-    <div className="bg-[#f2f2f2] relative" ref={ref}>
-      <div className="grid max-w-screen-xl px-4 mx-auto lg:gap-8 xl:gap-0 py-12 md:py-24 lg:py-32 lg:grid-cols-12">
-        <motion.div
-          style={{ opacity, y: yText, scale }}
-          className="place-self-center lg:col-span-6"
-        >
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="scroll-m-20 text-4xl text-secondary-foreground font-extrabold tracking-tight lg:text-5xl"
-          >
-            {t("title")}
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
-            className="mt-3 text-lg text-secondary-foreground"
-          >
-            {t("description")}
-          </motion.p>
+    <section
+      className="relative overflow-hidden bg-[#f2F2F2] py-20 lg:py-32"
+      ref={ref}
+    >
+      <div className="container relative z-10">
+        <div className="grid items-center gap-8 lg:grid-cols-2">
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="mt-7 sm:mt-12 mx-auto z-10 max-w-xl relative"
+            style={{ opacity, y: yText, scale }}
+            className="max-w-2xl"
           >
-            <SearchForm />
-            <div className="hidden md:block absolute top-0 end-0 -translate-y-12 translate-x-20">
-              <svg
-                className="w-16 h-auto text-orange-500"
-                width={121}
-                height={135}
-                viewBox="0 0 121 135"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M5 16.4754C11.7688 27.4499 21.2452 57.3224 5 89.0164"
-                  stroke="currentColor"
-                  strokeWidth={10}
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M33.6761 112.104C44.6984 98.1239 74.2618 57.6776 83.4821 5"
-                  stroke="currentColor"
-                  strokeWidth={10}
-                  strokeLinecap="round"
-                />
-                <path
-                  d="M50.5525 130C68.2064 127.495 110.731 117.541 116 78.0874"
-                  stroke="currentColor"
-                  strokeWidth={10}
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-            <div className="hidden md:block absolute bottom-0 start-0 translate-y-10 -translate-x-32">
-              <svg
-                className="w-40 h-auto text-cyan-500"
-                width={347}
-                height={188}
-                viewBox="0 0 347 188"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4 82.4591C54.7956 92.8751 30.9771 162.782 68.2065 181.385C112.642 203.59 127.943 78.57 122.161 25.5053C120.504 2.2376 93.4028 -8.11128 89.7468 25.5053C85.8633 61.2125 130.186 199.678 180.982 146.248L214.898 107.02C224.322 95.4118 242.9 79.2851 258.6 107.02C274.299 134.754 299.315 125.589 309.861 117.539L343 93.4426"
-                  stroke="currentColor"
-                  strokeWidth={7}
-                  strokeLinecap="round"
-                />
-              </svg>
-            </div>
-          </motion.div>
-        </motion.div>
+            <motion.h1
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="text-4xl font-bold tracking-tight text-primary lg:text-6xl"
+            >
+              {t("title")}
+            </motion.h1>
 
-        <motion.div
-          style={{ opacity, x: xImage }}
-          initial={{ opacity: 0, x: 100 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="hidden lg:mt-0 lg:col-span-6 lg:flex items-center"
-        >
-          <Image
-            src="/data/illustration/car-insurance.svg"
-            alt="Fond de la section héros"
-            quality={100}
-            width={1200}
-            height={900}
-            layout="responsive"
-          />
-        </motion.div>
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              className="mt-6 text-lg text-muted-foreground"
+            >
+              {t("description")}
+            </motion.p>
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.6 }}
+              className="mt-8"
+            >
+              <SearchForm />
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            style={{ opacity, x: xImage }}
+            initial={{ opacity: 0, x: 100 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.7, delay: 0.3 }}
+            className="relative h-[400px] lg:h-[600px]"
+          >
+            <Image
+              src="/data/illustration/car-insurance.svg"
+              alt="Hero illustration"
+              fill
+              className="object-contain"
+              priority
+            />
+          </motion.div>
+        </div>
       </div>
-    </div>
+
+      {/* Décoration d'arrière-plan */}
+      <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(var(--primary-rgb),0.1),transparent)]" />
+    </section>
   );
 };
 

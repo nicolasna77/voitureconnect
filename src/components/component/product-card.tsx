@@ -17,46 +17,16 @@ import {
   MapPin,
   Trash,
 } from "lucide-react";
-import { Button } from "../ui/button";
+import { Button, buttonVariants } from "../ui/button";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import { Badge } from "../ui/badge";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
-
-type AdWithCar = {
-  id: string;
-  title: string;
-  updatedAt: string;
-  garageId?: string | null;
-  car: {
-    pictures: Picture[];
-    price: string | number;
-    Kms: number;
-    year: number;
-    gearbox: string;
-    fuelType: string;
-    carMake: {
-      id_car_make: number;
-      name: string;
-      date_create: number;
-      date_update: string | null;
-      id_car_type: number;
-    } | null;
-    carModel: {
-      id_car_model: number;
-      name: string;
-      date_create: number;
-      date_update: string | null;
-      id_car_make: number;
-      id_car_type: number;
-    } | null;
-  };
-  isLiked?: boolean;
-  idLike?: string | null;
-};
+import AuthAlertDialog from "../auth/auth-alert-dialog";
+import { AdWithCar } from "@/types/car";
 
 const ProductCard = ({
   item,
@@ -73,181 +43,239 @@ const ProductCard = ({
 
   const { data: session } = useSession();
   const queryClient = useQueryClient();
-  const method = item.isLiked || favorite ? "delete" : "post";
-  const path =
-    item.isLiked || favorite
-      ? `/api/ad/like?userId=${session?.user?.id}&adId=${item.id}`
-      : "/api/ad/like";
+
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
+  const [showSubscriptionDialog, setShowSubscriptionDialog] = useState(false);
+  console.log(item);
   const likeMutation = useMutation({
-    mutationFn: () =>
-      axios[method](path, {
+    mutationFn: async () => {
+      if (item.isLiked) {
+        const likeId = item.idLike;
+        if (!likeId) {
+          throw new Error("ID du like manquant");
+        }
+        return axios.delete(`/api/ad/like/${likeId}`);
+      }
+      return axios.post("/api/ad/like", {
         adId: item.id,
         userId: session?.user?.id,
-      }),
-
-    onSuccess: () => {
-      if (method === "post") {
+      });
+    },
+    onSuccess: (response) => {
+      if (!favorite && !item.isLiked) {
         toast({
-          title: "Vous avez ajouté cet article à vos favoris",
-          description:
-            "Vous pouvez retrouver vos favoris dans l'espace favoris",
+          title: "Ajouté aux favoris",
+          description: "Retrouvez vos favoris dans votre espace personnel",
         });
       } else {
         toast({
-          title: "Vous avez retiré cet article de vos favoris",
+          title: "Retiré des favoris",
         });
       }
       queryClient.invalidateQueries({ queryKey: ["annonces"] });
       queryClient.invalidateQueries({ queryKey: ["favorites"] });
     },
-    onError: () => {
-      toast({
-        variant: "destructive",
-        title: "Une erreur est survenue lors de l'action sur le favori",
-      });
+    onError: (error: any) => {
+      if (error?.response?.status === 403) {
+        setShowSubscriptionDialog(true);
+      } else if (error?.response?.status === 409) {
+        queryClient.invalidateQueries({ queryKey: ["annonces"] });
+        queryClient.invalidateQueries({ queryKey: ["favorites"] });
+      } else {
+        toast({
+          variant: "destructive",
+          title: "Une erreur est survenue",
+          description: "Impossible de modifier les favoris",
+        });
+      }
     },
   });
 
-  const handleLike = useCallback(() => {
-    if (!session?.user?.id) {
-      toast({
-        variant: "destructive",
-        title: "Vous devez être connecté pour ajouter aux favoris",
-      });
-      return;
-    }
-    likeMutation.mutate();
-  }, [likeMutation, session?.user?.id, toast]);
+  const handleLike = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      if (!session?.user) {
+        setShowAuthDialog(true);
+        return;
+      }
+
+      likeMutation.mutate();
+    },
+    [session, likeMutation]
+  );
 
   const formatNumber = (num: number) =>
     Math.floor(num)
       .toString()
       .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
   return (
-    <Card
-      key={item?.id}
-      className={`relative group w-full ${
-        orientation === "list" ? "sm:flex" : " "
-      }`}
-    >
-      <Link
-        href={item?.id ? `/search/${item.id}` : "#"}
-        className={orientation === "list" ? "sm:w-[45%]" : "w-full"}
+    <>
+      <AuthAlertDialog
+        isOpen={showAuthDialog}
+        onClose={() => setShowAuthDialog(false)}
+        type="auth"
+      />
+
+      <AuthAlertDialog
+        isOpen={showSubscriptionDialog}
+        onClose={() => setShowSubscriptionDialog(false)}
+        type="subscription"
+        title="Abonnement requis"
+        description="Cette fonctionnalité nécessite un abonnement premium."
+      />
+
+      <Card
+        className={`relative group overflow-hidden ${
+          orientation === "list"
+            ? "sm:grid sm:grid-cols-[400px_1fr] max-w-7xl  sm:gap-6 "
+            : "flex flex-col"
+        }`}
       >
-        <div className={`h-[230px] `}>
-          <Image
-            src={item.car?.pictures[0]?.url}
-            alt={item.car?.pictures[0]?.alt}
-            width={150}
-            sizes="100vw"
-            height={150}
-            quality={100}
-            className="w-full h-full rounded-lg object-cover"
-          />
-        </div>
-      </Link>
-      {!favorite && !me && (
-        <Button
-          size="icon"
-          variant="ghost"
-          className={`absolute ${
+        {/* Section Image */}
+        <div
+          className={`relative ${
             orientation === "list"
-              ? "top-4 right-4  sm:top-4 sm:left-1/3"
-              : "top-4 right-4"
-          } rounded-full text-red`}
-          onClick={handleLike}
-          disabled={likeMutation.isPending}
+              ? "w-full h-[230px] sm:h-[300px] sm:w-full"
+              : "w-full h-[230px]"
+          }`}
         >
-          <HeartIcon
-            className={
-              item.isLiked
-                ? "text-red-500 fill-current"
-                : "text-muted-foreground"
-            }
-          />
-        </Button>
-      )}
+          <Link
+            href={item?.id ? `/search/${item.id}` : "#"}
+            className="block h-full"
+          >
+            <Image
+              src={item.car?.pictures[0]?.url}
+              alt={item.car?.pictures[0]?.alt}
+              fill
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              quality={100}
+              className={`object-cover ${
+                orientation === "list" ? "sm:rounded-lg" : "rounded-t-lg"
+              }`}
+            />
+          </Link>
 
-      {item.garageId && (
-        <Badge variant={"secondary"} className="absolute top-4 left-4">
-          Pro
-        </Badge>
-      )}
+          {item.garageId && (
+            <Badge variant="secondary" className="absolute top-4 left-4">
+              Pro
+            </Badge>
+          )}
+          {!favorite && !me && (
+            <div className="absolute top-3 right-3">
+              <div className="absolute inset-0 blur-lg bg-white/30 rounded-full" />
+              <Button
+                size="icon"
+                variant="secondary"
+                className="relative rounded-full text-red"
+                onClick={handleLike}
+                disabled={likeMutation.isPending}
+              >
+                <HeartIcon
+                  size={32}
+                  className={
+                    item.isLiked
+                      ? "text-red-500 fill-current "
+                      : "text-muted-foreground"
+                  }
+                />
+              </Button>
+            </div>
+          )}
+        </div>
 
-      <div className={orientation === "list" ? "sm:w-2/3" : "w-full"}>
-        <Link href={item?.id ? `/search/${item.id}` : "#"}>
-          <CardHeader>
-            <div className="grid gap-2 grid-cols-3 items-center w-full  justify-between">
-              <div className="flex flex-col col-span-2 ">
-                <CardTitle className="font-semibold text-xl">
-                  {item?.title}
-                </CardTitle>
-                <span className="flex text-sm font-normal">
-                  Mise à jour :{" "}
-                  {new Date(item?.updatedAt || Date.now()).toLocaleString(
-                    "fr-FR",
-                    { dateStyle: "short", timeStyle: "short" }
-                  )}
-                </span>
-              </div>
-              <div className="flex justify-end col-span-1 w-full ">
-                <div className="text-lg font-bold flex bg-secondary rounded-lg p-2 text-secondary-foreground">
-                  {formatNumber(Number(item?.car?.price || 0))}€
+        {/* Section Contenu et Footer */}
+        <div
+          className={`flex flex-col ${
+            orientation === "list" ? "sm:gap-4" : ""
+          }`}
+        >
+          <Link href={item?.id ? `/search/${item.id}` : "#"}>
+            <CardHeader>
+              <div className="grid gap-2 grid-cols-3 items-center w-full">
+                <div className="flex flex-col col-span-2">
+                  <CardTitle className="font-semibold text-xl">
+                    {item?.title}
+                  </CardTitle>
+                  <span className="flex text-sm font-normal">
+                    Mise à jour :{" "}
+                    {new Date(item?.updatedAt || Date.now()).toLocaleString(
+                      "fr-FR",
+                      {
+                        dateStyle: "short",
+                        timeStyle: "short",
+                      }
+                    )}
+                  </span>
+                </div>
+                <div className="flex justify-end col-span-1">
+                  <div className="text-lg font-bold bg-secondary rounded-lg p-2 text-secondary-foreground">
+                    {formatNumber(Number(item?.car?.price || 0))}€
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="text-sm text-muted-foreground">
-              <div className="grid grid-cols-2 gap-4">
-                {[
-                  {
-                    Icon: GaugeIcon,
-                    text: `${formatNumber(Number(item?.car?.Kms || 0))} km`,
-                  },
-                  { Icon: CalendarIcon, text: item?.car?.year },
-                  { Icon: Cog, text: item?.car?.gearbox },
-                  { Icon: FuelIcon, text: item?.car?.fuelType },
-                ].map(({ Icon, text }, index) => (
-                  <div key={index} className="flex items-center gap-2">
-                    <Icon className="w-5 h-5 text-muted-foreground" />
-                    <span>{text}</span>
-                  </div>
-                ))}
+            </CardHeader>
+
+            <CardContent className={orientation === "list" ? "w-full" : ""}>
+              <div className="text-sm text-muted-foreground">
+                <div className="grid grid-cols-2 gap-4">
+                  {[
+                    {
+                      Icon: GaugeIcon,
+                      text: `${formatNumber(Number(item?.car?.Kms || 0))} km`,
+                    },
+                    { Icon: CalendarIcon, text: item?.car?.year },
+                    { Icon: Cog, text: item?.car?.gearbox },
+                    { Icon: FuelIcon, text: item?.car?.fuelType },
+                  ].map(({ Icon, text }, index) => (
+                    <div key={index} className="flex items-center gap-2">
+                      <Icon className="w-5 h-5 text-muted-foreground" />
+                      <span>{text}</span>
+                    </div>
+                  ))}
+                </div>
+                <div className="flex items-center bottom-0 gap-2 mt-4">
+                  <MapPin className="w-5 h-5 text-muted-foreground" />
+                  <span className="text-muted-foreground">
+                    {item.address
+                      ? `${item.address.city}, ${item.address.state}`
+                      : "Non spécifié"}
+                  </span>
+                </div>
               </div>
-              <div className="flex items-center bottom-0 gap-2 mt-4">
-                <MapPin className="w-5 h-5 text-muted-foreground" />
-                <span className="text-muted-foreground">Paris</span>
-              </div>
-            </div>
-          </CardContent>
-        </Link>
-      </div>
-      {me && (
-        <CardFooter className="bg-gray-50 p-4 flex justify-between items-center">
-          <Button variant="outline">Modifier</Button>
-          <Button variant="destructive" className="flex items-center">
-            <Trash className="w-5 h-5 mr-1 fill-current" />
-            Supprimer
-          </Button>
-          <Button>Voir l&apos;annonce</Button>
-        </CardFooter>
-      )}
-      {favorite && (
-        <CardFooter className="bg-gray-50 p-4 flex justify-between items-center">
-          <Button
-            variant="destructive"
-            className="flex items-center"
-            onClick={handleLike}
-            disabled={likeMutation.isPending}
+            </CardContent>
+          </Link>
+        </div>
+        {/* Footer */}
+        {(me || favorite) && (
+          <CardFooter
+            className={`bg-gray-50 p-4 flex justify-between items-center mt-auto ${
+              orientation === "list" ? "sm:px-0 sm:bg-transparent" : ""
+            }`}
           >
-            <Trash className="w-5 h-5 mr-1 fill-current" />
-            Retirer des favoris
-          </Button>
-          <Button variant={"secondary"}>Voir l&apos;annonce</Button>
-        </CardFooter>
-      )}
-    </Card>
+            {me && <Button variant="outline">Modifier</Button>}
+            {favorite && (
+              <Button
+                variant="destructive"
+                className="flex items-center"
+                onClick={handleLike}
+                disabled={likeMutation.isPending}
+              >
+                <Trash className="w-5 h-5 mr-1 fill-current" />
+                Retirer des favoris
+              </Button>
+            )}
+            <Link
+              href={`/search/${item.id}`}
+              className={buttonVariants({ variant: "outline" })}
+            >
+              Voir l&apos;annonce
+            </Link>
+          </CardFooter>
+        )}
+      </Card>
+    </>
   );
 };
 

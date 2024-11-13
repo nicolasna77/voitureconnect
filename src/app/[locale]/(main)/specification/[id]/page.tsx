@@ -1,13 +1,10 @@
 "use client";
 
-import LoaderComponant from "@/components/component/loader";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Badge } from "@/components/ui/badge";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { notFound } from "next/navigation";
+import LoaderComponent from "@/components/component/loader";
 import {
   Card,
   CardContent,
@@ -16,24 +13,159 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import {
   Table,
   TableBody,
-  TableHead,
-  TableRow,
-  TableHeader,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
-import { notFound } from "next/navigation";
-import React from "react";
+// Types
+interface Specification {
+  name: string;
+  value: string;
+  unit: string | null;
+}
 
-async function getGenerationDetails(id: string) {
+interface CarTrim {
+  id_car_trim: number;
+  name: string;
+  specificationsByCategory: Record<string, Specification[]>;
+}
+
+interface CarSerie {
+  id_car_serie: number;
+  name: string;
+  trims: CarTrim[];
+  commonSpecifications: Record<string, Specification[]>;
+}
+
+interface Generation {
+  id_car_generation: number;
+  name: string;
+  year_begin: string | null;
+  year_end: string | null;
+  carModel: {
+    name: string;
+    carMake: {
+      name: string;
+    };
+  };
+  series: CarSerie[];
+}
+
+// Utilitaires
+function getCategoryName(categoryId: string): string {
+  const categories: Record<string, string> = {
+    chassis: "Châssis",
+    engine: "Moteur",
+    gearbox: "Boîte de vitesses",
+    suspension: "Suspension et freins",
+    performance: "Performances",
+    other: "Autres spécifications",
+  };
+  return categories[categoryId] || categoryId;
+}
+
+async function getGenerationDetails(id: string): Promise<Generation> {
   const { data } = await axios.get(`/api/car/detail?id=${id}`);
   return data;
 }
 
+// Composants
+function SpecificationTable({
+  specifications,
+}: {
+  specifications: Specification[];
+}) {
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead className="w-1/2">Caractéristique</TableHead>
+          <TableHead className="w-1/2">Valeur</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {specifications.map((spec, index) => (
+          <TableRow key={index}>
+            <TableCell className="font-medium">{spec.name}</TableCell>
+            <TableCell>
+              {spec.value} {spec.unit}
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+}
+
+function CommonSpecifications({
+  specifications,
+}: {
+  specifications: Record<string, Specification[]>;
+}) {
+  if (!specifications || Object.keys(specifications).length === 0) return null;
+
+  return (
+    <div className="mb-8">
+      <h3 className="text-xl font-semibold mb-4">Caractéristiques communes</h3>
+      <Accordion type="single" collapsible className="w-full">
+        {Object.entries(specifications).map(([category, specs]) => (
+          <AccordionItem key={category} value={category}>
+            <AccordionTrigger className="text-lg font-medium">
+              {getCategoryName(category)}
+            </AccordionTrigger>
+            <AccordionContent>
+              <SpecificationTable specifications={specs} />
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  );
+}
+
+function TrimSpecifications({ trims }: { trims: CarTrim[] }) {
+  return (
+    <div>
+      <h3 className="text-xl font-semibold mb-4">Finitions</h3>
+      <Accordion type="single" collapsible className="w-full">
+        {trims.map((trim) => (
+          <AccordionItem
+            key={trim.id_car_trim}
+            value={`trim-${trim.id_car_trim}`}
+          >
+            <AccordionTrigger className="text-lg font-medium">
+              {trim.name}
+            </AccordionTrigger>
+            <AccordionContent>
+              {Object.entries(trim.specificationsByCategory || {}).map(
+                ([category, specs]) => (
+                  <div key={category} className="mb-6">
+                    <h4 className="text-lg font-medium mb-2">
+                      {getCategoryName(category)}
+                    </h4>
+                    <SpecificationTable specifications={specs} />
+                  </div>
+                )
+              )}
+            </AccordionContent>
+          </AccordionItem>
+        ))}
+      </Accordion>
+    </div>
+  );
+}
+
+// Page principale
 export default function SpecificationPage({
   params,
 }: {
@@ -48,131 +180,56 @@ export default function SpecificationPage({
     queryFn: () => getGenerationDetails(params.id),
   });
 
-  if (isLoading) return <LoaderComponant />;
-  if (isError) return <div>{"Une erreur s'est produite"}</div>;
+  if (isLoading) return <LoaderComponent />;
+  if (isError) return <ErrorComponent />;
   if (!generation) return notFound();
-  console.log(generation);
-  return (
-    <Card>
-      <CardHeader>
-        <CardTitle>
-          {generation.carModel.carMake.name} {generation.carModel.name}{" "}
-          {generation.name}
-        </CardTitle>
-        <CardDescription>
-          Période : {generation.year_begin} - {generation.year_end || "présent"}
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid grid-cols-2 gap-4 mb-4">
-          <div>
-            <p>
-              <strong>Marque :</strong> {generation.carModel.carMake.name}
-            </p>
-            <p>
-              <strong>Modèle :</strong> {generation.carModel.name}
-            </p>
-            <p>
-              <strong>Génération :</strong> {generation.name}
-            </p>
-          </div>
-          <div>
-            <p>
-              <strong>Type :</strong> {generation.carType?.name}
-            </p>
-          </div>
-        </div>
 
-        {generation.carSeries.map((series: any) => (
-          <Card key={series.id_car_serie} className="mb-4">
-            <CardHeader>
-              <CardTitle>{series.name}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {series.carTrims.map((trim: any) => (
-                <Accordion key={trim.id_car_trim} type="single" collapsible>
-                  <AccordionItem value={trim.id_car_trim.toString()}>
-                    <AccordionTrigger>
-                      <h3 className="text-lg font-semibold">{trim.name}</h3>
-                    </AccordionTrigger>
-                    <AccordionContent>
-                      <div className="mb-4">
-                        <h4 className="font-semibold">Spécifications</h4>
-                        <Table>
-                          <TableHeader>
-                            <TableRow>
-                              <TableHead>Spécification</TableHead>
-                              <TableHead>Valeur</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {trim.carSpecificationValues.map((spec: any) => (
-                              <TableRow key={spec.id_car_specification_value}>
-                                <TableCell>
-                                  {spec.carSpecification.name}
-                                </TableCell>
-                                <TableCell>
-                                  {spec.value} {spec.unit}
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
-                      </div>
-                      {trim.carEquipments?.length > 0 ? (
-                        trim.carEquipments.map((equipment: any) => (
-                          <div
-                            key={equipment.id_car_equipment}
-                            className="mt-2"
-                          >
-                            <h4 className="font-semibold">{equipment.name}</h4>
-                            <Table>
-                              <TableHeader>
-                                <TableRow>
-                                  <TableHead>Option</TableHead>
-                                  <TableHead>Type</TableHead>
-                                </TableRow>
-                              </TableHeader>
-                              <TableBody>
-                                {equipment.carOptionValues.map(
-                                  (optionValue: any) => (
-                                    <TableRow
-                                      key={optionValue.id_car_option_value}
-                                    >
-                                      <TableCell>
-                                        {optionValue.carOption.name}
-                                      </TableCell>
-                                      <TableCell>
-                                        <Badge
-                                          variant={
-                                            optionValue.is_base
-                                              ? "secondary"
-                                              : "default"
-                                          }
-                                        >
-                                          {optionValue.is_base
-                                            ? "Base"
-                                            : "Option"}
-                                        </Badge>
-                                      </TableCell>
-                                    </TableRow>
-                                  )
-                                )}
-                              </TableBody>
-                            </Table>
-                          </div>
-                        ))
-                      ) : (
-                        <div>Aucun équipement disponible</div>
-                      )}
-                    </AccordionContent>
-                  </AccordionItem>
-                </Accordion>
-              ))}
-            </CardContent>
-          </Card>
-        ))}
-      </CardContent>
-    </Card>
+  return (
+    <div className="container mx-auto py-8">
+      <Card className="mb-8">
+        <CardHeader>
+          <CardTitle className="text-3xl font-bold">
+            {generation.carModel?.carMake?.name} {generation.carModel?.name}{" "}
+            {generation.name}
+          </CardTitle>
+          <CardDescription className="text-xl">
+            Période : {generation.year_begin || "N/A"} -{" "}
+            {generation.year_end || "N/A"}
+          </CardDescription>
+        </CardHeader>
+      </Card>
+
+      {generation.series?.map((serie) => (
+        <Card key={serie.id_car_serie} className="mb-8">
+          <CardHeader>
+            <CardTitle className="text-2xl font-semibold">
+              {serie.name}
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <CommonSpecifications specifications={serie.commonSpecifications} />
+            <TrimSpecifications trims={serie.trims} />
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  );
+}
+
+function ErrorComponent() {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <Card className="w-96">
+        <CardHeader>
+          <CardTitle className="text-red-600">Erreur</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p>
+            Une erreur s&apos;est produite lors du chargement des données.
+            Veuillez réessayer plus tard.
+          </p>
+        </CardContent>
+      </Card>
+    </div>
   );
 }

@@ -6,17 +6,26 @@ const prisma = new PrismaClient();
 export const GET = async () => {
   const locale = await getLocale();
 
-  const tableName = locale === "fr" ? "carMakeFR" : "carMakeEN";
-
-  const data = await prisma[tableName as "carMakeFR" | "carMakeEN"].findMany({
-    distinct: ["name"],
-    orderBy: {
-      name: "asc",
-    },
-    select: {
-      name: true,
-    },
-  });
+  const data =
+    locale === "fr"
+      ? await prisma.carMakeFR.findMany({
+          distinct: ["name"],
+          orderBy: {
+            name: "asc",
+          },
+          select: {
+            name: true,
+          },
+        })
+      : await prisma.carMakeEN.findMany({
+          distinct: ["name"],
+          orderBy: {
+            name: "asc",
+          },
+          select: {
+            name: true,
+          },
+        });
 
   return Response.json({ data });
 };

@@ -5,8 +5,8 @@ import { useMultiContext } from "@/contexts/multistep-form-context";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FormProvider, useForm } from "react-hook-form";
 import { z } from "zod";
-import { Button } from "./ui/button";
-import { Form } from "./ui/form";
+import { Button } from "../ui/button";
+import { Form } from "../ui/form";
 
 const stepOneSchema = z.object({
   brand: z.string().min(1, { message: "La marque est obligatoire" }),

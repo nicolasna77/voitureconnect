@@ -1,93 +1,67 @@
 import { PrismaClient } from "@prisma/client";
-import { NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 
 const prisma = new PrismaClient();
 
-export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const query = searchParams.get("q");
-
-  if (!query) {
-    return NextResponse.json(
-      { error: "Aucun terme de recherche fourni" },
-      { status: 400 }
-    );
-  }
-
+export async function GET(req: NextRequest) {
   try {
-    // Rechercher les marques, modèles et générations
-    const carMakes = await prisma.carMake.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      select: {
-        id_car_make: true,
-        name: true,
-      },
+    const searchParams = req.nextUrl.searchParams;
+    const query = searchParams.get("q");
+
+    if (!query) {
+      return new Response(JSON.stringify({ data: [] }), {
+        status: 200,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const suggestions = await prisma.$queryRaw`
+      SELECT DISTINCT 
+        'marque' as type,
+        cm.name as brand,
+        NULL as model,
+        NULL as generation
+      FROM "dataCarFR"."car_make" cm
+      WHERE LOWER(cm.name) LIKE LOWER(${`%${query}%`})
+      
+      UNION ALL
+      
+      SELECT DISTINCT 
+        'model' as type,
+        cm.name as brand,
+        cmod.name as model,
+        NULL as generation
+      FROM "dataCarFR"."car_model" cmod
+      JOIN "dataCarFR"."car_make" cm ON cm.id_car_make = cmod.id_car_make
+      WHERE LOWER(cmod.name) LIKE LOWER(${`%${query}%`})
+      
+      UNION ALL
+      
+      SELECT DISTINCT 
+        'generation' as type,
+        cm.name as brand,
+        cmod.name as model,
+        cg.name as generation
+      FROM "dataCarFR"."car_generation" cg
+      JOIN "dataCarFR"."car_model" cmod ON cmod.id_car_model = cg.id_car_model
+      JOIN "dataCarFR"."car_make" cm ON cm.id_car_make = cmod.id_car_make
+      WHERE LOWER(cg.name) LIKE LOWER(${`%${query}%`})
+      
+      LIMIT 10;
+    `;
+
+    return new Response(JSON.stringify({ data: suggestions }), {
+      status: 200,
+      headers: { "Content-Type": "application/json" },
     });
-
-    const carModels = await prisma.carModel.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      select: {
-        name: true,
-        carMake: {
-          select: {
-            name: true,
-          },
-        },
-      },
-    });
-
-    const carGenerations = await prisma.carGeneration.findMany({
-      where: {
-        name: {
-          contains: query,
-          mode: "insensitive",
-        },
-      },
-      select: {
-        name: true,
-        carModel: {
-          select: {
-            name: true,
-            carMake: {
-              select: {
-                name: true,
-              },
-            },
-          },
-        },
-      },
-    });
-
-    let suggestions = [
-      ...carMakes.map((make) => [make.name, "", ""]),
-      ...carModels
-        .filter((model) => model.name !== null)
-        .map((model) => [model.carMake.name, model.name, ""]),
-      ...carGenerations.map((generation) => [
-        generation.carModel.carMake.name,
-        generation.carModel.name,
-        generation.name,
-      ]),
-    ];
-
-    // Limiter les suggestions à 10
-    suggestions = suggestions.slice(0, 10);
-
-    return NextResponse.json({ data: suggestions });
   } catch (error) {
-    console.error("Erreur lors de la récupération des suggestions:", error);
-    return NextResponse.json({ error: "Erreur serveur" }, { status: 500 });
-  } finally {
-    await prisma.$disconnect();
+    console.error("Erreur lors de la recherche de suggestions:", error);
+    return new Response(
+      JSON.stringify({
+        error: "Erreur lors de la recherche",
+        details: error instanceof Error ? error.message : "Erreur inconnue",
+      }),
+      { status: 500 }
+    );
   }
 }

@@ -38,7 +38,7 @@ const LoginSocial = () => {
       ) : (
         <>
           <FcGoogle size={24} />
-          S'identifier avec Google
+          S&apos;identifier avec Google
         </>
       )}
     </Button>

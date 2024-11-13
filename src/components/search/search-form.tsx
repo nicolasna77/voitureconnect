@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import {
@@ -19,6 +19,7 @@ import { Tabs, TabsList, TabsTrigger } from "../ui/tabs";
 import { Badge } from "../ui/badge";
 import { useDebounce } from "use-debounce";
 import SearchDetail from "./search-detail";
+import SearchItemSelect from "./search-item-select";
 
 type FormState = {
   marque: string;
@@ -27,6 +28,76 @@ type FormState = {
   input: string;
   localisation: string;
   vehicleType: "voiture" | "moto";
+};
+
+const CommandSearch = ({
+  value,
+  onValueChange,
+  suggestions,
+  onSuggestionSelect,
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+  suggestions: any[];
+  onSuggestionSelect: (
+    type: string,
+    brand: string,
+    model?: string,
+    generation?: string
+  ) => void;
+}) => {
+  const [open, setOpen] = useState(false);
+
+  const renderSuggestion = (suggestion: any) => {
+    const { type, brand, model, generation } = suggestion;
+    switch (type) {
+      case "marque":
+        return `${brand}`;
+      case "model":
+        return `${brand} ${model}`;
+      case "generation":
+        return `${brand} ${model} ${generation}`;
+      default:
+        return "";
+    }
+  };
+
+  return (
+    <div className="relative">
+      <Command className="rounded-lg border shadow-md" shouldFilter={false}>
+        <CommandInput
+          value={value}
+          onValueChange={(newValue) => {
+            onValueChange(newValue);
+            setOpen(newValue.length > 0);
+          }}
+          placeholder="Rechercher une voiture..."
+        />
+        {open && suggestions.length > 0 && (
+          <CommandList className="absolute top-full left-0 right-0 mt-1 bg-white rounded-lg border shadow-md max-h-[300px] overflow-auto z-50">
+            <CommandGroup>
+              {suggestions.map((suggestion, index) => (
+                <CommandItem
+                  key={index}
+                  onSelect={() => {
+                    onSuggestionSelect(
+                      suggestion.type,
+                      suggestion.brand,
+                      suggestion.model,
+                      suggestion.generation
+                    );
+                    setOpen(false);
+                  }}
+                >
+                  {renderSuggestion(suggestion)}
+                </CommandItem>
+              ))}
+            </CommandGroup>
+          </CommandList>
+        )}
+      </Command>
+    </div>
+  );
 };
 
 const SearchForm: React.FC = () => {
@@ -63,86 +134,51 @@ const SearchForm: React.FC = () => {
     },
   });
 
-  const { data: suggestionsData } = useQuery<string[][]>({
+  const { data: suggestions = [] } = useQuery({
     queryKey: ["suggestions", debouncedInput],
     queryFn: async () => {
       if (!debouncedInput) return [];
-      const response = await axios.get(
-        `/api/car/suggestions?q=${debouncedInput}`
+      const res = await fetch(
+        `/api/car/suggestions?q=${encodeURIComponent(debouncedInput)}`
       );
-      return response.data.data;
+      const data = await res.json();
+      return data.data || [];
     },
-    enabled: debouncedInput.length > 0,
+    enabled: Boolean(debouncedInput),
   });
 
   const handleSuggestionSelect = useCallback(
-    (suggestion: string[]) => {
-      const [type, brand, model, generation] = suggestion;
-      if (type === "marque") {
-        updateFormState("marque", brand);
-      } else if (type === "model") {
-        updateFormState("marque", brand);
-        updateFormState("model", model);
-      } else if (type === "generation") {
-        updateFormState("marque", brand);
-        updateFormState("model", model);
-        updateFormState("generation", generation);
-      }
-      updateFormState("input", "");
+    (type: string, brand: string, model?: string, generation?: string) => {
+      setFormState((prev) => {
+        const newState = { ...prev };
+
+        switch (type) {
+          case "marque":
+            newState.marque = brand;
+            newState.model = "";
+            newState.generation = "";
+            break;
+          case "model":
+            newState.marque = brand;
+            newState.model = model || "";
+            newState.generation = "";
+            break;
+          case "generation":
+            newState.marque = brand;
+            newState.model = model || "";
+            newState.generation = generation || "";
+            break;
+        }
+
+        newState.input = "";
+        return newState;
+      });
     },
-    [updateFormState]
+    []
   );
-
-  const removeParam = useCallback(
-    (param: keyof FormState) => {
-      const newSearchParams = new URLSearchParams(searchParams.toString());
-      newSearchParams.delete(param);
-      router.push(`?${newSearchParams.toString()}`);
-      updateFormState(param, "");
-    },
-    [searchParams, router, updateFormState]
-  );
-
-  const CommandSearch = () => {
-    const [open, setOpen] = useState(false);
-
-    const handleValueChange = (value: string) => {
-      updateFormState("input", value);
-      setOpen(!!value);
-    };
-
-    const filteredSuggestions = suggestionsData || [];
-    console.log(filteredSuggestions);
-
-    return (
-      <Command className="rounded-lg border bg-background shadow-md">
-        <CommandInput
-          placeholder={`Rechercher votre ${formState.vehicleType} ...`}
-          onValueChange={handleValueChange}
-          value={formState.input}
-        />
-        <CommandList>
-          {open &&
-            (filteredSuggestions.length > 0 ? (
-              filteredSuggestions.map((suggestion, index) => (
-                <CommandItem
-                  key={index}
-                  value={suggestion[0]}
-                  onSelect={() => handleSuggestionSelect(suggestion)}
-                >
-                  {suggestion[0]} {suggestion[2]} {suggestion[3]}
-                </CommandItem>
-              ))
-            ) : (
-              <CommandEmpty>Aucune suggestion trouvée</CommandEmpty>
-            ))}
-        </CommandList>
-      </Command>
-    );
-  };
 
   return (
-    <Card className="bg-card  border-border border-4  max-w-4xl m-auto p-8 relative">
+    <Card className="bg-card border-border border-4 max-w-4xl m-auto p-8 relative">
       <Tabs
         defaultValue="voiture"
         className="mb-8 -mt-14 m-auto w-1/2"
@@ -164,7 +200,12 @@ const SearchForm: React.FC = () => {
 
       <form onSubmit={handleSubmit.mutate} className="space-y-6">
         <div className="flex flex-col max-w-md m-auto gap-4">
-          <CommandSearch />
+          <CommandSearch
+            value={formState.input}
+            onValueChange={(value) => updateFormState("input", value)}
+            suggestions={suggestions}
+            onSuggestionSelect={handleSuggestionSelect}
+          />
           <SearchLocalisation />
         </div>
 
@@ -205,25 +246,6 @@ const SearchForm: React.FC = () => {
           </Button>
         </div>
       </form>
-
-      <div className="mt-4 flex flex-wrap gap-2">
-        {(["marque", "model", "generation", "localisation"] as const).map(
-          (param) =>
-            formState[param] && (
-              <Badge key={param} variant="secondary" className="text-sm">
-                {formState[param]}
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="ml-1 h-4 w-4 p-0"
-                  onClick={() => removeParam(param)}
-                >
-                  <X className="h-3 w-3" />
-                </Button>
-              </Badge>
-            )
-        )}
-      </div>
     </Card>
   );
 };

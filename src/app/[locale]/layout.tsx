@@ -39,15 +39,15 @@ export default async function RootLayout({
     <html lang={locale}>
       <body className={font.className}>
         <NextIntlClientProvider locale={locale} messages={messages}>
-          <SessionProvider session={session}>
-            <ReactQueryProvider>
+          <ReactQueryProvider>
+            <SessionProvider session={session}>
               <Header />
               {children}
               <Toaster />
               <Footer />
               <Analytics />
-            </ReactQueryProvider>
-          </SessionProvider>
+            </SessionProvider>
+          </ReactQueryProvider>
         </NextIntlClientProvider>
       </body>
     </html>

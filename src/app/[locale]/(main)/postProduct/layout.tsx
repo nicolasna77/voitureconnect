@@ -1,6 +1,6 @@
-import { MultiForm } from "@/components/multi-form";
+import { MultiForm } from "@/components/postAD/multi-form";
 import { MultiStepContextProvider } from "@/contexts/multistep-form-context";
-import { Steps } from "@/components/steps";
+import { Steps } from "@/components/postAD/steps";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import Title from "@/components/title";
 

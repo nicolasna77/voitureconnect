@@ -26,26 +26,28 @@
       },
       "plans": {
         "basic": {
-          "title": "Basic Individual",
-          "price": 0,
+          "title": "Basic",
           "description": "For browsing and buying",
           "features": ["Browse listings", "Buy vehicles (private and dealers)"],
           "cta": "Sign up"
         },
-        "premium": {
-          "title": "Premium Individual",
-          "price": 10,
+        "pro_standard": {
+          "title": "Pro Standard",
           "description": "Advanced security and verification",
-          "features": ["VIN verification", "Damage history"],
-          "cta": "Subscribe"
-        },
-        "pro": {
-          "title": "Pro",
-          "price": 50,
-          "description": "For small dealerships",
-          "features": ["Listing management", "Basic verification tools"],
+          "features": ["VIN verification", "Damage history", "Premium support"],
           "cta": "Subscribe",
           "recommended": "Recommended"
+        },
+        "pro_premium": {
+          "title": "Pro Premium",
+          "description": "For professional dealerships",
+          "features": [
+            "All Pro Standard features",
+            "Advanced analytics",
+            "Priority support",
+            "Custom branding"
+          ],
+          "cta": "Subscribe"
         },
         "featuresCount": "features"
       }
@@ -135,18 +137,48 @@
     }
   },
   "CardDetails": {
+    "description": "Description",
     "lastUpdate": "Last update",
     "details": "Details",
+    "trim": "Trim",
     "brand": "Brand",
     "model": "Model",
     "mileage": "Mileage",
     "year": "Year",
     "gearbox": "Gearbox",
+    "specifications": "Technical Specifications",
+    "equipment": "Equipment",
+    "fuelType": "Fuel Type",
+    "color": "Color",
+    "generation": "Generation",
+    "serie": "Series",
+    "options": "Options",
     "contactSeller": "Contact seller",
     "sendMessage": "Send message"
   },
   "LocaleSwitcher": {
     "label": "Change language",
     "locale": "{locale, select, fr {French} en {English} other {Unknown}}"
+  },
+  "RegisterForm": {
+    "title": "Create an account",
+    "or": "Or",
+    "username": "Username",
+    "usernamePlaceholder": "Enter your username",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "********",
+    "submit": "Sign up",
+    "errors": {
+      "usernameRequired": "Username is required",
+      "invalidEmail": "Invalid email",
+      "passwordLength": "Password must be at least 8 characters",
+      "default": "Error, please try again"
+    },
+    "success": {
+      "title": "Registration successful",
+      "description": "You can now log in"
+    }
   }
 }
