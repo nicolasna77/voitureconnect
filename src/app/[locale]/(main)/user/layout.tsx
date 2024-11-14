@@ -8,7 +8,6 @@ export default function UserLayout({
 }) {
   const session = useSession();
 
-  
   return (
     <div className="container m-auto min-h-[calc(100vh_-_theme(spacing.16))] py-8 px-4">
       {children}

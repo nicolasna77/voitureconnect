@@ -29,7 +29,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     "cron/sync-databases.ts",
-    "cron/index.mts"
-, "src/app/[locale]/(main)/(auth)/verify-email"  ],
+    "cron/index.mts",
+    "src/app/[locale]/(main)/(auth)/verify-email"
+  ],
   "exclude": ["node_modules"]
 }

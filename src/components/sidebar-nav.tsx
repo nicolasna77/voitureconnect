@@ -32,7 +32,7 @@ export function SidebarNav({ className, items, ...props }: SidebarNavProps) {
           href={item.href}
           className={cn(
             buttonVariants({
-              variant: pathnameSplit === item.href ? "default" : "ghost",
+              variant: pathnameSplit === item.href ? "outline" : "ghost",
             }),
 
             "justify-start"

@@ -26,7 +26,7 @@ const HeroSection = () => {
       className="relative overflow-hidden bg-[#f2F2F2] py-20 lg:py-32"
       ref={ref}
     >
-      <div className="container relative z-10">
+      <div className="container m-auto relative z-10">
         <div className="grid items-center gap-8 lg:grid-cols-2">
           <motion.div
             style={{ opacity, y: yText, scale }}

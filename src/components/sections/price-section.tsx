@@ -59,7 +59,7 @@ export default function SectionTarifs() {
       ref={ref}
       className="bg-gradient-to-b from-background bg-primary/15 to-secondary/20 py-24 lg:py-32"
     >
-      <div className="container">
+      <div className="container m-auto">
         <motion.div
           style={{ opacity, y }}
           className="max-w-2xl mx-auto text-center mb-10 lg:mb-14"
