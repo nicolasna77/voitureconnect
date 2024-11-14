@@ -1,21 +1,34 @@
 "use server";
 
-import { auth, signIn } from "@/lib/auth";
-import { DEFAULT_LOGIN_REDIRECT } from "../../route";
+import { signIn } from "./auth";
 import { AuthError } from "next-auth";
 
-export async function authenticate(formData: FormData) {
-  const result = (await signIn("credentials", {
-    email: formData.get("email"),
-    password: formData.get("password"),
-    redirect: true,
-    redirectTo: DEFAULT_LOGIN_REDIRECT,
-  })) as { error?: string };
-
-  return { success: true, result, AuthError };
+enum ResponseForm {
+  InvalidCredentials = "Identifiants invalides.",
+  SomethingWentWrong = "Une erreur est survenue.",
 }
 
-export async function getSession() {
-  const session = await auth();
-  return session;
+export async function authentication(
+  prevState: string | null,
+  formData: FormData
+) {
+  try {
+    await signIn("credentials", {
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+      redirect: true,
+      redirectTo: "/",
+    });
+    return null;
+  } catch (error) {
+    if (error instanceof AuthError) {
+      switch (error.type) {
+        case "CredentialsSignin":
+          return ResponseForm.InvalidCredentials;
+        default:
+          return ResponseForm.SomethingWentWrong;
+      }
+    }
+    throw error;
+  }
 }

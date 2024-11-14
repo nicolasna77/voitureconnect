@@ -95,7 +95,7 @@ export function MultiForm() {
     <Form {...form} aria-label="Formulaire de publication de produit">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-4 lg:relative lg:flex-1"
+        className="space-y-4  lg:relative lg:flex-1"
         role="form"
       >
         <FormProvider {...form}>

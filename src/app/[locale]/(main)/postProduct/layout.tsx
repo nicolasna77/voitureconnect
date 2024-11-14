@@ -1,8 +1,4 @@
-import { MultiForm } from "@/components/formPostProduct/multi-form";
 import { MultiStepContextProvider } from "@/contexts/multistep-form-context";
-import { Steps } from "@/components/formPostProduct/steps";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import Title from "@/components/title";
 
 export default function PostProductLayout({
   children,
@@ -11,7 +7,9 @@ export default function PostProductLayout({
 }) {
   return (
     <MultiStepContextProvider>
-      <div>{children}</div>
+      <div className="flex justify-center items-center min-h-[calc(100vh-100px-100px)] w-full p-4">
+        <div className="w-full max-w-5xl">{children}</div>
+      </div>
     </MultiStepContextProvider>
   );
 }

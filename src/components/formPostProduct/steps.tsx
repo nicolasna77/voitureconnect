@@ -9,12 +9,14 @@ const stepData = [
 ];
 export function Steps() {
   return (
-    <header className="flex h-[200px]  items-start justify-center bg-sidebarMobile bg-cover bg-no-repeat p-6 lg:row-span-3 lg:row-start-2  lg:justify-start lg:rounded-md lg:bg-sidebarDesktop lg:bg-cover lg:bg-center lg:pt-10">
-      <div className="flex gap-4 text-white m-auto">
-        {stepData.map((info, index) => {
-          return <StepItem key={index} infos={info} />;
-        })}
-      </div>
-    </header>
+    <div className="absolute -top-20 left-0 w-full md:w-[25%] md:relative md:top-0 md:left-0">
+      <nav className="py-5  bg-background h-full rounded-md border border-border md:p-5">
+        <ul className="flex justify-center gap-2 md:flex-col">
+          {stepData.map((info, index) => {
+            return <StepItem key={index} infos={info} />;
+          })}
+        </ul>
+      </nav>
+    </div>
   );
 }

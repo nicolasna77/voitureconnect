@@ -14,8 +14,8 @@ const LoginSocial = () => {
     try {
       setIsLoading(true);
       await signIn("google", {
-        callbackUrl: DEFAULT_LOGIN_REDIRECT,
         redirect: true,
+        redirectTo: "/",
       });
     } catch (error) {
       console.error("Erreur de connexion:", error);

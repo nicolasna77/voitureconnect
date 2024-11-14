@@ -24,12 +24,12 @@ export default function LoginMenu({ session }: { session: Session }) {
         Connexion
       </Link>
     );
-
+  console.log(session?.user?.picture);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="cursor-pointer">
-          <AvatarImage src={session?.user?.picture} />
+        <Avatar className="h-8 w-8 cursor-pointer">
+          <AvatarImage src={session?.user?.picture} alt="avatar" />
           <AvatarFallback>
             {session?.user?.name?.charAt(0).toUpperCase()}
           </AvatarFallback>

@@ -2,7 +2,13 @@ import CarDetails from "@/components/component/car-details";
 import { MultiForm } from "@/components/formPostProduct/multi-form";
 import { Steps } from "@/components/formPostProduct/steps";
 import Title from "@/components/title";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 
 import React from "react";
 
@@ -10,10 +16,13 @@ const PagePostProduct = () => {
   return (
     <Card>
       <CardHeader>
-        <Title>Déposer une annonce</Title>
-        <Steps />
+        <CardTitle>Déposer une annonce</CardTitle>
+        <CardDescription>
+          Remplissez le formulaire pour déposer votre annonce
+        </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="flex justify-between gap-8 p-4">
+        <Steps />
         <MultiForm />
       </CardContent>
     </Card>

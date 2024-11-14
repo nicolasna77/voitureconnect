@@ -6,34 +6,27 @@ import { Label } from "../ui/label";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import LoginSocial from "./login-social";
-import { useState } from "react";
-import { authenticate } from "@/lib/actions";
-import { useRouter } from "next/navigation";
-import { DEFAULT_LOGIN_REDIRECT } from "../../../route";
+import { useFormState, useFormStatus } from "react-dom";
+import { authentication } from "@/lib/actions";
+
+// Créer un composant pour le bouton de soumission
+const SubmitButton = () => {
+  const { pending } = useFormStatus();
+
+  return (
+    <Button
+      size={"lg"}
+      variant={"default"}
+      className="m-auto justify-center flex"
+      type="submit"
+    >
+      {pending ? <Loader2 className="animate-spin" /> : "Se Connecter"}
+    </Button>
+  );
+};
 
 const LoginForm = () => {
-  const router = useRouter();
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
-
-  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setError("");
-    setLoading(true);
-
-    const formData = new FormData(event.currentTarget);
-
-    const response = await authenticate(formData);
-    if (response?.AuthError) {
-      setError(response.AuthError.toString());
-    }
-
-    if (response?.success) {
-      router.push(DEFAULT_LOGIN_REDIRECT);
-      router.refresh();
-    }
-    setLoading(false);
-  }
+  const [state, formAction] = useFormState(authentication, null);
 
   return (
     <Card className="grid gap-6 rounded-lg px-6 pb-4 pt-8">
@@ -51,11 +44,11 @@ const LoginForm = () => {
           </div>
         </div>
 
-        <form onSubmit={onSubmit}>
-          {error && (
+        <form action={formAction}>
+          {state && (
             <div className="flex items-center gap-2 p-3 bg-red-100 rounded-md mb-4">
               <AlertTriangle className="text-red-500 h-5 w-5" />
-              <p className="text-red-500 text-sm">{error}</p>
+              <p className="text-red-500 text-sm">{state}</p>
             </div>
           )}
           <div className="w-full">
@@ -105,14 +98,7 @@ const LoginForm = () => {
             </div>
           </div>
           <div className="py-4">
-            <Button
-              size={"lg"}
-              variant={"default"}
-              className="m-auto justify-center flex"
-              type="submit"
-            >
-              {loading ? <Loader2 className="animate-spin" /> : "Se Connecter"}
-            </Button>
+            <SubmitButton />
           </div>
         </form>
         <div className="text-center m-auto">
