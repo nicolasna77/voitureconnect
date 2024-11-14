@@ -1,7 +1,7 @@
 "use server";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import prisma from "@/lib/prisma";
+import prisma from "@/prisma";
 import crypto from "crypto";
 import { sendVerificationEmail } from "@/lib/mail";
 
