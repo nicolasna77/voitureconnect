@@ -24,6 +24,8 @@ interface MultiStepContextType {
   prevStep: () => void;
   updateFormData: (partialData: Partial<FormData>) => void;
   submitForm: () => void;
+  isYear?: boolean;
+  changePlan?: () => void;
 }
 
 export const MultiStepContext = createContext({} as MultiStepContextType);
@@ -87,6 +89,8 @@ export function MultiStepContextProvider({
         prevStep,
         updateFormData,
         submitForm,
+        isYear: true,
+        changePlan: () => {},
       }}
     >
       {children}

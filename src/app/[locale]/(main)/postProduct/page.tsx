@@ -1,6 +1,6 @@
 import CarDetails from "@/components/component/car-details";
-import { MultiForm } from "@/components/postAD/multi-form";
-import { Steps } from "@/components/postAD/steps";
+import { MultiForm } from "@/components/formPostProduct/multi-form";
+import { Steps } from "@/components/formPostProduct/steps";
 import Title from "@/components/title";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 

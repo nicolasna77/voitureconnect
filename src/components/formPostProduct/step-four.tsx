@@ -1,9 +1,10 @@
 "use client";
-import { Button } from "@/components/ui/button";
-import { useMultiContext } from "@/contexts/multistep-form-context";
+import React from "react";
+import { Button } from "../ui/button";
+import { useMultiContext } from "../../contexts/multistep-form-context";
 import { useFormContext } from "react-hook-form";
 
-export function StepFour() {
+const StepFour = () => {
   const { getValues } = useFormContext();
   const { isYear, changePlan } = useMultiContext();
   const formValues = getValues();
@@ -49,7 +50,6 @@ export function StepFour() {
             </p>
             <Button
               variant={"link"}
-              onClick={() => changePlan()}
               className="h-auto p-0 text-gray-400 underline"
             >
               Change
@@ -102,4 +102,6 @@ export function StepFour() {
       </div>
     </>
   );
-}
+};
+
+export default StepFour;

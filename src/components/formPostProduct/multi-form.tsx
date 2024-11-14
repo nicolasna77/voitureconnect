@@ -17,15 +17,34 @@ const stepOneSchema = z.object({
     .min(1, { message: "La transmission est obligatoire" }),
   fuel: z.string().min(1, { message: "Le type de carburant est obligatoire" }),
   color: z.string().min(1, { message: "La couleur est obligatoire" }),
-  year: z.string().min(1, { message: "L'année est obligatoire" }),
+  year: z
+    .string()
+    .min(1)
+    .refine(
+      (val) => {
+        const num = parseInt(val);
+        return num >= 1900 && num <= new Date().getFullYear();
+      },
+      { message: "L'année n'est pas valide" }
+    ),
 });
 
 const stepTwoSchema = z.object({
   title: z.string().min(1, { message: "Le titre est obligatoire" }),
   description: z.string().min(1, { message: "La description est obligatoire" }),
-  price: z.string().min(1, { message: "Le prix est obligatoire" }),
+  price: z
+    .string()
+    .min(1)
+    .refine(
+      (val) => {
+        const num = parseFloat(val);
+        return !isNaN(num) && num > 0;
+      },
+      { message: "Le prix doit être positif" }
+    ),
   num: z.string().min(1, { message: "Le numéro est obligatoire" }),
   address: z.string().min(1, { message: "L'adresse est obligatoire" }),
+
   picture: z
     .array(z.string())
     .min(1, { message: "Au moins une photo est requise" }),
@@ -48,7 +67,7 @@ export function MultiForm() {
       transmission: "",
       fuel: "",
       color: "",
-      year: "",
+      year: new Date().getFullYear().toString(),
       title: "",
       description: "",
       price: "",
@@ -73,10 +92,11 @@ export function MultiForm() {
   }
 
   return (
-    <Form {...form}>
+    <Form {...form} aria-label="Formulaire de publication de produit">
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className="space-y-4 lg:relative lg:flex-1"
+        role="form"
       >
         <FormProvider {...form}>
           {step === 1 && <StepOne />}
