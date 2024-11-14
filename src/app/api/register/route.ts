@@ -1,7 +1,10 @@
 "use server";
 import bcrypt from "bcryptjs";
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";
+import crypto from "crypto";
+import { sendVerificationEmail } from "@/lib/mail";
+
 export const POST = async (request: any) => {
   const { name, email, password } = await request.json();
 
@@ -24,9 +27,11 @@ export const POST = async (request: any) => {
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
+  const verificationToken = crypto.randomBytes(32).toString("hex");
+  const tokenExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 heures
 
   try {
-    await prisma.user.create({
+    const user = await prisma.user.create({
       data: {
         name,
         role: "USER",
@@ -34,10 +39,31 @@ export const POST = async (request: any) => {
         password: hashedPassword,
       },
     });
-    return new NextResponse("L'utilisateur a été enregistré avec succès", {
-      status: 200,
+
+    // Créer le token de vérification
+    await prisma.verificationToken.create({
+      data: {
+        email: user.email,
+        token: verificationToken,
+        expires: tokenExpires,
+      },
     });
+
+    // Envoyer l'email de vérification
+    await sendVerificationEmail({
+      email: user.email,
+      token: verificationToken,
+      name: user.name,
+    });
+
+    return new NextResponse(
+      "L'utilisateur a été enregistré avec succès. Veuillez vérifier votre email.",
+      {
+        status: 200,
+      }
+    );
   } catch (err: any) {
+    console.error(err);
     return new NextResponse(
       "Erreur lors de l'enregistrement de l'utilisateur",
       {

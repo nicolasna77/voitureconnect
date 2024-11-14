@@ -1,7 +1,5 @@
-import { PrismaClient } from "@prisma/client";
 import { getLocale } from "next-intl/server";
-
-const prisma = new PrismaClient();
+import prisma from "@/prisma";
 
 export const GET = async () => {
   const locale = await getLocale();

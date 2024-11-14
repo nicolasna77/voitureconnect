@@ -187,5 +187,22 @@
       "title": "Inscription réussie",
       "description": "Vous pouvez maintenant vous connecter"
     }
+  },
+  "Search": {
+    "labels": {
+      "marque": "Marque",
+      "model": "Modèle",
+      "generation": "Génération",
+      "localisation": "Localisation",
+      "vehicleType": "Type de véhicule",
+      "fuelType": "Carburant",
+      "priceMin": "Prix min",
+      "priceMax": "Prix max",
+      "yearMin": "Année min",
+      "yearMax": "Année max",
+      "transmission": "Boîte de vitesse",
+      "kmMin": "Km min",
+      "kmMax": "Km max"
+    }
   }
 }

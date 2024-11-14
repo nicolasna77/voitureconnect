@@ -12,6 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslations } from "next-intl";
+import Link from "next/link";
 
 const LoginSocial = dynamic(() => import("./login-social"), { ssr: false });
 
@@ -171,6 +172,11 @@ const RegisterForm = () => {
             </Button>
           </div>
         </form>
+        <div className="text-center m-auto">
+          <Link href="/login" className="text-sm text-primary ">
+            Vous avez déjà un compte ?
+          </Link>
+        </div>
       </CardContent>
     </Card>
   );

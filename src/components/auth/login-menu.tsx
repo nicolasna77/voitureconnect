@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Button, buttonVariants } from "../ui/button";
+import { buttonVariants } from "../ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -9,13 +9,11 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import SignoutButton from "./signout-button";
-import { useRouter } from "next/navigation";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Session } from "next-auth";
 import { cn } from "@/lib/utils";
 
 export default function LoginMenu({ session }: { session: Session }) {
-  const router = useRouter();
   if (!session)
     return (
       <Link
@@ -31,7 +29,7 @@ export default function LoginMenu({ session }: { session: Session }) {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Avatar className="cursor-pointer">
-          <AvatarImage src="/placeholder-user.jpg" />
+          <AvatarImage src={session?.user?.picture} />
           <AvatarFallback>
             {session?.user?.name?.charAt(0).toUpperCase()}
           </AvatarFallback>

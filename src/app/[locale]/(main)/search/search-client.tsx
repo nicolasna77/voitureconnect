@@ -15,7 +15,8 @@ import ViewToggle from "@/components/search/view-toggle";
 import FilterToggle from "@/components/search/filter-toggle";
 import ResetButton from "@/components/search/reset-button";
 import SortSelect from "@/components/search/sort-select";
-import { Orientation } from "@/hooks/useOrientation";
+import useOrientation, { Orientation } from "@/hooks/useOrientation";
+import useFilters from "@/hooks/useFilters";
 
 type AdResponse = {
   data: AdWithCar[];
@@ -39,15 +40,18 @@ type FilterState = {
 
 interface SearchClientProps {
   initialOrientation: Orientation;
+  initialShowFilters: boolean;
 }
 
-const SearchClient = ({ initialOrientation }: SearchClientProps) => {
+const SearchClient = ({
+  initialOrientation,
+  initialShowFilters,
+}: SearchClientProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [page, setPage] = useState(Number(searchParams.get("page")) || 1);
-  const [orientation, setOrientation] =
-    useState<Orientation>(initialOrientation);
-  const [showFilters, setShowFilters] = useState(false);
+  const { orientation, updateOrientation } = useOrientation(initialOrientation);
+  const { showFilters, toggleFilters } = useFilters(initialShowFilters);
   const { data: session } = useSession();
 
   const removeParam = useCallback(
@@ -87,10 +91,6 @@ const SearchClient = ({ initialOrientation }: SearchClientProps) => {
     enabled: true,
   });
 
-  const toggleFilters = useCallback(() => {
-    setShowFilters((prev) => !prev);
-  }, []);
-
   const handleFilterChange = useCallback(
     (filters: FilterState) => {
       const currentParams = new URLSearchParams(searchParams.toString());
@@ -112,13 +112,12 @@ const SearchClient = ({ initialOrientation }: SearchClientProps) => {
     <div className="py-8">
       <SearchForm />
       <div className="mx-auto py-12">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap justify-between">
+          <div className="flex items-center ">
             <FilterToggle
               defaultShowFilters={showFilters}
               toggleFilters={toggleFilters}
             />
-            <div className="py-4">Total résultat: {data?.total}</div>
           </div>
           <div className="flex-1 flex justify-center">
             <SearchItemSelect onRemoveParam={removeParam} />
@@ -126,31 +125,32 @@ const SearchClient = ({ initialOrientation }: SearchClientProps) => {
           <div className="flex items-center gap-2">
             <ViewToggle
               defaultOrientation={orientation}
-              onChange={setOrientation}
+              onChange={updateOrientation}
             />
             <ResetButton />
             <SortSelect />
           </div>
         </div>
-        <div className="sm:grid py-8 sm:grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="sm:grid py-8 grid-cols-8 gap-4">
           {showFilters && (
-            <div className="col-span-1">
+            <div className="col-span-3 md:col-span-3 lg:col-span-2 ">
               <FilterSearch
                 showFilters={showFilters}
-                setShowFilters={setShowFilters}
+                setShowFilters={toggleFilters}
                 onFilterChange={handleFilterChange}
               />
             </div>
           )}
           <div
             className={`w-full ${
-              showFilters ? "col-span-full md:col-span-3" : "col-span-full"
+              showFilters ? "col-span-full lg:col-span-6" : "col-span-full"
             }`}
           >
             <ListProduct
               data={data?.data}
               orientation={orientation}
               isPending={isPending}
+              filters={showFilters}
               isError={isError}
               error={error}
             />

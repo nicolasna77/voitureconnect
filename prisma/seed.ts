@@ -2,7 +2,6 @@ import { faker } from "@faker-js/faker";
 import bcrypt from "bcryptjs";
 import prisma from "./client";
 import { Prisma, SubscriptionPlan } from "@prisma/client";
-import { Decimal } from "@prisma/client/runtime/library";
 
 // Constantes pour le nombre d'entrées à générer
 const NUM_USERS = 50;
@@ -96,12 +95,24 @@ async function main() {
             },
           });
 
+          // Création d'une image de fond pour le garage
+          const picture = await prisma.picture.create({
+            data: {
+              url: faker.image.urlLoremFlickr({ category: "business" }),
+              alt: "Image de fond du garage",
+              isShown: true,
+              carId: (await prisma.car.findFirst())?.id || "", // Nécessite au moins une voiture
+            },
+          });
+
           return prisma.garage.create({
             data: {
               name: faker.company.name(),
               AdresseId: address.id,
               phone: faker.phone.number(),
               ownerId: faker.helpers.arrayElement(users).id,
+              image: faker.image.urlLoremFlickr({ category: "business" }),
+              backgroundId: picture.id,
             },
           });
         })
@@ -114,91 +125,54 @@ async function main() {
         .fill(null)
         .map(async () => {
           try {
-            // Vérifier les carTypes disponibles
-            const carTypes = await prisma.carTypeFR.findMany();
-            if (carTypes.length === 0) {
-              console.log("Aucun type de voiture disponible");
-              return null;
-            }
-            const randomType = faker.helpers.arrayElement(carTypes);
-
-            // Vérifier les marques compatibles
-            const compatibleMakes = await prisma.carMakeFR.findMany({
-              where: { id_car_type: randomType.id_car_type },
-            });
-            if (compatibleMakes.length === 0) {
-              console.log(
-                `Aucune marque compatible pour le type ${randomType.name}`
-              );
-              return null;
-            }
-            const randomMake = faker.helpers.arrayElement(compatibleMakes);
-
-            // Vérifier les modèles compatibles
-            const compatibleModels = await prisma.carModelFR.findMany({
+            // Récupérer d'abord tous les types de voitures avec leurs marques et modèles compatibles
+            const carType = await prisma.carTypeFR.findFirst({
               where: {
-                id_car_make: randomMake.id_car_make,
-                id_car_type: randomType.id_car_type,
+                carMakes: {
+                  some: {
+                    carModels: {
+                      some: {
+                        trims: {
+                          some: {},
+                        },
+                      },
+                    },
+                  },
+                },
               },
-            });
-            if (compatibleModels.length === 0) {
-              console.log(
-                `Aucun modèle compatible pour la marque ${randomMake.name}`
-              );
-              return null;
-            }
-            const randomModel = faker.helpers.arrayElement(compatibleModels);
-
-            // Vérifier les trims compatibles
-            const validTrims = await prisma.carTrimFR.findMany({
-              where: {
-                id_car_model: randomModel.id_car_model,
-                id_car_type: randomType.id_car_type,
-              },
-            });
-            if (validTrims.length === 0) {
-              console.log(
-                `Aucun trim compatible pour le modèle ${randomModel.name}`
-              );
-              return null;
-            }
-            const randomTrim = faker.helpers.arrayElement(validTrims);
-
-            // Vérifier les équipements compatibles
-            const validEquipments = await prisma.carEquipmentFR.findMany({
-              where: {
-                id_car_trim: randomTrim.id_car_trim,
-                id_car_type: randomType.id_car_type,
+              include: {
+                carMakes: {
+                  include: {
+                    carModels: {
+                      include: {
+                        trims: {
+                          include: {
+                            equipments: true,
+                          },
+                        },
+                        generations: true,
+                        series: true,
+                      },
+                    },
+                  },
+                },
               },
             });
 
-            // Ajouter cette ligne
-            const randomEquipment = faker.helpers.arrayElement(validEquipments);
-
-            // Vérifier si un équipement valide existe
-            if (!randomEquipment) {
-              console.log(
-                `Aucun équipement compatible pour le trim ${randomTrim.name}`
-              );
-              return null;
+            if (!carType) {
+              throw new Error("Aucun type de voiture trouvé");
             }
 
-            // Ajouter la vérification pour generation et serie
-            const validGeneration = await prisma.carGenerationFR.findFirst({
-              where: { id_car_model: randomModel.id_car_model },
-            });
-            const validSerie = await prisma.carSerieFR.findFirst({
-              where: { id_car_model: randomModel.id_car_model },
-            });
+            const randomMake = faker.helpers.arrayElement(carType.carMakes);
+            const randomModel = faker.helpers.arrayElement(
+              randomMake.carModels
+            );
+            const randomTrim = faker.helpers.arrayElement(randomModel.trims);
+            const randomEquipment = faker.helpers.arrayElement(
+              randomTrim.equipments
+            );
 
-            if (!validGeneration || !validSerie) {
-              console.log(
-                `Aucune génération ou série compatible pour le modèle ${randomModel.name}`
-              );
-              return null;
-            }
-
-            // Création de la voiture avec les données valides
+            // Création de la voiture avec les données validées
             return await prisma.car.create({
               data: {
                 userId: faker.helpers.arrayElement(users).id,
@@ -224,13 +198,14 @@ async function main() {
                   "Manuelle",
                   "Automatique",
                 ]),
-                carTypeId: randomType.id_car_type,
+                carTypeId: carType.id_car_type,
                 carMakeId: randomMake.id_car_make,
                 carModelId: randomModel.id_car_model,
                 carTrimId: randomTrim.id_car_trim,
                 carEquipmentId: randomEquipment.id_car_equipment,
-                carGenerationId: validGeneration.id_car_generation,
-                carSerieId: validSerie.id_car_serie,
+                carGenerationId:
+                  randomModel.generations[0]?.id_car_generation ?? 1,
+                carSerieId: randomModel.series[0]?.id_car_serie ?? 1,
 
                 pictures: {
                   create: Array(NUM_PICTURES_PER_CAR)

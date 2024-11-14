@@ -1,15 +1,22 @@
 import CarDetails from "@/components/component/car-details";
+import { MultiForm } from "@/components/postAD/multi-form";
+import { Steps } from "@/components/postAD/steps";
 import Title from "@/components/title";
-import { AdWithCar } from "@/types/car";
-import { Decimal } from "@prisma/client/runtime/library";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
 import React from "react";
 
 const PagePostProduct = () => {
   return (
-    <div>
-      <Title>{"Aperçu de l'annonce"}</Title>
-    </div>
+    <Card>
+      <CardHeader>
+        <Title>Déposer une annonce</Title>
+        <Steps />
+      </CardHeader>
+      <CardContent>
+        <MultiForm />
+      </CardContent>
+    </Card>
   );
 };
 

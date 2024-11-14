@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { Car, Prisma } from "@prisma/client";
 import { Decimal } from "@prisma/client/runtime/library";
+import { Prisma } from "@prisma/client";
 
 // Définir les interfaces pour les relations de voiture
 interface CarRelation {

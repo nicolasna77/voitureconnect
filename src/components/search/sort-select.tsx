@@ -47,10 +47,10 @@ const SortSelect = () => {
         <SelectValue placeholder="Trier par" />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="price_desc">Trier par prix (décroissant)</SelectItem>
-        <SelectItem value="price_asc">Trier par prix (croissant)</SelectItem>
-        <SelectItem value="date_desc">Trier par date (décroissant)</SelectItem>
-        <SelectItem value="date_asc">Trier par date (croissant)</SelectItem>
+        <SelectItem value="price_desc">Prix décroissant</SelectItem>
+        <SelectItem value="price_asc">Prix croissant</SelectItem>
+        <SelectItem value="date_desc">Date décroissant</SelectItem>
+        <SelectItem value="date_asc">Date croissant</SelectItem>
       </SelectContent>
     </Select>
   );

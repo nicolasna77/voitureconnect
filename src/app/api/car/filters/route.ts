@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/prisma";
 import { NextRequest } from "next/server";
 
 function buildWhereClause(searchParams: URLSearchParams, lang: string) {
@@ -54,13 +54,17 @@ export async function GET(request: NextRequest) {
 
     // Transformer les données pour le frontend
     const options = {
-      carTypes: [
-        ...new Set(
+      carTypes: Array.from(
+        new Set(
           availableOptions.map((car) => car.carType?.name).filter(Boolean)
-        ),
-      ],
-      fuelTypes: [...new Set(availableOptions.map((car) => car.fuelType))],
-      gearboxTypes: [...new Set(availableOptions.map((car) => car.gearbox))],
+        )
+      ),
+      fuelTypes: Array.from(
+        new Set(availableOptions.map((car) => car.fuelType))
+      ),
+      gearboxTypes: Array.from(
+        new Set(availableOptions.map((car) => car.gearbox))
+      ),
       gearboxCounts: Object.fromEntries(
         gearboxCounts.map(({ gearbox, _count }) => [gearbox, _count])
       ),

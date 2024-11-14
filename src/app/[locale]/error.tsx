@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 enum Erreur {
@@ -17,8 +18,13 @@ const mapErreurs = {
 };
 
 export default function PageErreurAuth() {
-  const recherche = useSearchParams();
-  const erreur = recherche.get("error") as Erreur;
+  const [error, setError] = useState<Erreur | null>(null);
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const errorParam = searchParams.get("error") as Erreur;
+    setError(errorParam);
+  }, [searchParams]);
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center">
@@ -30,8 +36,9 @@ export default function PageErreurAuth() {
           Quelque chose s&apos;est mal passé
         </h5>
         <div className="font-normal text-gray-700 dark:text-gray-400">
-          {mapErreurs[erreur] ||
-            "Veuillez nous contacter si cette erreur persiste."}
+          {error
+            ? mapErreurs[error]
+            : "Veuillez nous contacter si cette erreur persiste."}
         </div>
       </a>
     </div>

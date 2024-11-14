@@ -14,7 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import {  useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 import { Session } from "next-auth";
 import { Loader2 } from "lucide-react";
 
@@ -33,8 +33,8 @@ export function DisplayNameForm({ session }: { session: Session }) {
       return response.data;
     },
     onSuccess: async (newDisplayName) => {
+      await update({ name: newDisplayName });
       queryClient.invalidateQueries({ queryKey: ["userSettings"] });
-      await update();
       toast({
         title: "Succès",
         variant: "default",

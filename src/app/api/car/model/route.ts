@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/prisma";
+import prisma from "@/prisma";
 import { getLocale } from "next-intl/server";
 
 export const GET = async (req: Request) => {

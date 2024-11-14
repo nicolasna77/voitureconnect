@@ -129,31 +129,24 @@ const ProductCard = ({
       <Card
         className={`relative group overflow-hidden ${
           orientation === "list"
-            ? "sm:grid sm:grid-cols-[400px_1fr] max-w-7xl  sm:gap-6 "
+            ? "md:grid md:grid-cols-[300px_1fr]   md:gap-6 "
             : "flex flex-col"
         }`}
       >
-        {/* Section Image */}
         <div
           className={`relative ${
             orientation === "list"
-              ? "w-full h-[230px] sm:h-[300px] sm:w-full"
-              : "w-full h-[230px]"
+              ? "  h-[280px] sm:h-[320px] "
+              : "w-full h-[280px]"
           }`}
         >
-          <Link
-            href={item?.id ? `/search/${item.id}` : "#"}
-            className="block h-full"
-          >
+          <Link prefetch href={item?.id ? `/search/${item.id}` : "#"}>
             <Image
               src={item.car?.pictures[0]?.url}
               alt={item.car?.pictures[0]?.alt}
-              fill
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               quality={100}
-              className={`object-cover ${
-                orientation === "list" ? "sm:rounded-lg" : "rounded-t-lg"
-              }`}
+              fill
+              className={`object-cover rounded-lg `}
             />
           </Link>
 
@@ -191,7 +184,7 @@ const ProductCard = ({
             orientation === "list" ? "sm:gap-4" : ""
           }`}
         >
-          <Link href={item?.id ? `/search/${item.id}` : "#"}>
+          <Link prefetch href={item?.id ? `/search/${item.id}` : "#"}>
             <CardHeader>
               <div className="grid gap-2 grid-cols-3 items-center w-full">
                 <div className="flex flex-col col-span-2">
@@ -267,6 +260,7 @@ const ProductCard = ({
               </Button>
             )}
             <Link
+              prefetch
               href={`/search/${item.id}`}
               className={buttonVariants({ variant: "outline" })}
             >

@@ -13,9 +13,8 @@ const UserInfo = ({
     address: Address;
   };
 }) => {
-  console.log(item);
   return (
-    <Link href={`/profile/${item.id}`} className="block group">
+    <Link href={`/search/profile/${item.User.id}`} className="block group">
       <div className="flex items-center space-x-4 p-4 rounded-lg transition-colors duration-200 hover:bg-accent/50">
         <Avatar className="w-10 h-10">
           <AvatarFallback>{item.User.name.slice(0, 2)}</AvatarFallback>

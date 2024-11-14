@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { SubscriptionPlan } from "@prisma/client";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/prisma";
 
 function roundUpToTwoDecimals(num: number): number {
   return Number((Math.ceil(num * 100) / 100).toFixed(2));

@@ -8,11 +8,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Drawer, DrawerContent, DrawerTrigger } from "@/components/ui/drawer";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useMediaQuery } from "@/hooks/use-media-query";
-import { useState } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import { useSearchParams } from "next/navigation";
 
 interface FilterState {
   category: string;
@@ -27,6 +28,19 @@ interface FilterState {
   kmMax: string;
 }
 
+const initialFilters: FilterState = {
+  category: "",
+  vehicleType: "",
+  fuelType: "",
+  priceMin: "",
+  priceMax: "",
+  yearMin: "",
+  yearMax: "",
+  transmission: "",
+  kmMin: "",
+  kmMax: "",
+};
+
 const FilterSearch = ({
   showFilters,
   setShowFilters,
@@ -36,26 +50,18 @@ const FilterSearch = ({
   setShowFilters: (show: boolean) => void;
   onFilterChange: (filters: FilterState) => void;
 }) => {
-  const isDesktop = useMediaQuery("(min-width: 768px)");
-  const searchParams = new URLSearchParams(window.location.search);
-  const [filters, setFilters] = useState({
-    category: "",
-    vehicleType: "",
-    fuelType: "",
-    priceMin: "",
-    priceMax: "",
-    yearMin: "",
-    yearMax: "",
-    transmission: "",
-    kmMin: "",
-    kmMax: "",
-  });
+  const isDesktop = useMediaQuery("( min-width:1024px )");
+  const searchParams = useSearchParams();
+  const [filters, setFilters] = useState<FilterState>(initialFilters);
 
-  const handleFilterChange = (key: string, value: string) => {
-    const newFilters = { ...filters, [key]: value };
-    setFilters(newFilters);
-    onFilterChange(newFilters);
-  };
+  const handleFilterChange = useCallback(
+    (key: keyof FilterState, value: string) => {
+      const newFilters = { ...filters, [key]: value };
+      setFilters(newFilters);
+      onFilterChange(newFilters);
+    },
+    [filters, onFilterChange]
+  );
 
   const { data: filterOptions } = useQuery({
     queryKey: ["filterOptions", searchParams.toString()],
@@ -67,118 +73,115 @@ const FilterSearch = ({
     },
   });
 
-  const handleSearch = () => {
+  const handleSearch = useCallback(() => {
     onFilterChange(filters);
-  };
+  }, [filters, onFilterChange]);
 
-  const filterContent = (
-    <div className="flex flex-col gap-6">
-      {[
-        {
-          title: "Type de véhicule",
-          key: "vehicleType",
-          placeholder: "Tout",
-          items: filterOptions?.data?.carTypes || [],
-        },
-        {
-          title: "Carburant",
-          key: "fuelType",
-          placeholder: "Tout",
-          items: filterOptions?.data?.fuelTypes || [],
-        },
-      ].map(({ title, key, placeholder, items }) => (
-        <div key={title}>
-          <h3 className="font-semibold mb-2">{title}</h3>
-          <Select onValueChange={(value) => handleFilterChange(key, value)}>
+  const filterContent = useMemo(
+    () => (
+      <div className="flex flex-col gap-6 ">
+        {[
+          {
+            title: "Carburant",
+            key: "fuelType" as keyof FilterState,
+            placeholder: "Tout",
+            items: filterOptions?.data?.fuelTypes || [],
+          },
+        ].map(({ title, key, placeholder, items }) => (
+          <div key={title}>
+            <h3 className="font-semibold mb-2">{title}</h3>
+            <Select onValueChange={(value) => handleFilterChange(key, value)}>
+              <SelectTrigger>
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
+              <SelectContent>
+                {items.map((item: string) => (
+                  <SelectItem key={item} value={item}>
+                    {item.charAt(0).toUpperCase() + item.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        ))}
+
+        <div>
+          <h3 className="font-semibold mb-2">Prix</h3>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              placeholder="Minimum €"
+              onChange={(e) => handleFilterChange("priceMin", e.target.value)}
+            />
+            <Input
+              type="number"
+              placeholder="Maximum €"
+              onChange={(e) => handleFilterChange("priceMax", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2">Année-Modèle</h3>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              placeholder="Minimum"
+              onChange={(e) => handleFilterChange("yearMin", e.target.value)}
+            />
+            <Input
+              type="number"
+              placeholder="Maximum"
+              onChange={(e) => handleFilterChange("yearMax", e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div>
+          <h3 className="font-semibold mb-2">Boîte de vitesse</h3>
+          <Select
+            onValueChange={(value) => handleFilterChange("transmission", value)}
+          >
             <SelectTrigger>
-              <SelectValue placeholder={placeholder} />
+              <SelectValue placeholder="Tout type" />
             </SelectTrigger>
             <SelectContent>
-              {items.map((item: string) => (
-                <SelectItem key={item} value={item}>
-                  {item.charAt(0).toUpperCase() + item.slice(1)}
+              {(filterOptions?.data?.gearboxTypes || []).map((type: string) => (
+                <SelectItem key={type} value={type}>
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                  {filterOptions?.data?.gearboxCounts?.[type] &&
+                    ` (${filterOptions?.data?.gearboxCounts[type]})`}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
-      ))}
 
-      <div>
-        <h3 className="font-semibold mb-2">Prix</h3>
-        <div className="flex gap-2">
-          <Input
-            type="number"
-            placeholder="Minimum €"
-            onChange={(e) => handleFilterChange("priceMin", e.target.value)}
-          />
-          <Input
-            type="number"
-            placeholder="Maximum €"
-            onChange={(e) => handleFilterChange("priceMax", e.target.value)}
-          />
+        <div>
+          <h3 className="font-semibold mb-2">Kilométrage</h3>
+          <div className="flex gap-2">
+            <Input
+              type="number"
+              placeholder="Minimum km"
+              onChange={(e) => handleFilterChange("kmMin", e.target.value)}
+            />
+            <Input
+              type="number"
+              placeholder="Maximum km"
+              onChange={(e) => handleFilterChange("kmMax", e.target.value)}
+            />
+          </div>
         </div>
-      </div>
 
-      <div>
-        <h3 className="font-semibold mb-2">Année-Modèle</h3>
-        <div className="flex gap-2">
-          <Input
-            type="number"
-            placeholder="Minimum"
-            onChange={(e) => handleFilterChange("yearMin", e.target.value)}
-          />
-          <Input
-            type="number"
-            placeholder="Maximum"
-            onChange={(e) => handleFilterChange("yearMax", e.target.value)}
-          />
-        </div>
+        <Button className="w-full" onClick={handleSearch}>
+          Rechercher{" "}
+          {filterOptions?.data?.totalCount
+            ? `(${filterOptions?.data?.totalCount})`
+            : ""}
+        </Button>
       </div>
-
-      <div>
-        <h3 className="font-semibold mb-2">Boîte de vitesse</h3>
-        <Select
-          onValueChange={(value) => handleFilterChange("transmission", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="Tout type" />
-          </SelectTrigger>
-          <SelectContent>
-            {(filterOptions?.data?.gearboxTypes || []).map((type: string) => (
-              <SelectItem key={type} value={type}>
-                {type.charAt(0).toUpperCase() + type.slice(1)}
-                {filterOptions?.data?.gearboxCounts?.[type] &&
-                  ` (${filterOptions?.data?.gearboxCounts[type]})`}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div>
-        <h3 className="font-semibold mb-2">Kilométrage</h3>
-        <div className="flex gap-2">
-          <Input
-            type="number"
-            placeholder="Minimum km"
-            onChange={(e) => handleFilterChange("kmMin", e.target.value)}
-          />
-          <Input
-            type="number"
-            placeholder="Maximum km"
-            onChange={(e) => handleFilterChange("kmMax", e.target.value)}
-          />
-        </div>
-      </div>
-
-      <Button className="w-full" onClick={handleSearch}>
-        Rechercher{" "}
-        {filterOptions?.data?.totalCount
-          ? `(${filterOptions?.data?.totalCount})`
-          : ""}
-      </Button>
-    </div>
+    ),
+    [filterOptions?.data, handleFilterChange, handleSearch]
   );
 
   if (isDesktop) {

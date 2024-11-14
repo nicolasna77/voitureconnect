@@ -180,5 +180,22 @@
       "title": "Registration successful",
       "description": "You can now log in"
     }
+  },
+  "Search": {
+    "labels": {
+      "marque": "Brand",
+      "model": "Model",
+      "generation": "Generation",
+      "localisation": "Location",
+      "vehicleType": "Vehicle Type",
+      "fuelType": "Fuel Type",
+      "priceMin": "Min Price",
+      "priceMax": "Max Price",
+      "yearMin": "Min Year",
+      "yearMax": "Max Year",
+      "transmission": "Transmission",
+      "kmMin": "Min Km",
+      "kmMax": "Max Km"
+    }
   }
 }

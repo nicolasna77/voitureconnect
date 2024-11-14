@@ -11,18 +11,19 @@ datasource db {
 
 // ============= SCHÉMA BASE =============
 model User {
-  id                 String        @id @default(uuid())
+  id                 String         @id @default(uuid())
   name               String
-  email              String        @unique
+  email              String         @unique
   password           String
-  picture            String        @default("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png")
-  role               Role          @default(USER)
-  garages            Garage[]      @relation("GarageOwner")
+  picture            String         @default("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png")
+  role               Role           @default(USER)
+  garages            Garage[]       @relation("GarageOwner")
   offers             Offer[]
-  buyerTransactions  Transaction[] @relation("Buyer")
-  sellerTransactions Transaction[] @relation("Seller")
-  createdAt          DateTime      @default(now())
-  updatedAt          DateTime      @updatedAt
+  emailVerified      DateTime?
+  buyerTransactions  Transaction[]  @relation("Buyer")
+  sellerTransactions Transaction[]  @relation("Seller")
+  createdAt          DateTime       @default(now())
+  updatedAt          DateTime       @updatedAt
   Account            Account[]
   Session            Session[]
   Ad                 Ad[]
@@ -66,11 +67,12 @@ model Account {
 }
 
 model VerificationToken {
-  identifier String
-  token      String   @unique
-  expires    DateTime
+  id      String   @id @default(uuid())
+  email   String
+  token   String
+  expires DateTime
 
-  @@unique([identifier, token])
+  @@unique([email, token])
   @@schema("base")
 }
 
@@ -88,17 +90,20 @@ model Address {
 }
 
 model Garage {
-  id        String   @id @default(uuid())
-  name      String
-  AdresseId String
-  Adresse   Address  @relation(fields: [AdresseId], references: [id])
-  phone     String
-  ownerId   String
-  owner     User     @relation("GarageOwner", fields: [ownerId], references: [id])
-  adID      Ad[]
-  cars      Car[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id           String   @id @default(uuid())
+  name         String
+  AdresseId    String
+  image        String?
+  backgroundId String?
+  background   Picture? @relation(fields: [backgroundId], references: [id])
+  Adresse      Address  @relation(fields: [AdresseId], references: [id])
+  phone        String
+  ownerId      String
+  owner        User     @relation("GarageOwner", fields: [ownerId], references: [id])
+  adID         Ad[]
+  cars         Car[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   @@schema("base")
 }
@@ -175,6 +180,7 @@ model Like {
   user      User     @relation(fields: [userId], references: [id])
   ad        Ad       @relation(fields: [adId], references: [id])
   createdAt DateTime @default(now())
+
   @@unique([userId, adId])
   @@schema("base")
 }
@@ -232,24 +238,25 @@ model Car {
 }
 
 model Picture {
-  id      String  @id @default(uuid())
+  id      String   @id @default(uuid())
   url     String
   alt     String
-  isShown Boolean @default(true)
+  isShown Boolean  @default(true)
   carId   String
-  car     Car     @relation(fields: [carId], references: [id])
+  car     Car      @relation(fields: [carId], references: [id])
+  Garage  Garage[]
 
   @@schema("base")
 }
 
 // ============= SCHÉMA FRANÇAIS =============
 model CarTypeFR {
-  id_car_type             Int                       @id @default(autoincrement())
-  name                    String
-  date_create             Int
-  date_update             String?                   @default("NULL")
-  carMakes                CarMakeFR[]
-  carModels               CarModelFR[]
+  id_car_type            Int                       @id @default(autoincrement())
+  name                   String
+  date_create            Int
+  date_update            String?                   @default("NULL")
+  carMakes               CarMakeFR[]
+  carModels              CarModelFR[]
   carGenerations         CarGenerationFR[]
   carSeries              CarSerieFR[]
   carTrims               CarTrimFR[]
@@ -258,20 +265,20 @@ model CarTypeFR {
   carOptions             CarOptionFR[]
   carOptionValues        CarOptionValueFR[]
   carEquipments          CarEquipmentFR[]
-  cars Car[] @relation("CarToCarTypeFR")
+  cars                   Car[]                     @relation("CarToCarTypeFR")
 
   @@map("car_type")
   @@schema("dataCarFR")
 }
 
 model CarMakeFR {
-  id_car_make Int          @id @default(autoincrement())
+  id_car_make Int       @id @default(autoincrement())
   id_car_type Int
   name        String
   date_create Int
-  date_update String?      @default("NULL")
-  cars Car[] @relation("CarToCarMakeFR")
-  carType CarTypeFR @relation(fields: [id_car_type], references: [id_car_type])
+  date_update String?   @default("NULL")
+  cars        Car[]     @relation("CarToCarMakeFR")
+  carType     CarTypeFR @relation(fields: [id_car_type], references: [id_car_type])
 
   carModels CarModelFR[]
 
@@ -291,25 +298,25 @@ model CarModelFR {
   series       CarSerieFR[]
   trims        CarTrimFR[]
   carType      CarTypeFR         @relation(fields: [id_car_type], references: [id_car_type])
-  cars Car[] @relation("CarToCarModelFR")
+  cars         Car[]             @relation("CarToCarModelFR")
 
   @@map("car_model")
   @@schema("dataCarFR")
 }
 
 model CarGenerationFR {
-  id_car_generation Int              @id @default(autoincrement())
+  id_car_generation Int          @id @default(autoincrement())
   id_car_model      Int
   id_car_type       Int
   name              String
-  year_begin        String?          @default("NULL")
-  year_end          String?          @default("NULL")
-  date_update       String?          @default("NULL")
+  year_begin        String?      @default("NULL")
+  year_end          String?      @default("NULL")
+  date_update       String?      @default("NULL")
   date_create       Int
-  carModel          CarModelFR       @relation(fields: [id_car_model], references: [id_car_model])
-  carType           CarTypeFR        @relation(fields: [id_car_type], references: [id_car_type])
+  carModel          CarModelFR   @relation(fields: [id_car_model], references: [id_car_model])
+  carType           CarTypeFR    @relation(fields: [id_car_type], references: [id_car_type])
   series            CarSerieFR[]
-  cars              Car[]            @relation("CarToCarGenerationFR")
+  cars              Car[]        @relation("CarToCarGenerationFR")
 
   @@map("car_generation")
   @@schema("dataCarFR")
@@ -365,7 +372,7 @@ model CarEquipmentFR {
   carTrim          CarTrimFR          @relation(fields: [id_car_trim], references: [id_car_trim])
   optionValues     CarOptionValueFR[]
   carType          CarTypeFR          @relation(fields: [id_car_type], references: [id_car_type])
-  cars Car[] @relation("CarToCarEquipmentFR")
+  cars             Car[]              @relation("CarToCarEquipmentFR")
 
   @@map("car_equipment")
   @@schema("dataCarFR")
@@ -449,7 +456,7 @@ model CarTypeEN {
   CarSpecificationValueEN CarSpecificationValueEN[]
   CarOptionEN             CarOptionEN[]
   CarOptionValueEN        CarOptionValueEN[]
-  cars Car[] @relation("CarToCarTypeEN")
+  cars                    Car[]                     @relation("CarToCarTypeEN")
 
   @@map("car_type")
   @@schema("dataCarEN")
@@ -464,7 +471,7 @@ model CarMakeEN {
   carType     CarTypeEN @relation(fields: [id_car_type], references: [id_car_type])
 
   carModels CarModelEN[]
-  cars Car[] @relation("CarToCarMakeEN")
+  cars      Car[]        @relation("CarToCarMakeEN")
 
   @@map("car_make")
   @@schema("dataCarEN")
@@ -482,7 +489,7 @@ model CarModelEN {
   generations  CarGenerationEN[]
   series       CarSerieEN[]
   trims        CarTrimEN[]
-  cars Car[] @relation("CarToCarModelEN")
+  cars         Car[]             @relation("CarToCarModelEN")
 
   @@map("car_model")
   @@schema("dataCarEN")
@@ -497,10 +504,10 @@ model CarGenerationEN {
   year_end          String?      @default("NULL")
   date_update       String?      @default("NULL")
   date_create       Int
-  carModel CarModelEN   @relation(fields: [id_car_model], references: [id_car_model])
+  carModel          CarModelEN   @relation(fields: [id_car_model], references: [id_car_model])
   carType           CarTypeEN    @relation(fields: [id_car_type], references: [id_car_type])
   series            CarSerieEN[]
-  cars Car[] @relation("CarToCarGenerationEN")
+  cars              Car[]        @relation("CarToCarGenerationEN")
 
   @@map("car_generation")
   @@schema("dataCarEN")
@@ -518,7 +525,7 @@ model CarSerieEN {
   generation        CarGenerationEN? @relation(fields: [id_car_generation], references: [id_car_generation])
   trims             CarTrimEN[]
   carType           CarTypeEN        @relation(fields: [id_car_type], references: [id_car_type])
-  cars Car[] @relation("CarToCarSerieEN")
+  cars              Car[]            @relation("CarToCarSerieEN")
 
   @@map("car_serie")
   @@schema("dataCarEN")
@@ -539,7 +546,7 @@ model CarTrimEN {
   carType               CarTypeEN                 @relation(fields: [id_car_type], references: [id_car_type])
   equipments            CarEquipmentEN[]
   specifications        CarSpecificationValueEN[]
-  cars Car[] @relation("CarToCarTrimEN")
+  cars                  Car[]                     @relation("CarToCarTrimEN")
 
   @@map("car_trim")
   @@schema("dataCarEN")
@@ -555,7 +562,7 @@ model CarEquipmentEN {
   id_car_type      Int
   carTrim          CarTrimEN @relation(fields: [id_car_trim], references: [id_car_trim])
   carType          CarTypeEN @relation(fields: [id_car_type], references: [id_car_type])
-  cars Car[] @relation("CarToCarEquipmentEN")
+  cars             Car[]     @relation("CarToCarEquipmentEN")
 
   carOptionValues CarOptionValueEN[]
 
@@ -635,15 +642,15 @@ enum SubscriptionPlan {
 model Subscription {
   id        String           @id @default(uuid())
   userId    String
-  user      User            @relation(fields: [userId], references: [id])
+  user      User             @relation(fields: [userId], references: [id])
   plan      SubscriptionPlan
-  status    String          
+  status    String
   startDate DateTime
   endDate   DateTime
-  isAnnual  Boolean         @default(false)
+  isAnnual  Boolean          @default(false)
   amount    Decimal
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @updatedAt
+  createdAt DateTime         @default(now())
+  updatedAt DateTime         @updatedAt
 
   @@map("subscriptions")
   @@schema("base")

@@ -7,7 +7,7 @@ import Link from "next/link";
 
 const GarageInfo = ({ garage }: { garage: Garage & { Adresse: Address } }) => {
   return (
-    <Link href={`/garage/${garage.id}`} className=" group">
+    <Link href={`/search/pro/${garage.id}`} className=" group">
       <div className="flex items-center gap-6 p-4 my-4 rounded-lg transition-colors duration-200 hover:bg-accent/50">
         <Avatar className="w-16 h-16 border-2 border-primary/10">
           <AvatarFallback className="text-lg font-medium">
