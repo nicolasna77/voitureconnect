@@ -1,5 +1,5 @@
 import { v4 as uuidv4 } from "uuid";
-import prisma from "@/lib/prisma";
+import prisma from "@/prisma";
 
 export const generateVerificationToken = async (email: string) => {
   // Generate a random token
@@ -18,8 +18,8 @@ export const generateVerificationToken = async (email: string) => {
       where: {
         email_token: {
           email: lowerCaseEmail,
-          token: existingToken.token
-        }
+          token: existingToken.token,
+        },
       },
     });
   }
