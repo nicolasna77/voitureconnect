@@ -1,16 +1,12 @@
 import type { NextAuthConfig } from "next-auth";
 import Google from "next-auth/providers/google";
-import Credentials from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import prisma from "@/prisma";
 import authCredentials from "next-auth/providers/credentials";
 
 export default {
   providers: [
-    Google({
-      clientId: process.env.GOOGLE_CLIENT_ID as string,
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
-    }),
+    Google,
     authCredentials({
       credentials: {
         email: { label: "email", type: "email" },
@@ -18,19 +14,34 @@ export default {
       },
       async authorize(credentials) {
         if (!credentials) {
-          return null;
+          throw new Error("Veuillez remplir tous les champs");
         }
 
         const { email, password } = credentials;
+
         try {
           const user = await prisma.user.findUnique({
             where: {
               email: email as string,
             },
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              role: true,
+              password: true,
+              emailVerified: true,
+            },
           });
 
-          if (!user || !user.password) {
-            return null;
+          if (!user) {
+            throw new Error("Email ou mot de passe incorrect");
+          }
+
+          if (!user.emailVerified) {
+            throw new Error(
+              "Veuillez vérifier votre email avant de vous connecter"
+            );
           }
 
           const isValid = await bcrypt.compare(
@@ -39,7 +50,9 @@ export default {
           );
 
           if (!isValid) {
-            return null;
+            throw Error("Type d'erreur", {
+              cause: { server_message: "Email ou mot de passe invalide" },
+            });
           }
 
           return {
@@ -49,7 +62,7 @@ export default {
             role: user.role,
           };
         } catch (error) {
-          return null;
+          throw error;
         }
       },
     }),

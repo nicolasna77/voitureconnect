@@ -100,8 +100,7 @@ async function main() {
             data: {
               url: faker.image.urlLoremFlickr({ category: "business" }),
               alt: "Image de fond du garage",
-              isShown: true,
-              carId: (await prisma.car.findFirst())?.id || "", // Nécessite au moins une voiture
+              isShown: true
             },
           });
 

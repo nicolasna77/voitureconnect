@@ -10,7 +10,6 @@ export async function GET(request: Request) {
   }
 
   try {
-    console.log("Recherche du token:", token);
     const verificationToken = await prisma.verificationToken.findFirst({
       where: {
         token,
@@ -19,7 +18,6 @@ export async function GET(request: Request) {
         },
       },
     });
-    console.log("Token trouvé:", verificationToken);
 
     if (!verificationToken) {
       return new NextResponse(
@@ -30,13 +28,22 @@ export async function GET(request: Request) {
 
     // Mettre à jour l'utilisateur
     await prisma.user.update({
-      where: { email: verificationToken.email },
-      data: { emailVerified: new Date() },
+      where: {
+        email: verificationToken.identifier,
+      },
+      data: {
+        emailVerified: new Date(),
+      },
     });
 
     // Supprimer le token utilisé
     await prisma.verificationToken.delete({
-      where: { id: verificationToken.id },
+      where: {
+        identifier_token: {
+          identifier: verificationToken.identifier,
+          token: verificationToken.token,
+        },
+      },
     });
 
     return new NextResponse(

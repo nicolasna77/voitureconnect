@@ -9,6 +9,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     strategy: "jwt",
   },
   secret: process.env.AUTH_SECRET,
+  trustHost: true,
   pages: {
     signIn: "/login",
     error: "/error",
@@ -59,7 +60,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return token;
       }
     },
-    async signIn({ user }) {
+    async signIn({ user, account }) {
+      if (account?.provider === "google") {
+        return true;
+      }
+
       const dbUser = await prisma.user.findUnique({
         where: { email: user.email ?? "" },
         select: { emailVerified: true },

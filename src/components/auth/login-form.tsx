@@ -8,26 +8,35 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import LoginSocial from "./login-social";
 import { useState } from "react";
 import { authenticate } from "@/lib/actions";
+import { useRouter } from "next/navigation";
+import { DEFAULT_LOGIN_REDIRECT } from "../../../route";
 
 const LoginForm = () => {
+  const router = useRouter();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    setError("");
+    setLoading(true);
+
     const formData = new FormData(event.currentTarget);
-    try {
-      setLoading(true);
-      await authenticate(formData);
-    } catch (e) {
-      setError("Vérifiez vos identifiants");
-    } finally {
-      setLoading(false);
+
+    const response = await authenticate(formData);
+    if (response?.AuthError) {
+      setError(response.AuthError.toString());
     }
+
+    if (response?.success) {
+      router.push(DEFAULT_LOGIN_REDIRECT);
+      router.refresh();
+    }
+    setLoading(false);
   }
 
   return (
-    <Card className="grid gap-6 rounded-lg  px-6 pb-4 pt-8">
+    <Card className="grid gap-6 rounded-lg px-6 pb-4 pt-8">
       <CardHeader>
         <CardTitle className="text-2xl">Connectez-vous</CardTitle>
       </CardHeader>
@@ -44,9 +53,9 @@ const LoginForm = () => {
 
         <form onSubmit={onSubmit}>
           {error && (
-            <div className="flex m-auto items-center gap-2">
-              <AlertTriangle className="text-red-500" />
-              <p className="text-red-500">{error}</p>
+            <div className="flex items-center gap-2 p-3 bg-red-100 rounded-md mb-4">
+              <AlertTriangle className="text-red-500 h-5 w-5" />
+              <p className="text-red-500 text-sm">{error}</p>
             </div>
           )}
           <div className="w-full">

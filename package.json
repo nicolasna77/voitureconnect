@@ -13,7 +13,8 @@
     "lint": "next lint",
     "sync": "node --loader ts-node/esm src/cron/index.ts",
     "clean-db": "npx tsx prisma/cleanbdd.ts",
-    "sync:dev": "cross-env NODE_ENV=development tsx cron/index.ts"
+    "sync:dev": "cross-env NODE_ENV=development tsx cron/index.ts",
+    "vercel-build": "prisma generate && next build"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"

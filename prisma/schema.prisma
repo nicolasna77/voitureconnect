@@ -11,25 +11,26 @@ datasource db {
 
 // ============= SCHÉMA BASE =============
 model User {
-  id                 String         @id @default(uuid())
+  id                 String          @id @default(uuid())
   name               String
-  email              String         @unique
-  password           String
-  picture            String         @default("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png")
-  role               Role           @default(USER)
-  garages            Garage[]       @relation("GarageOwner")
+  email              String          @unique
+  password           String?
+  picture            String          @default("https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png")
+  role               Role            @default(USER)
+  garages            Garage[]        @relation("GarageOwner")
   offers             Offer[]
   emailVerified      DateTime?
-  buyerTransactions  Transaction[]  @relation("Buyer")
-  sellerTransactions Transaction[]  @relation("Seller")
-  createdAt          DateTime       @default(now())
-  updatedAt          DateTime       @updatedAt
-  Account            Account[]
+  buyerTransactions  Transaction[]   @relation("Buyer")
+  sellerTransactions Transaction[]   @relation("Seller")
   Session            Session[]
   Ad                 Ad[]
   likes              Like[]
   Car                Car[]
   subscription       Subscription[]
+  Authenticator      Authenticator[]
+  Account            Account[]
+  createdAt          DateTime        @default(now())
+  updatedAt          DateTime        @updatedAt
 
   @@schema("base")
 }
@@ -43,36 +44,60 @@ enum Role {
 }
 
 model Session {
-  id           String   @id @default(uuid())
-  userId       String
   sessionToken String   @unique
+  userId       String
   expires      DateTime
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@schema("base")
 }
 
 model Account {
-  id                String    @id @default(uuid())
   userId            String
-  providerType      String
-  providerId        String
+  type              String
+  provider          String
   providerAccountId String
-  refreshToken      String?
-  accessToken       String?
-  expires           DateTime?
-  user              User      @relation(fields: [userId], references: [id])
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
 
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([provider, providerAccountId])
   @@schema("base")
 }
 
 model VerificationToken {
-  id      String   @id @default(uuid())
-  email   String
-  token   String
-  expires DateTime
+  identifier String
+  token      String
+  expires    DateTime
 
-  @@unique([email, token])
+  @@id([identifier, token])
+  @@schema("base")
+}
+
+model Authenticator {
+  credentialID         String  @unique
+  userId               String
+  providerAccountId    String
+  credentialPublicKey  String
+  counter              Int
+  credentialDeviceType String
+  credentialBackedUp   Boolean
+  transports           String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId, credentialID])
   @@schema("base")
 }
 
@@ -212,8 +237,8 @@ model Car {
   carModel      CarModelFR?      @relation("CarToCarModelFR", fields: [carModelId], references: [id_car_model], map: "Car_carModelId_FR_fkey")
   carGeneration CarGenerationFR? @relation("CarToCarGenerationFR", fields: [carGenerationId], references: [id_car_generation], map: "Car_carGenerationId_FR_fkey")
   carSerie      CarSerieFR?      @relation("CarToCarSerieFR", fields: [carSerieId], references: [id_car_serie], map: "Car_carSerieId_FR_fkey")
-  carTrim       CarTrimFR?       @relation("CarToCarTrimFR", fields: [carTrimId], references: [id_car_trim], map: "Car_carTrimId_FR_fkey")
-  carEquipment  CarEquipmentFR?  @relation("CarToCarEquipmentFR", fields: [carEquipmentId], references: [id_car_equipment], map: "Car_carEquipmentId_FR_fkey")
+  carTrim       CarTrimFR?       @relation("CarToCarTrimFR", fields: [carTrimId], references: [id_car_trim], map: "Car_carTrimId_FR_fkey_new")
+  carEquipment  CarEquipmentFR?  @relation("CarToCarEquipmentFR", fields: [carEquipmentId], references: [id_car_equipment], map: "Car_carEquipmentId_FR_fkey_new")
 
   // Relations EN
   carTypeEN       CarTypeEN?       @relation("CarToCarTypeEN", fields: [carTypeId], references: [id_car_type], map: "Car_carTypeId_EN_fkey")
@@ -222,7 +247,7 @@ model Car {
   carGenerationEN CarGenerationEN? @relation("CarToCarGenerationEN", fields: [carGenerationId], references: [id_car_generation], map: "Car_carGenerationId_EN_fkey")
   carSerieEN      CarSerieEN?      @relation("CarToCarSerieEN", fields: [carSerieId], references: [id_car_serie], map: "Car_carSerieId_EN_fkey")
   carTrimEN       CarTrimEN?       @relation("CarToCarTrimEN", fields: [carTrimId], references: [id_car_trim], map: "Car_carTrimId_EN_fkey")
-  carEquipmentEN  CarEquipmentEN?  @relation("CarToCarEquipmentEN", fields: [carEquipmentId], references: [id_car_equipment], map: "Car_carEquipmentId_EN_fkey")
+  carEquipmentEN  CarEquipmentEN?  @relation("CarToCarEquipmentEN", fields: [carEquipmentId], references: [id_car_equipment])
 
   // IDs des données de référence (avec contraintes)
   carTypeId       Int
@@ -242,8 +267,8 @@ model Picture {
   url     String
   alt     String
   isShown Boolean  @default(true)
-  carId   String
-  car     Car      @relation(fields: [carId], references: [id])
+  carId   String?
+  car     Car?     @relation(fields: [carId], references: [id])
   Garage  Garage[]
 
   @@schema("base")

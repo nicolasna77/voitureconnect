@@ -43,7 +43,7 @@ export const POST = async (request: any) => {
     // Créer le token de vérification
     await prisma.verificationToken.create({
       data: {
-        email: user.email,
+        identifier: user.email,
         token: verificationToken,
         expires: tokenExpires,
       },
