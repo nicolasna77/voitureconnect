@@ -11,6 +11,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { auth } from "@/lib/auth";
 
 import { getMessages } from "next-intl/server";
+import GoogleAdsense from "@/lib/GoogleAdsense";
 
 const font = Inter({
   weight: "400",
@@ -33,6 +34,7 @@ export default async function RootLayout({
   return (
     <html lang={locale}>
       <body className={font.className}>
+        <GoogleAdsense id="8946842704207401" />
         <NextIntlClientProvider locale={locale} messages={messages}>
           <ReactQueryProvider>
             <SessionProvider session={session}>
