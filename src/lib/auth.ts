@@ -44,7 +44,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       });
 
       if (user) {
-        token.role = user.role;
+        token.role = user.role ?? undefined;
         token.picture = user.picture;
       }
 
