@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, useMap } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap, Circle } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import LoaderComponant from "./component/loader";
@@ -66,6 +66,15 @@ const CityMap: React.FC<CityMapProps> = ({ city }) => {
       <ChangeView center={position} />
       <TileLayer url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png" />
       <Marker position={position} />
+      <Circle
+        center={position}
+        radius={2000}
+        pathOptions={{
+          color: "gray",
+          fillColor: "gray",
+          fillOpacity: 0.1,
+        }}
+      />
     </MapContainer>
   );
 };

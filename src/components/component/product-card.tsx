@@ -136,7 +136,7 @@ const ProductCard = ({
         <div
           className={`relative ${
             orientation === "list"
-              ? "  h-[280px] sm:h-[320px] "
+              ? "  h-[280px] sm:h-[280px] "
               : "w-full h-[280px]"
           }`}
         >

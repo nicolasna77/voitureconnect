@@ -36,6 +36,14 @@ const CarDetails = ({ id }: { id: string }) => {
 
   const carDetails = data.car || {};
 
+  // Fonction utilitaire pour accéder aux bonnes propriétés selon la langue
+  const getCarProperty = (property: string) => {
+    if (locale === "fr") {
+      return carDetails[property]?.name || "-";
+    }
+    return carDetails[`${property}EN`]?.name || "-";
+  };
+
   return (
     <>
       <div className="grid gap-4 lg:grid-cols-[1fr_250px] xl:grid-cols-4 lg:gap-8">
@@ -74,13 +82,13 @@ const CarDetails = ({ id }: { id: string }) => {
                       <span className="text-muted-foreground">
                         {t("CardDetails.brand")}
                       </span>
-                      <span>{carDetails?.carMake?.name || "-"}</span>
+                      <span>{getCarProperty("carMake")}</span>
                     </li>
                     <li className="flex items-center justify-between">
                       <span className="text-muted-foreground">
                         {t("CardDetails.model")}
                       </span>
-                      <span>{carDetails.carModel?.name || "-"}</span>
+                      <span>{getCarProperty("carModel")}</span>
                     </li>
                     <li className="flex items-center justify-between">
                       <span className="text-muted-foreground">
@@ -131,19 +139,19 @@ const CarDetails = ({ id }: { id: string }) => {
                       <span className="text-muted-foreground">
                         {t("CardDetails.generation")}
                       </span>
-                      <span>{carDetails.carGeneration?.name || "-"}</span>
+                      <span>{getCarProperty("carGeneration")}</span>
                     </li>
                     <li className="flex items-center justify-between">
                       <span className="text-muted-foreground">
                         {t("CardDetails.serie")}
                       </span>
-                      <span>{carDetails.carSerie?.name || "-"}</span>
+                      <span>{getCarProperty("carSerie")}</span>
                     </li>
                     <li className="flex items-center justify-between">
                       <span className="text-muted-foreground">
                         {t("CardDetails.trim")}
                       </span>
-                      <span>{carDetails.carTrim?.name || "-"}</span>
+                      <span>{getCarProperty("carTrim")}</span>
                     </li>
                   </ul>
                 </div>

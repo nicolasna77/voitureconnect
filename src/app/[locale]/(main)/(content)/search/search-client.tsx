@@ -1,7 +1,7 @@
 "use client";
 
-import ListProduct from "../../../../components/list/list-product";
-import SearchForm from "../../../../components/search/search-form";
+import ListProduct from "../../../../../components/list/list-product";
+import SearchForm from "../../../../../components/search/search-form";
 import { useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter, useSearchParams } from "next/navigation";

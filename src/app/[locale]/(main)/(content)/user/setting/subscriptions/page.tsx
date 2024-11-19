@@ -1,4 +1,5 @@
 "use client";
+import { Card } from "@/components/ui/card";
 import { auth } from "@/lib/auth";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
@@ -36,7 +37,7 @@ export default function Page() {
       ) : (
         <div className="grid gap-4">
           {subscriptions.map((sub) => (
-            <div key={sub.id} className="border rounded-lg p-4 shadow-sm">
+            <Card key={sub.id} className="border rounded-lg p-4 shadow-sm">
               <div className="flex justify-between items-center">
                 <div>
                   <h2 className="font-semibold">{sub.plan.name}</h2>
@@ -52,7 +53,7 @@ export default function Page() {
                   <p className="font-bold">{sub.plan.price}€/mois</p>
                 </div>
               </div>
-            </div>
+            </Card>
           ))}
         </div>
       )}

@@ -30,7 +30,7 @@ const ListProduct = ({
       <div
         className={`grid gap-8 m-auto ${
           orientation === "grid" && !filters
-            ? "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+            ? "grid-cols-1 md:grid-cols-2 xl:grid-cols-3 "
             : "max-w-4xl grid-cols-1 "
         } ${
           filters && orientation === "grid"

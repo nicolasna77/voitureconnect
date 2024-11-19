@@ -24,7 +24,6 @@ export default function LoginMenu({ session }: { session: Session }) {
         Connexion
       </Link>
     );
-  console.log(session?.user?.picture);
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>

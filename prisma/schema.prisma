@@ -231,34 +231,44 @@ model Car {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
 
-  // Relations avec les données de référence (une seule relation par type)
-  carType       CarTypeFR?       @relation("CarToCarTypeFR", fields: [carTypeId], references: [id_car_type], map: "Car_carTypeId_FR_fkey")
-  carMake       CarMakeFR?       @relation("CarToCarMakeFR", fields: [carMakeId], references: [id_car_make], map: "Car_carMakeId_FR_fkey")
-  carModel      CarModelFR?      @relation("CarToCarModelFR", fields: [carModelId], references: [id_car_model], map: "Car_carModelId_FR_fkey")
-  carGeneration CarGenerationFR? @relation("CarToCarGenerationFR", fields: [carGenerationId], references: [id_car_generation], map: "Car_carGenerationId_FR_fkey")
-  carSerie      CarSerieFR?      @relation("CarToCarSerieFR", fields: [carSerieId], references: [id_car_serie], map: "Car_carSerieId_FR_fkey")
-  carTrim       CarTrimFR?       @relation("CarToCarTrimFR", fields: [carTrimId], references: [id_car_trim], map: "Car_carTrimId_FR_fkey_new")
-  carEquipment  CarEquipmentFR?  @relation("CarToCarEquipmentFR", fields: [carEquipmentId], references: [id_car_equipment], map: "Car_carEquipmentId_FR_fkey_new")
+  // IDs des données de référence FR
+  carTypeId       Int?
+  carMakeId       Int?
+  carModelId      Int?
+  carGenerationId Int?
+  carSerieId      Int?
+  carTrimId       Int?
+  carEquipmentId  Int?
+
+  // IDs des données de référence EN
+  carTypeIdEN       Int?
+  carMakeIdEN       Int?
+  carModelIdEN      Int?
+  carGenerationIdEN Int?
+  carSerieIdEN      Int?
+  carTrimIdEN       Int?
+  carEquipmentIdEN  Int?
+
+  // Relations FR
+  carType       CarTypeFR?       @relation("CarToCarTypeFR", fields: [carTypeId], references: [id_car_type])
+  carMake       CarMakeFR?       @relation("CarToCarMakeFR", fields: [carMakeId], references: [id_car_make])
+  carModel      CarModelFR?      @relation("CarToCarModelFR", fields: [carModelId], references: [id_car_model])
+  carGeneration CarGenerationFR? @relation("CarToCarGenerationFR", fields: [carGenerationId], references: [id_car_generation])
+  carSerie      CarSerieFR?      @relation("CarToCarSerieFR", fields: [carSerieId], references: [id_car_serie])
+  carTrim       CarTrimFR?       @relation("CarToCarTrimFR", fields: [carTrimId], references: [id_car_trim])
+  carEquipment  CarEquipmentFR?  @relation("CarToCarEquipmentFR", fields: [carEquipmentId], references: [id_car_equipment])
 
   // Relations EN
-  carTypeEN       CarTypeEN?       @relation("CarToCarTypeEN", fields: [carTypeId], references: [id_car_type], map: "Car_carTypeId_EN_fkey")
-  carMakeEN       CarMakeEN?       @relation("CarToCarMakeEN", fields: [carMakeId], references: [id_car_make], map: "Car_carMakeId_EN_fkey")
-  carModelEN      CarModelEN?      @relation("CarToCarModelEN", fields: [carModelId], references: [id_car_model], map: "Car_carModelId_EN_fkey")
-  carGenerationEN CarGenerationEN? @relation("CarToCarGenerationEN", fields: [carGenerationId], references: [id_car_generation], map: "Car_carGenerationId_EN_fkey")
-  carSerieEN      CarSerieEN?      @relation("CarToCarSerieEN", fields: [carSerieId], references: [id_car_serie], map: "Car_carSerieId_EN_fkey")
-  carTrimEN       CarTrimEN?       @relation("CarToCarTrimEN", fields: [carTrimId], references: [id_car_trim], map: "Car_carTrimId_EN_fkey")
-  carEquipmentEN  CarEquipmentEN?  @relation("CarToCarEquipmentEN", fields: [carEquipmentId], references: [id_car_equipment])
+  carTypeEN       CarTypeEN?       @relation("CarToCarTypeEN", fields: [carTypeIdEN], references: [id_car_type])
+  carMakeEN       CarMakeEN?       @relation("CarToCarMakeEN", fields: [carMakeIdEN], references: [id_car_make])
+  carModelEN      CarModelEN?      @relation("CarToCarModelEN", fields: [carModelIdEN], references: [id_car_model])
+  carGenerationEN CarGenerationEN? @relation("CarToCarGenerationEN", fields: [carGenerationIdEN], references: [id_car_generation])
+  carSerieEN      CarSerieEN?      @relation("CarToCarSerieEN", fields: [carSerieIdEN], references: [id_car_serie])
+  carTrimEN       CarTrimEN?       @relation("CarToCarTrimEN", fields: [carTrimIdEN], references: [id_car_trim])
+  carEquipmentEN  CarEquipmentEN?  @relation("CarToCarEquipmentEN", fields: [carEquipmentIdEN], references: [id_car_equipment])
 
-  // IDs des données de référence (avec contraintes)
-  carTypeId       Int
-  carMakeId       Int
-  carModelId      Int
-  carGenerationId Int
-  carSerieId      Int
-  carTrimId       Int
-  carEquipmentId  Int
-
-  @@index([carTypeId, carMakeId, carModelId]) // Ajout d'index pour améliorer les performances
+  @@index([carTypeId, carMakeId, carModelId])
+  @@index([carTypeIdEN, carMakeIdEN, carModelIdEN])
   @@schema("base")
 }
 
