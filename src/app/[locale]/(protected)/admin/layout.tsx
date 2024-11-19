@@ -1,4 +1,5 @@
-import AppSidebar from "@/components/admin/sidebar";
+import { AppSidebar } from "@/components/admin/sidebar";
+import { SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
@@ -13,5 +14,10 @@ export default async function AdminLayout({
     redirect("/auth/signin");
   }
 
-  return <AppSidebar>{children}</AppSidebar>;
+  return (
+    <SidebarProvider>
+      <AppSidebar />
+      {children}
+    </SidebarProvider>
+  );
 }
