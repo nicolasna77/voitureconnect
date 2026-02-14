@@ -4,13 +4,15 @@ import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
 import prisma from "@/prisma";
 
-const stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY!);
+const stripeClient = process.env.STRIPE_SECRET_KEY
+  ? new Stripe(process.env.STRIPE_SECRET_KEY)
+  : undefined;
 
 // Build plugins array conditionally
 const plugins = [];
 
 // Only add Stripe plugin if webhook secret is configured
-if (process.env.STRIPE_WEBHOOK_SECRET) {
+if (stripeClient && process.env.STRIPE_WEBHOOK_SECRET) {
   plugins.push(
     stripe({
       stripeClient,
