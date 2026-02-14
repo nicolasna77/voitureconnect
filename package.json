@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && prisma db push --skip-generate && tsx scripts/import-car-data.ts && tsx scripts/import-car-data-en.ts && next build",
+    "build": "prisma generate && prisma db push && tsx scripts/import-car-data.ts && tsx scripts/import-car-data-en.ts && next build",
     "start": "next start",
     "lint": "eslint ."
   },
