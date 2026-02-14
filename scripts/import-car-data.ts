@@ -321,7 +321,8 @@ async function importCarData(filePath: string) {
   console.log(`   - Finitions: ${totalTrims}`);
 }
 
-const filePath = process.argv[2] || "c:/Users/nicol/Desktop/Car2DB_fra_cut.xlsx";
+import path from "node:path";
+const filePath = process.argv[2] || path.join(__dirname, "..", "data", "Car2DB_fra_cut.xlsx");
 
 importCarData(filePath)
   .catch((error) => {
