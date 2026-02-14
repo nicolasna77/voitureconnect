@@ -31,47 +31,112 @@ interface TransformedSpecification {
   unit: string | null;
 }
 
-// Fonction pour catégoriser les spécifications
+// Fonction pour catégoriser les spécifications (FR + EN)
 const categorizeSpecifications = (
   specifications: SpecificationValue[]
 ): Record<string, TransformedSpecification[]> => {
   const categoryKeywords = {
-    chassis: [
-      "dimension",
-      "weight",
-      "volume",
+    dimensions: [
+      // FR
+      "longueur",
+      "largeur",
+      "hauteur",
+      "empattement",
+      "voie avant",
+      "voie arrière",
+      "voie ar",
+      // EN
       "length",
       "width",
       "height",
       "wheelbase",
       "track",
-      "ground",
-      "curb",
+    ],
+    weights: [
+      // FR
+      "poids",
+      "charge utile",
+      "remorque",
+      "coffre",
+      "réservoir",
+      "places",
+      "volume",
+      // EN
+      "weight",
+      "payload",
       "trunk",
       "cargo",
+      "tank",
+      "seats",
     ],
     engine: [
-      "engine",
-      "motor",
-      "capacity",
+      // FR
+      "puissance",
+      "couple",
+      "cylindrée",
+      "cylindres",
+      "soupapes",
+      "architecture",
+      "régime",
+      "alimentation",
+      // EN
       "power",
       "torque",
-      "injection",
+      "displacement",
       "cylinder",
       "valve",
-      "bore",
-      "stroke",
+      "engine",
+      "rpm",
     ],
-    gearbox: ["transmission", "gearbox", "drive", "speed"],
-    suspension: ["suspension", "brake", "disc", "steering"],
-    performance: [
-      "performance",
-      "consumption",
-      "speed",
-      "acceleration",
-      "fuel",
-      "emission",
+    gearbox: [
+      // FR
+      "boîte",
+      "rapports",
+      "roues motrices",
+      "transmission",
+      // EN
+      "gearbox",
+      "transmission",
+      "drive",
+      "gear",
+    ],
+    fuel: [
+      // FR
+      "carburant",
+      "consommation",
+      "émission",
       "co2",
+      // EN
+      "fuel",
+      "consumption",
+      "emission",
+    ],
+    performance: [
+      // FR
+      "vitesse max",
+      "accélération",
+      "0-100",
+      // EN
+      "top speed",
+      "acceleration",
+    ],
+    suspension: [
+      // FR
+      "suspension",
+      "freins",
+      "frein",
+      "direction",
+      // EN
+      "brake",
+      "steering",
+    ],
+    body: [
+      // FR
+      "carrosserie",
+      "portes",
+      // EN
+      "body",
+      "doors",
     ],
   };
 
@@ -122,10 +187,15 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const id = searchParams.get("id");
 
+    console.log("[API car/detail] Received request with id:", id);
+
     if (!id) {
       return new Response("ID de génération manquant", { status: 400 });
     }
 
+    console.log("[API car/detail] Fetching generation from database...");
+
+    // First, get the generation with its model
     const generation = await prisma.carGenerationFR.findUnique({
       where: {
         id_car_generation: parseInt(id),
@@ -136,41 +206,60 @@ export async function GET(req: NextRequest) {
             carMake: true,
           },
         },
-        series: {
-          include: {
-            trims: {
-              include: {
-                specifications: {
-                  include: {
-                    carSpecification: {
-                      select: {
-                        name: true,
-                        id_parent: true,
-                      },
-                    },
-                  },
-                  orderBy: [
-                    {
-                      carSpecification: {
-                        name: "asc",
-                      },
-                    },
-                  ],
-                },
-              },
-            },
-          },
-        },
       },
     });
+
+    console.log("[API car/detail] Generation found:", generation ? "yes" : "no");
 
     if (!generation) {
       return new Response("Génération non trouvée", { status: 404 });
     }
 
-    const transformedData = {
+    // The database has no series - trims are linked directly to models
+    // So we load trims directly and create a virtual "series" structure for display
+    const trims = await prisma.carTrimFR.findMany({
+      where: {
+        id_car_model: generation.id_car_model,
+      },
+      include: {
+        specifications: {
+          include: {
+            carSpecification: {
+              select: {
+                name: true,
+                id_parent: true,
+              },
+            },
+          },
+          orderBy: [
+            {
+              carSpecification: {
+                name: "asc",
+              },
+            },
+          ],
+        },
+      },
+    });
+
+    console.log("[API car/detail] Trims count:", trims?.length || 0);
+
+    // Create a virtual series structure with all trims
+    const virtualSeries = trims.length > 0 ? [{
+      id_car_serie: 0,
+      name: generation.carModel?.name || "Motorisations",
+      trims: trims,
+    }] : [];
+
+    // Combine generation with virtual series
+    const generationWithSeries = {
       ...generation,
-      series: generation.series.map((serie) => {
+      series: virtualSeries,
+    };
+
+    const transformedData = {
+      ...generationWithSeries,
+      series: generationWithSeries.series.map((serie) => {
         const commonSpecs = getCommonSpecifications(serie.trims);
         const commonSpecsByCategory = categorizeSpecifications(commonSpecs);
 

@@ -1,6 +1,7 @@
 import { AppSidebar } from "@/components/admin/sidebar";
-import { SidebarProvider } from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export default async function AdminLayout({
@@ -8,16 +9,22 @@ export default async function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
+  const session = await auth.api.getSession({
+    headers: await headers(),
+  });
 
   if (!session?.user) {
-    redirect("/auth/signin");
+    redirect("/login");
+  }
+
+  if (session.user.role !== "ADMIN") {
+    redirect("/");
   }
 
   return (
     <SidebarProvider>
       <AppSidebar />
-      {children}
+      <SidebarInset className="min-w-0 overflow-x-hidden">{children}</SidebarInset>
     </SidebarProvider>
   );
 }

@@ -1,10 +1,13 @@
 import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import prisma from "@/prisma";
 import { NextResponse } from "next/server";
 
 export async function GET() {
   try {
-    const session = await auth();
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
 
     if (!session?.user || session.user.role !== "ADMIN") {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -21,6 +24,13 @@ export async function GET() {
       monthlyTransactions,
       monthlyUsers,
       monthlySubscriptions,
+      subscriptionRevenueAgg,
+      creditPurchases,
+      creditConsumptions,
+      totalSpecAccesses,
+      topSpecifications,
+      monthlyCreditTransactions,
+      monthlySpecAccessData,
     ] = await Promise.all([
       prisma.user.count(),
       prisma.ad.count(),
@@ -71,6 +81,76 @@ export async function GET() {
         },
         _count: true,
       }),
+      // Revenue from subscriptions
+      prisma.subscription.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          status: "active",
+        },
+      }),
+      // Total credits purchased
+      prisma.creditTransaction.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          type: "PURCHASE",
+        },
+      }),
+      // Total credits consumed
+      prisma.creditTransaction.aggregate({
+        _sum: {
+          amount: true,
+        },
+        where: {
+          type: "CONSUMPTION",
+        },
+      }),
+      // Total spec accesses
+      prisma.specificationAccess.count(),
+      // Top specifications by access count
+      prisma.specificationAccess.groupBy({
+        by: ["specificationId", "specificationType"],
+        _count: {
+          _all: true,
+        },
+        _sum: {
+          creditCost: true,
+        },
+        orderBy: {
+          _count: {
+            specificationId: "desc",
+          },
+        },
+        take: 10,
+      }),
+      // Monthly credit transactions
+      prisma.creditTransaction.groupBy({
+        by: ["createdAt"],
+        where: {
+          createdAt: {
+            gte: sixMonthsAgo,
+          },
+          type: "PURCHASE",
+        },
+        _sum: {
+          amount: true,
+        },
+      }),
+      // Monthly spec accesses
+      prisma.specificationAccess.groupBy({
+        by: ["accessedAt"],
+        where: {
+          accessedAt: {
+            gte: sixMonthsAgo,
+          },
+        },
+        _count: {
+          _all: true,
+        },
+      }),
     ]);
 
     // Formater les données pour les graphiques
@@ -88,27 +168,42 @@ export async function GET() {
         name: month.name,
         total: data
           .filter((d) => {
-            const dataDate = new Date(d.createdAt);
+            const dateField = d.createdAt || d.accessedAt;
+            const dataDate = new Date(dateField);
             return (
               dataDate.getMonth() === month.date.getMonth() &&
               dataDate.getFullYear() === month.date.getFullYear()
             );
           })
-          .reduce((acc, curr) => {
-            // Pour les transactions, utiliser _sum.amount
-            if (valueKey === "transactions") {
-              return acc + (curr._sum?.amount?.toNumber() || 0);
+          .reduce((acc: number, curr: any) => {
+            if (valueKey === "transactions" || valueKey === "credits") {
+              return acc + (curr._sum?.amount?.toNumber?.() || curr._sum?.amount || 0);
             }
-            // Pour les autres statistiques, utiliser _count
             return acc + (curr._count?._all || 0);
           }, 0),
       }));
     };
 
+    const subscriptionRevenue = subscriptionRevenueAgg._sum.amount?.toNumber?.() || Number(subscriptionRevenueAgg._sum.amount) || 0;
+    const totalCreditsPurchased = creditPurchases._sum.amount || 0;
+    const totalCreditsUsed = creditConsumptions._sum.amount || 0;
+
+    // Calculate total revenue from transactions
+    const totalTransactionRevenue = monthlyTransactions.reduce(
+      (acc: number, curr: any) => acc + (curr._sum?.amount?.toNumber?.() || 0),
+      0
+    );
+    const totalRevenue = subscriptionRevenue + totalTransactionRevenue;
+
     return NextResponse.json({
       totalUsers,
       totalAds,
       totalSubscriptions,
+      totalRevenue,
+      subscriptionRevenue,
+      totalCreditsPurchased,
+      totalCreditsUsed,
+      totalSpecAccesses,
       recentTransactions,
       monthlyTransactions: formatMonthlyData(
         monthlyTransactions,
@@ -119,6 +214,15 @@ export async function GET() {
         monthlySubscriptions,
         "subscriptions"
       ),
+      monthlyRevenue: formatMonthlyData(monthlyTransactions, "transactions"),
+      monthlyCredits: formatMonthlyData(monthlyCreditTransactions, "credits"),
+      monthlySpecAccesses: formatMonthlyData(monthlySpecAccessData, "specAccesses"),
+      topSpecifications: topSpecifications.map((spec) => ({
+        specificationId: spec.specificationId,
+        specificationType: spec.specificationType,
+        accessCount: spec._count._all,
+        totalCreditsSpent: spec._sum.creditCost || 0,
+      })),
     });
   } catch (error) {
     console.error("[ADMIN_STATS]", error);

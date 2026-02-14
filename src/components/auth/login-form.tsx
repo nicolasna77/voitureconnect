@@ -6,30 +6,45 @@ import { Label } from "../ui/label";
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import LoginSocial from "./login-social";
-import { useFormState, useFormStatus } from "react-dom";
-import { authentication } from "@/lib/actions";
-
-// Créer un composant pour le bouton de soumission
-const SubmitButton = () => {
-  const { pending } = useFormStatus();
-
-  return (
-    <Button
-      size={"lg"}
-      variant={"default"}
-      className="m-auto justify-center flex"
-      type="submit"
-    >
-      {pending ? <Loader2 className="animate-spin" /> : "Se Connecter"}
-    </Button>
-  );
-};
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "@/lib/auth-client";
 
 const LoginForm = () => {
-  const [state, formAction] = useFormState(authentication, null);
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError(null);
+    setIsLoading(true);
+
+    const formData = new FormData(e.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    try {
+      const result = await signIn.email({
+        email,
+        password,
+      });
+
+      if (result.error) {
+        setError(result.error.message || "Identifiants invalides.");
+      } else {
+        router.push("/");
+        router.refresh();
+      }
+    } catch {
+      setError("Une erreur est survenue.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
-    <Card className="grid gap-6 rounded-lg px-6 pb-4 pt-8">
+    <Card className="grid gap-6 border-border rounded-lg px-6 pb-4 pt-8">
       <CardHeader>
         <CardTitle className="text-2xl">Connectez-vous</CardTitle>
       </CardHeader>
@@ -44,11 +59,11 @@ const LoginForm = () => {
           </div>
         </div>
 
-        <form action={formAction}>
-          {state && (
+        <form onSubmit={handleSubmit}>
+          {error && (
             <div className="flex items-center gap-2 p-3 bg-red-100 rounded-md mb-4">
               <AlertTriangle className="text-red-500 h-5 w-5" />
-              <p className="text-red-500 text-sm">{state}</p>
+              <p className="text-red-500 text-sm">{error}</p>
             </div>
           )}
           <div className="w-full">
@@ -93,12 +108,24 @@ const LoginForm = () => {
             </div>
             <div>
               <Link href="/forgot-password" className="text-sm text-primary">
-                Mot de passe oublié ?
+                Mot de passe oublie ?
               </Link>
             </div>
           </div>
           <div className="py-4">
-            <SubmitButton />
+            <Button
+              size={"lg"}
+              variant={"default"}
+              className="m-auto justify-center flex"
+              type="submit"
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <Loader2 className="animate-spin" />
+              ) : (
+                "Se Connecter"
+              )}
+            </Button>
           </div>
         </form>
         <div className="text-center m-auto">

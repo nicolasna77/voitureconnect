@@ -2,16 +2,12 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 
 import { Inter } from "next/font/google";
-import "../globals.css";
-import Footer from "@/components/footer";
+import "@/app/globals.css";
 import { ReactQueryProvider } from "./react-query-provider";
 import { Analytics } from "@vercel/analytics/react";
-import { SessionProvider } from "next-auth/react";
-import { Toaster } from "@/components/ui/toaster";
-import { auth } from "@/lib/auth";
-
-import { getMessages } from "next-intl/server";
+import { Toaster } from "@/components/ui/sonner";
 import GoogleAdsense from "@/lib/GoogleAdsense";
+import React from "react";
 
 const font = Inter({
   weight: "400",
@@ -23,26 +19,22 @@ export const metadata: Metadata = {
 };
 export default async function RootLayout({
   children,
-  params: { locale },
+  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: { locale: string; pathname: string };
+  params: Promise<{ locale: string }>;
 }>) {
-  const session = await auth();
-  const messages = await getMessages();
+  const { locale } = await params;
 
   return (
     <html lang={locale}>
       <body className={font.className}>
         <GoogleAdsense id="8946842704207401" />
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider>
           <ReactQueryProvider>
-            <SessionProvider session={session}>
-              {children}
-              <Toaster />
-              <Footer />
-              <Analytics />
-            </SessionProvider>
+            {children}
+            <Toaster />
+            <Analytics />
           </ReactQueryProvider>
         </NextIntlClientProvider>
       </body>

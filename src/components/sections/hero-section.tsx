@@ -1,87 +1,101 @@
 "use client";
 
-import Image from "next/image";
-import SearchForm from "../search/search-form";
-import { useTranslations } from "next-intl";
-import { motion, useScroll, useTransform } from "framer-motion";
-import { useRef } from "react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ArrowRight, Sparkles } from "lucide-react";
+import SpecificationSearch from "@/components/specification/specification-search";
 
-const HeroSection = () => {
-  const t = useTranslations("HomePage.hero");
-  const ref = useRef(null);
+const stats = [
+  { value: "15K+", label: "Véhicules analysés" },
+  { value: "98%", label: "Précision IA" },
+  { value: "50+", label: "Marques couvertes" },
+  { value: "4.9/5", label: "Note utilisateurs" },
+];
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ["start start", "end start"],
-  });
-
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const yText = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
-  const scale = useTransform(scrollYProgress, [0, 0.5], [1, 0.8]);
-  const xImage = useTransform(scrollYProgress, [0, 0.5], [0, 100]);
-
+export function HeroSection() {
   return (
-    <section
-      className="relative overflow-hidden bg-[#f2F2F2] py-20 lg:py-32"
-      ref={ref}
-    >
-      <div className="container m-auto relative z-10">
-        <div className="grid items-center gap-8 lg:grid-cols-2">
-          <motion.div
-            style={{ opacity, y: yText, scale }}
-            className="max-w-2xl"
-          >
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="text-4xl font-bold tracking-tight text-primary lg:text-6xl"
-            >
-              {t("title")}
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              className="mt-6 text-lg text-muted-foreground"
-            >
-              {t("description")}
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.6 }}
-              className="mt-8"
-            >
-              <SearchForm />
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            style={{ opacity, x: xImage }}
-            initial={{ opacity: 0, x: 100 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.7, delay: 0.3 }}
-            className="relative h-[400px] lg:h-[600px]"
-          >
-            <Image
-              src="/data/illustration/car-insurance.svg"
-              alt="Hero illustration"
-              fill
-              className="object-contain"
-              priority
-            />
-          </motion.div>
-        </div>
+    <section className="relative overflow-hidden pt-20 pb-24 lg:pt-32 lg:pb-40">
+      {/* Single subtle glow */}
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-600px w-800px rounded-full bg-foreground/2 blur-[100px]" />
       </div>
 
-      {/* Décoration d'arrière-plan */}
-      <div className="absolute inset-0 -z-10 bg-[radial-gradient(45%_45%_at_50%_50%,rgba(var(--primary-rgb),0.1),transparent)]" />
+      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-4xl text-center">
+          {/* Badge */}
+          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-5 py-2 text-sm font-medium text-muted-foreground">
+            <Sparkles
+              className="h-4 w-4 text-foreground/50"
+              aria-hidden="true"
+            />
+            <span>Propulsé par l{"'"}Intelligence Artificielle</span>
+          </div>
+
+          {/* Heading */}
+          <h1 className="animate-fade-up delay-100 mt-8 font-serif text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-8xl">
+            Car<span className="text-primary">Metrix</span>
+          </h1>
+
+          <p className="animate-fade-up delay-200 mt-6 text-xl font-medium text-foreground/70 sm:text-2xl lg:text-3xl">
+            Analyse intelligente de la fiabilité
+            <br className="hidden sm:block" />
+            et de la valeur des véhicules
+          </p>
+
+          <p className="animate-fade-up delay-300 mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
+            Fiches techniques complètes, fiabilité notée par IA, estimation de
+            prix et problèmes connus — basés sur des sources fiables.
+          </p>
+
+          {/* Search bar */}
+          <div className="animate-fade-up delay-400 mx-auto mt-10 max-w-xl">
+            <SpecificationSearch
+              placeholder="Rechercher une marque ou un modèle..."
+              size="lg"
+            />
+          </div>
+
+          {/* Quick actions */}
+          <div className="animate-fade-up delay-500 mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+            <Button
+              asChild
+              size="lg"
+              variant={"secondary"}
+              className="group w-full sm:w-auto"
+            >
+              <Link href="/specification">
+                Voir toutes les fiches
+                <ArrowRight
+                  className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
+                  aria-hidden="true"
+                />
+              </Link>
+            </Button>
+            <Button
+              asChild
+              size="lg"
+              variant="outline"
+              className="w-full sm:w-auto"
+            >
+              <Link href="#how-it-works">Découvrir comment ça marche</Link>
+            </Button>
+          </div>
+
+          {/* Stats */}
+          <div className="animate-fade-up delay-600 mt-20 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border sm:grid-cols-4">
+            {stats.map((stat) => (
+              <div key={stat.label} className="bg-card p-6 text-center">
+                <p className="text-3xl font-bold text-foreground lg:text-4xl">
+                  {stat.value}
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {stat.label}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
     </section>
   );
-};
-
-export default HeroSection;
+}

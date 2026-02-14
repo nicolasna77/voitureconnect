@@ -1,6 +1,6 @@
-import { useSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 
 export const useCurrentUser = () => {
-  const { data: session } = useSession();
-  return session;
+  const { data: session, isPending } = useSession();
+  return { session, isPending };
 };

@@ -1,23 +1,20 @@
 "use client";
 
 import { UsersTable } from "@/components/admin/UsersTable";
-import { userApi } from "@/services/api";
-import { useQuery } from "@tanstack/react-query";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
 
 export default function UsersAdminPage() {
-  const { data: users = [], isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: userApi.getUsers,
-  });
-
-  if (isLoading) {
-    return <div>Chargement...</div>;
-  }
-
   return (
-    <div className="container mx-auto py-10">
-      <h1 className="text-2xl font-bold mb-5">Gestion des Utilisateurs</h1>
-      <UsersTable users={users} />
-    </div>
+    <>
+      <header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
+        <SidebarTrigger className="-ml-1" />
+        <Separator orientation="vertical" className="mr-2 h-4" />
+        <h1 className="text-lg font-semibold">Gestion des Utilisateurs</h1>
+      </header>
+      <div className="p-6">
+        <UsersTable />
+      </div>
+    </>
   );
 }

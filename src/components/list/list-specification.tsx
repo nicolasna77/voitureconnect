@@ -1,93 +1,222 @@
 import Link from "next/link";
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import LoaderComponant from "../component/loader";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { CarIcon } from "lucide-react";
-import { Badge } from "../ui/badge";
+  CarIcon,
+  Calendar,
+  FileSearch,
+  AlertCircle,
+  ArrowRight,
+  Sparkles,
+  BadgeCheck,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
+
+interface Generation {
+  id_car_generation: number;
+  name: string;
+  year_begin?: string;
+  year_end?: string;
+  carModel: {
+    name: string;
+    carMake: {
+      name: string;
+    };
+  };
+  carType?: {
+    name: string;
+  };
+}
+
+interface ListSpecificationProps {
+  data: { data: Generation[] } | null;
+  isPending: boolean;
+  isError: boolean;
+  unlockedIds?: number[];
+}
+
+// Hoisted state components (vercel-react-best-practices: rendering-hoist-jsx)
+const EmptyState = () => (
+  <div className="flex flex-col items-center justify-center w-full py-16 text-center">
+    <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
+      <FileSearch
+        className="w-8 h-8 text-muted-foreground"
+        aria-hidden="true"
+      />
+    </div>
+    <h3 className="text-lg font-semibold mb-2">Aucun résultat trouvé</h3>
+    <p className="text-muted-foreground max-w-md text-sm">
+      Essayez de modifier vos filtres ou recherchez une autre marque de
+      véhicule.
+    </p>
+  </div>
+);
+
+const ErrorState = () => (
+  <div className="flex flex-col items-center justify-center w-full py-16 text-center">
+    <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
+      <AlertCircle className="w-8 h-8 text-destructive" aria-hidden="true" />
+    </div>
+    <h3 className="text-lg font-semibold mb-2">
+      Une erreur s&apos;est produite
+    </h3>
+    <p className="text-muted-foreground max-w-md text-sm">
+      Impossible de charger les données. Veuillez réessayer ultérieurement.
+    </p>
+  </div>
+);
+
+const LoadingState = () => (
+  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    {Array.from({ length: 8 }).map((_, i) => (
+      <div
+        key={i}
+        className="rounded-xl border border-border bg-card p-4 animate-pulse"
+      >
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-12 h-12 rounded-full bg-muted" />
+          <div className="flex-1 space-y-2">
+            <div className="h-4 bg-muted rounded w-3/4" />
+            <div className="h-3 bg-muted rounded w-1/2" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <div className="h-3 bg-muted rounded w-full" />
+          <div className="h-3 bg-muted rounded w-2/3" />
+        </div>
+      </div>
+    ))}
+  </div>
+);
+
+// Brand color helper (generates consistent color from brand name)
+function getBrandColor(brandName: string): string {
+  const colors = [
+    "bg-blue-500",
+    "bg-emerald-500",
+    "bg-violet-500",
+    "bg-amber-500",
+    "bg-rose-500",
+    "bg-cyan-500",
+    "bg-indigo-500",
+    "bg-pink-500",
+  ];
+  const index = brandName.charCodeAt(0) % colors.length;
+  return colors[index];
+}
+
+const SpecificationCard = ({ generation, isUnlocked }: { generation: Generation; isUnlocked: boolean }) => {
+  const makeName = generation.carModel.carMake.name;
+  const modelName = generation.carModel.name;
+  const yearRange = `${generation.year_begin || "?"} — ${generation.year_end || "présent"}`;
+
+  return (
+    <Link
+      href={`/specification/${generation.id_car_generation}`}
+      className="block group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rounded-xl"
+    >
+      <article
+        className={cn(
+          "h-full rounded-xl border border-border bg-card p-4",
+          "transition-all duration-200",
+          "hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30",
+          "group-focus-visible:border-primary",
+        )}
+      >
+        {/* Header */}
+        <div className="flex items-start gap-3 mb-4">
+          <div
+            className={cn(
+              "w-11 h-11 rounded-lg flex items-center justify-center text-white text-lg font-bold shrink-0",
+              "transition-transform group-hover:scale-105",
+              getBrandColor(makeName),
+            )}
+            aria-hidden="true"
+          >
+            {makeName.charAt(0)}
+          </div>
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-2">
+              <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
+                {makeName} {modelName}
+              </h3>
+              {isUnlocked && (
+                <span className="inline-flex items-center gap-1 shrink-0 rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-medium text-emerald-600">
+                  <BadgeCheck className="h-3 w-3" aria-hidden="true" />
+                  Consulté
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-muted-foreground truncate">
+              {generation.name}
+            </p>
+          </div>
+        </div>
+
+        {/* Metadata */}
+        <div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground mb-4">
+          <span className="flex items-center gap-1.5">
+            <Calendar className="w-3.5 h-3.5" aria-hidden="true" />
+            <span className="tabular-nums">{yearRange}</span>
+          </span>
+          {generation.carType && (
+            <>
+              <span className="text-border">•</span>
+              <span className="flex items-center gap-1.5">
+                <CarIcon className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>{generation.carType.name}</span>
+              </span>
+            </>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="flex items-center justify-between pt-3 border-t border-border">
+          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+            <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
+            <span>Analyse IA disponible</span>
+          </div>
+          <span className="flex items-center gap-1 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+            Voir la fiche
+            <ArrowRight className="h-3 w-3" aria-hidden="true" />
+          </span>
+        </div>
+      </article>
+    </Link>
+  );
+};
 
 const ListSpecification = ({
   data,
   isPending,
   isError,
-}: {
-  data: any;
-  isPending: boolean;
-  isError: any;
-}) => {
+  unlockedIds = [],
+}: ListSpecificationProps) => {
+  if (isPending) {
+    return <LoadingState />;
+  }
+
+  if (isError) {
+    return <ErrorState />;
+  }
+
+  if (!data?.data?.length) {
+    return <EmptyState />;
+  }
+
   return (
-    <>
-      {isPending ? (
-        <div className="text-center w-full py-32">
-          <LoaderComponant />
+    <div
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+      role="list"
+      aria-label="Liste des fiches techniques"
+    >
+      {data.data.map((generation) => (
+        <div key={generation.id_car_generation} role="listitem">
+          <SpecificationCard
+            generation={generation}
+            isUnlocked={unlockedIds.includes(generation.id_car_generation)}
+          />
         </div>
-      ) : isError ? (
-        <div className="text-center w-full py-32">
-          Erreur : Une erreur s&apos;est produite
-        </div>
-      ) : !data || !data.data || data.data.length === 0 ? (
-        <div className="text-center w-full py-32">Aucun résultat trouvé</div>
-      ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {data.data.map((generation: any) => (
-            <Link
-              key={generation.id_car_generation}
-              href={`/specification/${generation.id_car_generation}`}
-              className="block"
-            >
-              <Card className="mb-4 transition-shadow duration-300 overflow-hidden">
-                <CardHeader className="pb-2">
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xl font-bold">
-                      {generation.carModel.carMake.name.charAt(0)}
-                    </div>
-                    <div>
-                      <CardTitle className="text-lg">
-                        {generation.carModel.carMake.name}{" "}
-                        {generation.carModel.name}
-                      </CardTitle>
-                      <p className="text-sm text-muted-foreground">
-                        {generation.name}
-                      </p>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    <div className="flex items-center">
-                      <CalendarIcon className="w-4 h-4 mr-2 text-muted-foreground" />
-                      <span className="text-sm">
-                        {generation.year_begin} -{" "}
-                        {generation.year_end || "présent"}
-                      </span>
-                    </div>
-                    {generation.carType && (
-                      <div className="flex items-center">
-                        <CarIcon className="w-4 h-4 mr-2 text-muted-foreground" />
-                        <span className="text-sm">
-                          {generation.carType.name}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  <div className="mt-4">
-                    <Badge variant="secondary" className="mr-2">
-                      {generation.carModel.carMake.name}
-                    </Badge>
-                    <Badge variant="outline">{generation.carModel.name}</Badge>
-                  </div>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
-        </div>
-      )}
-    </>
+      ))}
+    </div>
   );
 };
 

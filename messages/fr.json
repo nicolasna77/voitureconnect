@@ -1,8 +1,35 @@
 {
   "HomePage": {
     "hero": {
-      "title": "Trouvez votre voiture idéale",
-      "description": "Découvrez notre sélection de véhicules et trouvez celui qui vous convient."
+      "title": "Analysez la fiabilité de votre futur véhicule",
+      "description": "Utilisez notre IA pour obtenir une analyse complète de la fiabilité, des problèmes courants et des coûts de réparation de n'importe quel véhicule.",
+      "searchPlaceholder": "Rechercher une marque…",
+      "searchLabel": "Rechercher une marque de voiture",
+      "searchButton": "Rechercher",
+      "browseSpecs": "Parcourir les fiches",
+      "generations": "Générations",
+      "models": "Modèles",
+      "specs": "Fiches techniques",
+      "heroImageAlt": "Illustration de recherche de véhicule"
+    },
+    "aiFeatures": {
+      "title": "Analyse IA Complete",
+      "description": "Notre intelligence artificielle analyse les donnees du marche automobile pour vous fournir des informations detaillees sur chaque vehicule.",
+      "reliability": "Score de Fiabilite",
+      "reliabilityDesc": "Obtenez un score de fiabilite global base sur les retours d'experience et les donnees du marche.",
+      "problems": "Problemes Courants",
+      "problemsDesc": "Decouvrez les problemes frequents signales par les proprietaires de ce modele.",
+      "costs": "Couts de Reparation",
+      "costsDesc": "Estimez les couts de reparation et d'entretien typiques pour ce vehicule.",
+      "marketValue": "Valeur Marche",
+      "marketValueDesc": "Obtenez une estimation de la valeur de ce vehicule sur le marche de l'occasion avec fourchette de prix.",
+      "maintenance": "Conseils d'Entretien",
+      "maintenanceDesc": "Recevez des recommandations personnalisees pour maintenir votre vehicule en bon etat.",
+      "buying": "Conseils d'Achat",
+      "buyingDesc": "Obtenez des conseils d'achat adaptes et les points a verifier avant l'achat.",
+      "chat": "Chat Interactif",
+      "chatDesc": "Posez vos questions sur le vehicule et obtenez des reponses instantanees.",
+      "cta": "Recherchez un vehicule ci-dessus pour commencer l'analyse"
     },
     "categories": {
       "title": "Categories de voiture",
@@ -203,6 +230,94 @@
       "transmission": "Boîte de vitesse",
       "kmMin": "Km min",
       "kmMax": "Km max"
+    }
+  },
+  "AI": {
+    "report": {
+      "title": "Analyse de Fiabilite",
+      "loading": "Generation du rapport...",
+      "reliabilityScore": "Score de Fiabilite",
+      "commonProblems": "Problemes Courants",
+      "repairCosts": "Estimation des Couts",
+      "maintenanceTips": "Conseils d'Entretien",
+      "marketValuation": "Estimation de Valeur",
+      "buyingAdvice": "Conseils d'Achat",
+      "marketValue": {
+        "title": "Estimation de Valeur Marche",
+        "averagePrice": "Prix moyen estime",
+        "minPrice": "Prix minimum",
+        "maxPrice": "Prix maximum",
+        "trend": "Tendance du marche",
+        "rising": "En hausse",
+        "stable": "Stable",
+        "declining": "En baisse",
+        "depreciation": "Depreciation annuelle",
+        "bestTime": "Meilleur moment pour acheter",
+        "factors": "Facteurs influencant la valeur"
+      }
+    },
+    "chat": {
+      "title": "Posez vos Questions",
+      "placeholder": "Demandez des details sur ce vehicule...",
+      "send": "Envoyer"
+    }
+  },
+  "Credits": {
+    "title": "Acheter des Credits",
+    "yourBalance": "Votre Solde",
+    "balanceDescription": "Utilisez vos credits pour debloquer les fiches techniques des vehicules",
+    "credits": "credits",
+    "credit": "credit",
+    "buyCredits": "Acheter des Credits",
+    "popular": "Populaire",
+    "save": "Economisez",
+    "unlockSpecs": "Debloquez {count} fiches techniques",
+    "permanentAccess": "Acces permanent aux fiches",
+    "noExpiration": "Credits sans expiration",
+    "buy": "Acheter",
+    "accessRequired": "Acces Requis",
+    "loginToAccess": "Connectez-vous pour acceder a cette fiche technique",
+    "login": "Se Connecter",
+    "unlockSpecification": "Debloquer la Fiche Technique",
+    "unlockDescription": "Cette fiche technique est payante. Debloquez-la avec vos credits pour un acces permanent.",
+    "cost": "Cout",
+    "unlock": "Debloquer",
+    "unlocking": "Deblocage en cours...",
+    "insufficientCredits": "Credits insuffisants. Achetez des credits pour continuer.",
+    "success": {
+      "title": "Paiement Reussi",
+      "description": "Vos credits ont ete ajoutes a votre compte.",
+      "creditsAdded": "Credits ajoutes",
+      "viewBalance": "Voir mon Solde",
+      "browseSpecs": "Parcourir les Fiches",
+      "processing": "Verification en cours...",
+      "processingDescription": "Nous verifions votre paiement et ajoutons vos credits.",
+      "errorTitle": "Erreur",
+      "backToCredits": "Retour aux credits",
+      "newBalance": "Nouveau solde"
+    },
+    "history": {
+      "title": "Historique des Credits",
+      "transactions": "Transactions",
+      "transactionsDescription": "Historique de vos achats et utilisations de credits",
+      "type": "Type",
+      "description": "Description",
+      "date": "Date",
+      "amount": "Montant",
+      "noTransactions": "Aucune transaction",
+      "error": "Erreur lors du chargement de l'historique",
+      "types": {
+        "PURCHASE": "Achat",
+        "CONSUMPTION": "Utilisation",
+        "REFUND": "Remboursement",
+        "BONUS": "Bonus"
+      }
+    },
+    "unlocked": {
+      "title": "Fiches techniques débloquées",
+      "description": "Vos fiches techniques avec accès permanent",
+      "noSpecs": "Aucune fiche technique débloquée",
+      "browseSpecs": "Parcourir les fiches"
     }
   }
 }

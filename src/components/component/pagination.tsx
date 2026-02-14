@@ -32,8 +32,9 @@ const PaginationComponant = ({
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
-            onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-            className={currentPage === 1 ? "hidden" : "cursor-pointer"}
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="cursor-pointer"
           />
         </PaginationItem>
 
@@ -65,12 +66,9 @@ const PaginationComponant = ({
 
         <PaginationItem>
           <PaginationNext
-            onClick={() =>
-              handlePageChange(Math.min(totalPages, currentPage + 1))
-            }
-            className={
-              currentPage === totalPages ? " hidden" : "cursor-pointer"
-            }
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+            className="cursor-pointer"
           />
         </PaginationItem>
       </PaginationContent>

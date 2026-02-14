@@ -1,6 +1,6 @@
 "use client";
 import { Button } from "../ui/button";
-import { AtSign, Key, User } from "lucide-react";
+import { AtSign, Key, User, Loader2 } from "lucide-react";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import React, { useState } from "react";
@@ -10,9 +10,10 @@ import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import Link from "next/link";
+import { signUp } from "@/lib/auth-client";
 
 const LoginSocial = dynamic(() => import("./login-social"), { ssr: false });
 
@@ -21,15 +22,15 @@ const registerSchema = z.object({
   email: z.string().email("Email invalide"),
   password: z
     .string()
-    .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+    .min(8, "Le mot de passe doit contenir au moins 8 caracteres"),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 const RegisterForm = () => {
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
-  const { toast } = useToast();
   const t = useTranslations("RegisterForm");
 
   const {
@@ -41,32 +42,28 @@ const RegisterForm = () => {
   });
 
   const onSubmit = async (data: RegisterFormValues) => {
+    setIsLoading(true);
+    setError("");
+
     try {
-      const res = await fetch("/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+      const result = await signUp.email({
+        email: data.email,
+        password: data.password,
+        name: data.name,
       });
-      if (res.status === 500) {
-        setError(t("errors.default"));
-      }
-      if (res.status === 400) {
-        const errorMessage = await res.text();
-        setError(errorMessage);
-      }
-      if (res.status === 200) {
-        toast({
-          title: t("success.title"),
-          variant: "default",
+
+      if (result.error) {
+        setError(result.error.message || t("errors.default"));
+      } else {
+        toast.success(t("success.title"), {
           description: t("success.description"),
         });
         router.push("/login");
       }
-    } catch (error) {
+    } catch {
       setError(t("errors.default"));
-      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -167,14 +164,15 @@ const RegisterForm = () => {
               variant={"default"}
               className="m-auto justify-center flex "
               type="submit"
+              disabled={isLoading}
             >
-              {t("submit")}
+              {isLoading ? <Loader2 className="animate-spin" /> : t("submit")}
             </Button>
           </div>
         </form>
         <div className="text-center m-auto">
           <Link href="/login" className="text-sm text-primary ">
-            Vous avez déjà un compte ?
+            Vous avez deja un compte ?
           </Link>
         </div>
       </CardContent>

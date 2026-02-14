@@ -1,8 +1,12 @@
-import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { userApi } from "@/services/api";
-import { toast } from "@/hooks/use-toast";
-import { User } from "@prisma/client";
+"use client";
+
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { userApi } from "@/lib/actions/admin-user";
+import { toast } from "sonner";
+import { useDebounce } from "@/hooks/use-debounce";
+import { Role, User } from "@prisma/client";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
   Table,
   TableBody,
@@ -13,8 +17,8 @@ import {
 } from "../ui/table";
 import {
   Select,
-  SelectItem,
   SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
@@ -28,20 +32,37 @@ import {
 } from "../ui/dialog";
 import { useState } from "react";
 import { Trash } from "lucide-react";
+import PaginationComponent from "../component/pagination";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
-export function UsersTable({ users }: { users: User[] }) {
-  const queryClient = useQueryClient();
+export function UsersTable() {
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [roleFilter, setRoleFilter] = useState<string>("ALL");
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+
+  const debouncedSearch = useDebounce(search, 300); // Ajout d'un délai de 300ms
+
+  const { data } = useQuery({
+    queryKey: ["users", page, debouncedSearch, roleFilter],
+    queryFn: () =>
+      userApi.getUsers({
+        page,
+        search: debouncedSearch,
+        role: roleFilter === "ALL" ? "" : roleFilter,
+      }),
+  });
+
+  const queryClient = useQueryClient();
 
   const updateRoleMutation = useMutation({
     mutationFn: userApi.updateUserRole,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast({ title: "Rôle mis à jour avec succès" });
+      toast.success("Rôle mis à jour avec succès");
     },
     onError: () => {
-      toast({
-        title: "Erreur lors de la modification du rôle",
+      toast.error("Erreur lors de la modification du rôle", {
         description: "Veuillez réessayer plus tard",
       });
     },
@@ -51,23 +72,56 @@ export function UsersTable({ users }: { users: User[] }) {
     mutationFn: userApi.deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
-      toast({ title: "Utilisateur supprimé avec succès" });
+      toast.success("Utilisateur supprimé avec succès");
       setUserToDelete(null);
     },
     onError: () => {
-      toast({
-        title: "Erreur lors de la suppression",
+      toast.error("Erreur lors de la suppression", {
         description: "Veuillez réessayer plus tard",
       });
     },
   });
 
+  const handleSearch = (value: string) => {
+    setSearch(value);
+    setPage(1);
+  };
+
+  const handleRoleFilter = (value: string) => {
+    setRoleFilter(value);
+    setPage(1);
+  };
+
   return (
-    <>
+    <div className="space-y-4">
+      <div className="flex gap-4">
+        <Input
+          aria-label="Rechercher un utilisateur"
+          placeholder="Rechercher un utilisateur\u2026"
+          value={search}
+          onChange={(e) => handleSearch(e.target.value)}
+          className="max-w-sm"
+        />
+        <Select value={roleFilter} onValueChange={handleRoleFilter}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Filtrer par rôle" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="ALL">Tous les rôles</SelectItem>
+            {Object.values(Role).map((role) => (
+              <SelectItem key={role} value={role}>
+                {role}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>ID</TableHead>
+            <TableHead>Photo</TableHead>
             <TableHead>Nom</TableHead>
             <TableHead>Email</TableHead>
             <TableHead>Rôle</TableHead>
@@ -75,9 +129,15 @@ export function UsersTable({ users }: { users: User[] }) {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
+          {data?.users.map((user: User) => (
             <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
+              <TableCell className="max-w-[100px] truncate" title={user.id}>{user.id}</TableCell>
+              <TableCell>
+                <Avatar>
+                  <AvatarFallback>{user.name?.[0]}</AvatarFallback>
+                  <AvatarImage src={user.picture} alt={user.name || ""} />
+                </Avatar>
+              </TableCell>
               <TableCell>{user.name}</TableCell>
               <TableCell>{user.email}</TableCell>
               <TableCell>
@@ -91,27 +151,35 @@ export function UsersTable({ users }: { users: User[] }) {
                     <SelectValue placeholder="Sélectionner un rôle" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="ADMIN">ADMIN</SelectItem>
-                    <SelectItem value="USER">USER</SelectItem>
-                    <SelectItem value="PRO">PRO</SelectItem>
+                    {Object.values(Role).map((role) => (
+                      <SelectItem key={role} value={role}>
+                        {role}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               </TableCell>
               <TableCell>
                 <Button
-                  size={"icon"}
-                  variant={"outline"}
+                  size="icon"
+                  variant="outline"
+                  aria-label={`Supprimer ${user.name}`}
                   onClick={() => setUserToDelete(user)}
-                  className="flex items-center gap-2"
                 >
-                  <Trash className="w-4 h-4" />
+                  <Trash className="w-4 h-4" aria-hidden="true" />
                 </Button>
               </TableCell>
             </TableRow>
           ))}
         </TableBody>
       </Table>
-
+      {data?.pages > 1 && (
+        <PaginationComponent
+          page={page}
+          totalPages={data.pages}
+          handlePageChange={setPage}
+        />
+      )}
       <Dialog open={!!userToDelete} onOpenChange={() => setUserToDelete(null)}>
         <DialogContent>
           <DialogHeader>
@@ -136,6 +204,6 @@ export function UsersTable({ users }: { users: User[] }) {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 }

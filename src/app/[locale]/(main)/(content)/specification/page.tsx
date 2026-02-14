@@ -1,131 +1,269 @@
 "use client";
-import React from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import SearchDetail from "@/components/search/search-detail";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+
+import React, { useCallback, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import Title from "@/components/title";
+import { useRouter, useSearchParams } from "next/navigation";
 import PaginationComponant from "@/components/component/pagination";
 import ListSpecification from "@/components/list/list-specification";
-import { useRouter, useSearchParams } from "next/navigation";
+import SpecificationFilter from "@/components/specification/specification-filter";
+import SpecificationSearch from "@/components/specification/specification-search";
+import { FileText, SlidersHorizontal, X, Sparkles } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 
 const fetchCarData = async (params: URLSearchParams) => {
-  const response = await axios.get(
-    `http://localhost:3000/api/car?${params.toString()}`
-  );
+  const response = await axios.get(`/api/car?${params.toString()}`);
   return response.data;
+};
+
+const fetchUnlockedIds = async (): Promise<number[]> => {
+  const response = await axios.get("/api/credits/unlocked-ids");
+  return response.data.ids;
 };
 
 const SpecificationPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const queryClient = useQueryClient();
+  const [showFilters, setShowFilters] = React.useState(false);
 
-  const [formState, setFormState] = React.useState({
-    marque: searchParams.get("marque") || "",
-    model: searchParams.get("model") || "",
-    generation: searchParams.get("generation") || "",
-    page: searchParams.get("page")
-      ? parseInt(searchParams.get("page") || "1")
-      : 1,
-  });
+  // Derive state directly from URL params (vercel-react-best-practices: rerender-derived-state-no-effect)
+  // This is the source of truth - no useEffect sync needed
+  const formState = useMemo(
+    () => ({
+      marque: searchParams.get("marque") || "",
+      model: searchParams.get("model") || "",
+      generation: searchParams.get("generation") || "",
+      page: parseInt(searchParams.get("page") || "1", 10),
+    }),
+    [searchParams]
+  );
 
   const query = new URLSearchParams(searchParams.toString());
 
   const {
     data: carData,
     isLoading,
+    isFetching,
     error,
   } = useQuery({
     queryKey: ["carData", query.toString()],
     queryFn: () => fetchCarData(query),
-    enabled: true,
     placeholderData: (previousData) => previousData,
+    staleTime: 30 * 1000,
   });
 
-  const mutation = useMutation({
-    mutationFn: (newFormState: typeof formState) => {
-      const params = new URLSearchParams();
-      if (newFormState.marque) params.append("marque", newFormState.marque);
-      if (newFormState.model) params.append("model", newFormState.model);
-      if (newFormState.generation)
-        params.append("generation", newFormState.generation);
-      params.append("page", newFormState.page.toString());
-      return Promise.resolve(
-        router.push(`?${params.toString()}`, { scroll: true })
-      );
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["carData"] });
-    },
+  const { data: unlockedIds = [] } = useQuery({
+    queryKey: ["unlockedIds"],
+    queryFn: fetchUnlockedIds,
+    staleTime: 60 * 1000,
   });
 
-  const updateFormState = React.useCallback(
+  // Update URL directly - formState derives from URL automatically (vercel-react-best-practices: rerender-derived-state-no-effect)
+  const updateFormState = useCallback(
     (type: string, value: string | number) => {
-      setFormState((prev) => {
-        const newState = { ...prev, [type]: value };
-        if (type === "marque") {
-          newState.model = "";
-          newState.generation = "";
-        } else if (type === "model") {
-          newState.generation = "";
-        }
-        newState.page = type === "page" ? Number(value) : 1;
-        mutation.mutate(newState);
-        return newState;
-      });
+      const newState = { ...formState, [type]: value };
+
+      // Clear dependent fields when parent changes
+      if (type === "marque") {
+        newState.model = "";
+        newState.generation = "";
+      } else if (type === "model") {
+        newState.generation = "";
+      }
+
+      // Reset to page 1 unless explicitly changing page
+      newState.page = type === "page" ? Number(value) : 1;
+
+      // Build URL params
+      const params = new URLSearchParams();
+      if (newState.marque) params.append("marque", newState.marque);
+      if (newState.model) params.append("model", newState.model);
+      if (newState.generation) params.append("generation", newState.generation);
+      if (newState.page > 1) params.append("page", newState.page.toString());
+
+      router.push(`?${params.toString()}`, { scroll: false });
     },
-    [mutation]
+    [formState, router]
   );
 
-  const handlePageChange = (newPage: number) => {
-    if (newPage < 1 || newPage > (carData?.pagination?.totalPages || 0)) return;
-    updateFormState("page", newPage);
-  };
+  const handlePageChange = useCallback(
+    (newPage: number) => {
+      const totalPages = carData?.pagination?.totalPages || 0;
+      if (newPage < 1 || newPage > totalPages) return;
+      updateFormState("page", newPage);
+    },
+    [carData?.pagination?.totalPages, updateFormState]
+  );
+
+  const clearFilter = useCallback(
+    (type: "marque" | "model" | "generation") => {
+      if (type === "marque") {
+        updateFormState("marque", "");
+      } else if (type === "model") {
+        updateFormState("model", "");
+      } else {
+        updateFormState("generation", "");
+      }
+    },
+    [updateFormState]
+  );
+
+  const totalCars = carData?.pagination?.totalCars || 0;
+  const currentPage = formState.page;
+  const totalPages = carData?.pagination?.totalPages || 0;
+
+  // Active filters for display
+  const activeFilters = useMemo(() => {
+    const filters: { type: "marque" | "model" | "generation"; value: string }[] = [];
+    if (formState.marque) filters.push({ type: "marque", value: formState.marque });
+    if (formState.model) filters.push({ type: "model", value: formState.model });
+    if (formState.generation) filters.push({ type: "generation", value: formState.generation });
+    return filters;
+  }, [formState]);
+
+  const hasActiveFilters = activeFilters.length > 0;
 
   return (
-    <div className="space-y-6  ">
-      <Title>Fiche technique</Title>
-      <Card className="mb-16">
-        <CardContent>
-          <div className="grid grid-cols-1 py-4 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            <SearchDetail
-              type="marque"
-              placeholder="Marque"
-              initialValue={formState.marque}
-              onValueChange={(value) => updateFormState("marque", value)}
-              parentFormState={formState}
-            />
-            <SearchDetail
-              type="model"
-              placeholder="Modèle"
-              initialValue={formState.model}
-              onValueChange={(value) => updateFormState("model", value)}
-              parentFormState={formState}
-              disabled={!formState.marque}
-            />
-            <SearchDetail
-              type="generation"
-              placeholder="Génération"
-              initialValue={formState.generation}
-              onValueChange={(value) => updateFormState("generation", value)}
-              parentFormState={formState}
-              disabled={!formState.model}
+    <div className="space-y-6 py-6">
+      {/* Hero header */}
+      <header className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-transparent border border-border p-6 sm:p-8">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+
+        <div className="relative">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center">
+              <FileText className="h-6 w-6 text-primary-foreground" aria-hidden="true" />
+            </div>
+            <div>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">
+                Fiches Techniques
+              </h1>
+              <p className="text-sm text-muted-foreground flex items-center gap-1.5">
+                <Sparkles className="h-3.5 w-3.5" aria-hidden="true" />
+                Analyse IA de {totalCars.toLocaleString("fr-FR")}+ véhicules
+              </p>
+            </div>
+          </div>
+
+          {/* Search bar */}
+          <div className="max-w-2xl">
+            <SpecificationSearch
+              placeholder="Rechercher une marque, modèle ou génération…"
+              size="lg"
+              autoFocus
             />
           </div>
-        </CardContent>
-      </Card>
 
-      <div>Résultats : {carData?.pagination?.totalCars || 0}</div>
+          {/* Advanced filters toggle */}
+          <div className="mt-4">
+            <Collapsible open={showFilters} onOpenChange={setShowFilters}>
+              <CollapsibleTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className={cn(
+                    "gap-2 text-muted-foreground hover:text-foreground",
+                    showFilters && "text-primary"
+                  )}
+                >
+                  <SlidersHorizontal className="h-4 w-4" aria-hidden="true" />
+                  Filtres avancés
+                  {hasActiveFilters && (
+                    <Badge variant="secondary" className="ml-1">
+                      {activeFilters.length}
+                    </Badge>
+                  )}
+                </Button>
+              </CollapsibleTrigger>
+              <CollapsibleContent className="mt-4">
+                <div className="rounded-xl border border-border bg-card p-4">
+                  <SpecificationFilter
+                    formState={formState}
+                    onFilterChange={updateFormState}
+                  />
+                </div>
+              </CollapsibleContent>
+            </Collapsible>
+          </div>
+        </div>
+      </header>
 
-      <ListSpecification isPending={isLoading} isError={error} data={carData} />
+      {/* Active filters pills */}
+      {hasActiveFilters && (
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-sm text-muted-foreground">Filtres actifs :</span>
+          {activeFilters.map((filter) => (
+            <Badge
+              key={filter.type}
+              variant="secondary"
+              className="gap-1.5 pl-3 pr-1.5 py-1.5"
+            >
+              <span>{filter.value}</span>
+              <button
+                onClick={() => clearFilter(filter.type)}
+                className="ml-1 rounded-full p-0.5 hover:bg-muted-foreground/20 transition-colors"
+                aria-label={`Supprimer le filtre ${filter.value}`}
+              >
+                <X className="h-3 w-3" aria-hidden="true" />
+              </button>
+            </Badge>
+          ))}
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => updateFormState("marque", "")}
+            className="text-muted-foreground hover:text-destructive text-xs h-7"
+          >
+            Tout effacer
+          </Button>
+        </div>
+      )}
 
-      {carData && carData.data && carData.data.length > 0 && (
-        <PaginationComponant
-          page={formState.page}
-          totalPages={carData.pagination.totalPages}
-          handlePageChange={handlePageChange}
-        />
+      {/* Results count */}
+      <div
+        className="flex items-center justify-between"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        <p className="text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground tabular-nums">
+            {totalCars.toLocaleString("fr-FR")}
+          </span>{" "}
+          résultat{totalCars !== 1 ? "s" : ""}
+        </p>
+        {isFetching && !isLoading && (
+          <span className="flex items-center gap-2 text-xs text-muted-foreground">
+            <span className="h-2 w-2 rounded-full bg-primary animate-pulse" />
+            Mise à jour…
+          </span>
+        )}
+      </div>
+
+      {/* Results list */}
+      <ListSpecification
+        isPending={isLoading}
+        isError={!!error}
+        data={carData}
+        unlockedIds={unlockedIds}
+      />
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <nav aria-label="Pagination des fiches techniques" className="pt-4">
+          <PaginationComponant
+            page={currentPage}
+            totalPages={totalPages}
+            handlePageChange={handlePageChange}
+          />
+        </nav>
       )}
     </div>
   );

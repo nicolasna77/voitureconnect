@@ -1,9 +1,8 @@
 "use client";
 import React from "react";
-import { signIn } from "next-auth/react";
+import { signIn } from "@/lib/auth-client";
 import { Button } from "../../components/ui/button";
 import { FcGoogle } from "react-icons/fc";
-import { DEFAULT_LOGIN_REDIRECT } from "../../../route";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
@@ -13,9 +12,9 @@ const LoginSocial = () => {
   const onClick = async () => {
     try {
       setIsLoading(true);
-      await signIn("google", {
-        redirect: true,
-        redirectTo: "/",
+      await signIn.social({
+        provider: "google",
+        callbackURL: "/",
       });
     } catch (error) {
       console.error("Erreur de connexion:", error);

@@ -1,12 +1,19 @@
 {
+  "registries": {
+    "@acme": "https://acme.com/r/{name}.json",
+    "@ss-components": "https://shadcnstudio.com/r/components/{name}.json",
+    "@ss-themes": "https://shadcnstudio.com/r/themes/{name}.json",
+    "@ss-blocks": "https://shadcnstudio.com/r/blocks/{name}.json"
+  },
+
   "$schema": "https://ui.shadcn.com/schema.json",
-  "style": "default",
+  "style": "new-york",
   "rsc": true,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.ts",
+    "config": "",
     "css": "src/app/globals.css",
-    "baseColor": "slate",
+    "baseColor": "neutral",
     "cssVariables": true,
     "prefix": ""
   },
@@ -14,6 +21,9 @@
     "components": "@/components",
     "utils": "@/lib/utils",
     "ui": "@/components/ui",
-    "magicui": "@/components/magicui"
-  }
+    "lib": "@/lib",
+    "hooks": "@/hooks"
+  },
+
+  "iconLibrary": "lucide"
 }

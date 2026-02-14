@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -11,7 +12,7 @@
     "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "jsx": "preserve",
+    "jsx": "react-jsx",
     "incremental": true,
     "plugins": [
       {
@@ -21,7 +22,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "target": "ES2017"
   },
   "include": [
     "next-env.d.ts",
@@ -30,7 +32,10 @@
     ".next/types/**/*.ts",
     "cron/sync-databases.ts",
     "cron/index.mts",
-    "src/app/[locale]/(main)/(auth)/verify-email"
+    "src/app/[locale]/(main)/(auth)/verify-email",
+    ".next/dev/types/**/*.ts",
+    "postcss.config.mjs",
+    "next.config.ts"
   ],
-  "exclude": ["node_modules"]
+  "exclude": ["node_modules", "prisma/seed.ts", "scripts"]
 }
