@@ -4,7 +4,12 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import prisma from "@/prisma";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not defined");
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -23,7 +28,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Retrieve the Stripe checkout session
-    const checkoutSession = await stripe.checkout.sessions.retrieve(sessionId);
+    const checkoutSession = await getStripe().checkout.sessions.retrieve(sessionId);
 
     // Verify payment was successful
     if (checkoutSession.payment_status !== "paid") {

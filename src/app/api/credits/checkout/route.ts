@@ -4,7 +4,12 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { CREDIT_PACKAGES } from "@/config/credits";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
+function getStripe() {
+  if (!process.env.STRIPE_SECRET_KEY) {
+    throw new Error("STRIPE_SECRET_KEY is not defined");
+  }
+  return new Stripe(process.env.STRIPE_SECRET_KEY);
+}
 
 export async function POST(req: NextRequest) {
   try {
@@ -32,7 +37,7 @@ export async function POST(req: NextRequest) {
 
     if (!stripeCustomerId) {
       // Create customer if not exists (fallback, normally handled by plugin)
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: session.user.email,
         name: session.user.name,
         metadata: {
@@ -43,7 +48,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Create Stripe Checkout session
-    const checkoutSession = await stripe.checkout.sessions.create({
+    const checkoutSession = await getStripe().checkout.sessions.create({
       customer: stripeCustomerId,
       mode: "payment",
       payment_method_types: ["card"],
