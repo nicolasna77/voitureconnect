@@ -11,6 +11,7 @@ const steps = [
     title: "Choisissez un véhicule",
     description:
       "Recherchez par marque, modèle ou utilisez notre barre de recherche intelligente.",
+    color: { bg: "bg-chart-2/8", border: "border-chart-2/15", hover: "group-hover:bg-chart-2/12", icon: "text-chart-2", badge: "bg-chart-2" },
   },
   {
     icon: Cpu,
@@ -18,6 +19,7 @@ const steps = [
     title: "CarMetrix analyse",
     description:
       "Notre IA analyse les données et croise des milliers de sources automobiles.",
+    color: { bg: "bg-chart-3/8", border: "border-chart-3/15", hover: "group-hover:bg-chart-3/12", icon: "text-chart-3", badge: "bg-chart-3" },
   },
   {
     icon: FileCheck,
@@ -25,6 +27,7 @@ const steps = [
     title: "Obtenez vos résultats",
     description:
       "Fiabilité, problèmes connus et estimation de prix en quelques secondes.",
+    color: { bg: "bg-chart-4/8", border: "border-chart-4/15", hover: "group-hover:bg-chart-4/12", icon: "text-chart-4", badge: "bg-chart-4" },
   },
 ];
 
@@ -51,7 +54,7 @@ export function HowItWorksSection() {
         <div className="relative mt-16">
           {/* Connector line */}
           <div
-            className="pointer-events-none absolute top-24 right-[16.67%] left-[16.67%] hidden h-px bg-border lg:block"
+            className="pointer-events-none absolute top-24 right-[16.67%] left-[16.67%] hidden h-px bg-gradient-to-r from-chart-2/30 via-chart-3/30 to-chart-4/30 lg:block"
             aria-hidden="true"
           />
 
@@ -71,13 +74,13 @@ export function HowItWorksSection() {
               >
                 <div className="group rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:border-foreground/15 hover:shadow-lg">
                   <div className="relative mx-auto mb-6 w-fit">
-                    <div className="flex h-16 w-16 items-center justify-center rounded-2xl border border-border bg-secondary/50 transition-colors duration-300 group-hover:bg-secondary">
+                    <div className={cn("flex h-16 w-16 items-center justify-center rounded-2xl border transition-colors duration-300", item.color.bg, item.color.border, item.color.hover)}>
                       <item.icon
-                        className="h-7 w-7 text-foreground/70"
+                        className={cn("h-7 w-7", item.color.icon)}
                         aria-hidden="true"
                       />
                     </div>
-                    <span className="absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">
+                    <span className={cn("absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-primary-foreground", item.color.badge)}>
                       {item.step}
                     </span>
                   </div>

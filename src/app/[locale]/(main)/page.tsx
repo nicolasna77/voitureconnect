@@ -42,6 +42,14 @@ const HowItWorksSection = dynamic(
   { ssr: true },
 );
 
+const PricingSection = dynamic(
+  () =>
+    import("@/components/sections/pricing-section").then(
+      (mod) => mod.PricingSection,
+    ),
+  { ssr: true },
+);
+
 const CTASection = dynamic(
   () =>
     import("@/components/sections/cta-section").then((mod) => mod.CTASection),
@@ -58,6 +66,7 @@ export default function Home() {
         <DemoSection />
         <AudienceSection />
         <HowItWorksSection />
+        <PricingSection />
         <CTASection />
       </main>
     </div>

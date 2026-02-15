@@ -41,8 +41,8 @@ export function TrustSection() {
         >
           <div className="p-8 lg:p-16">
             <div className="mx-auto max-w-3xl text-center">
-              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-4 py-2 text-sm font-medium text-muted-foreground">
-                <Shield className="h-4 w-4 text-foreground/50" aria-hidden="true" />
+              <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-4 py-2 text-sm font-medium text-muted-foreground">
+                <Shield className="h-4 w-4 text-primary" aria-hidden="true" />
                 <span>Confiance & Transparence</span>
               </div>
 
@@ -72,9 +72,9 @@ export function TrustSection() {
                         : undefined,
                     }}
                   >
-                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-border bg-secondary/50">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-primary/15 bg-primary/5">
                       <point.icon
-                        className="h-5 w-5 text-foreground/70"
+                        className="h-5 w-5 text-primary"
                         aria-hidden="true"
                       />
                     </div>

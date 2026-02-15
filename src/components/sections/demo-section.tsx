@@ -27,18 +27,21 @@ const issues = [
     km: "80 000 - 120 000 km",
     description:
       "Encrassement fréquent, peut causer perte de puissance et voyant moteur.",
+    severityColor: "border-destructive/20 bg-destructive/5 text-destructive",
   },
   {
     title: "Injecteurs",
     severity: "Moyenne",
     km: "100 000 - 150 000 km",
     description: "Usure prématurée possible, bruit de claquement au ralenti.",
+    severityColor: "border-chart-2/20 bg-chart-2/8 text-chart-2",
   },
   {
     title: "Embrayage",
     severity: "Faible",
     km: "120 000 - 180 000 km",
     description: "Usure normale, prévoir remplacement selon utilisation.",
+    severityColor: "border-chart-3/20 bg-chart-3/8 text-chart-3",
   },
 ];
 
@@ -81,9 +84,9 @@ export function DemoSection() {
                 </h3>
                 <p className="mt-1 text-muted-foreground">1.6 BlueHDi 120ch</p>
               </div>
-              <div className="flex flex-col items-center rounded-2xl border border-border bg-secondary/50 px-5 py-3">
-                <span className="text-3xl font-bold text-foreground">7.5</span>
-                <span className="text-xs font-medium text-muted-foreground">
+              <div className="flex flex-col items-center rounded-2xl border border-primary/20 bg-primary/5 px-5 py-3">
+                <span className="text-3xl font-bold text-primary">7.5</span>
+                <span className="text-xs font-medium text-primary/60">
                   /10
                 </span>
               </div>
@@ -97,7 +100,7 @@ export function DemoSection() {
                   className="rounded-xl border border-border bg-secondary/30 p-3"
                 >
                   <spec.icon
-                    className="mb-2 h-4 w-4 text-muted-foreground"
+                    className="mb-2 h-4 w-4 text-chart-3"
                     aria-hidden="true"
                   />
                   <p className="text-xs text-muted-foreground">{spec.label}</p>
@@ -114,11 +117,11 @@ export function DemoSection() {
                 Valeur estimée
               </p>
               <div className="mt-2 flex items-baseline gap-3">
-                <span className="text-3xl font-bold text-foreground">
+                <span className="text-3xl font-bold text-chart-3">
                   6 500 €
                 </span>
                 <span className="text-lg text-muted-foreground">—</span>
-                <span className="text-3xl font-bold text-foreground">
+                <span className="text-3xl font-bold text-chart-3">
                   8 200 €
                 </span>
               </div>
@@ -137,9 +140,9 @@ export function DemoSection() {
             style={{ animationDelay: isInView ? "350ms" : undefined }}
           >
             <h3 className="flex items-center gap-3 text-xl font-bold text-card-foreground">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-border bg-secondary/50">
+              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-destructive/20 bg-destructive/5">
                 <AlertTriangle
-                  className="h-4 w-4 text-foreground/70"
+                  className="h-4 w-4 text-destructive"
                   aria-hidden="true"
                 />
               </div>
@@ -159,7 +162,7 @@ export function DemoSection() {
                     <h4 className="font-semibold text-card-foreground">
                       {issue.title}
                     </h4>
-                    <span className="rounded-full border border-border bg-secondary/50 px-2.5 py-1 text-xs font-medium text-muted-foreground">
+                    <span className={cn("rounded-full border px-2.5 py-1 text-xs font-medium", issue.severityColor)}>
                       {issue.severity}
                     </span>
                   </div>

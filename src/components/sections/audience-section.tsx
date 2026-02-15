@@ -10,18 +10,21 @@ const audiences = [
     title: "Acheteurs de véhicules d'occasion",
     description:
       "Évitez les mauvaises surprises et faites un achat en toute confiance.",
+    color: { bg: "bg-primary/5", border: "border-primary/15", hoverBg: "group-hover:bg-primary/10", hoverBorder: "group-hover:border-primary/25", icon: "text-primary" },
   },
   {
     icon: Heart,
     title: "Passionnés d'auto",
     description:
       "Explorez les détails techniques et la fiabilité de vos modèles favoris.",
+    color: { bg: "bg-destructive/5", border: "border-destructive/15", hoverBg: "group-hover:bg-destructive/10", hoverBorder: "group-hover:border-destructive/25", icon: "text-destructive" },
   },
   {
     icon: Search,
     title: "Curieux avertis",
     description:
       "Comprenez avant d'acheter et prenez des décisions éclairées.",
+    color: { bg: "bg-chart-3/8", border: "border-chart-3/15", hoverBg: "group-hover:bg-chart-3/12", hoverBorder: "group-hover:border-chart-3/25", icon: "text-chart-3" },
   },
   {
     icon: BarChart3,
@@ -29,6 +32,7 @@ const audiences = [
     description:
       "Accédez à des données fiables pour conseiller vos clients.",
     badge: "Bientôt",
+    color: { bg: "bg-chart-2/8", border: "border-chart-2/15", hoverBg: "group-hover:bg-chart-2/12", hoverBorder: "group-hover:border-chart-2/25", icon: "text-chart-2" },
   },
 ];
 
@@ -70,9 +74,9 @@ export function AudienceSection() {
                 </span>
               )}
 
-              <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-secondary/50 transition-colors duration-300 group-hover:bg-secondary">
+              <div className={cn("mb-4 flex h-11 w-11 items-center justify-center rounded-xl border transition-colors duration-300", audience.color.bg, audience.color.border, audience.color.hoverBg, audience.color.hoverBorder)}>
                 <audience.icon
-                  className="h-5 w-5 text-foreground/70"
+                  className={cn("h-5 w-5 transition-colors duration-300", audience.color.icon)}
                   aria-hidden="true"
                 />
               </div>

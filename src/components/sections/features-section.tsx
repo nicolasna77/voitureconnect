@@ -12,6 +12,7 @@ const features = [
       "Toutes les données essentielles, claires et structurées pour chaque véhicule.",
     stat: "200+",
     statLabel: "données par fiche",
+    accent: { bg: "bg-primary/5", border: "border-primary/15", hoverBg: "group-hover:bg-primary/10", hoverBorder: "group-hover:border-primary/25", icon: "text-primary", stat: "text-primary" },
   },
   {
     icon: Bot,
@@ -20,6 +21,7 @@ const features = [
       "Une note sur 10, expliquée et basée sur des sources de confiance.",
     stat: "/10",
     statLabel: "score de fiabilité",
+    accent: { bg: "bg-chart-3/8", border: "border-chart-3/15", hoverBg: "group-hover:bg-chart-3/12", hoverBorder: "group-hover:border-chart-3/25", icon: "text-chart-3", stat: "text-chart-3" },
   },
   {
     icon: AlertTriangle,
@@ -28,6 +30,7 @@ const features = [
       "Pannes récurrentes, gravité et kilométrage d'apparition détaillés.",
     stat: "3",
     statLabel: "niveaux de gravité",
+    accent: { bg: "bg-destructive/5", border: "border-destructive/15", hoverBg: "group-hover:bg-destructive/10", hoverBorder: "group-hover:border-destructive/25", icon: "text-destructive", stat: "text-destructive" },
   },
   {
     icon: Euro,
@@ -36,6 +39,7 @@ const features = [
       "Fourchette de prix min / max selon l'état et la fiabilité du véhicule.",
     stat: "Min/Max",
     statLabel: "estimation précise",
+    accent: { bg: "bg-chart-2/8", border: "border-chart-2/15", hoverBg: "group-hover:bg-chart-2/12", hoverBorder: "group-hover:border-chart-2/25", icon: "text-chart-2", stat: "text-chart-2" },
   },
 ];
 
@@ -59,7 +63,7 @@ export function FeaturesSection() {
           )}
         >
           <div className="max-w-xl">
-            <p className="text-sm font-medium uppercase tracking-widest text-muted-foreground">
+            <p className="text-sm font-medium uppercase tracking-widest text-accent-foreground">
               Fonctionnalités
             </p>
             <h2 className="mt-3 font-serif text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
@@ -96,9 +100,9 @@ export function FeaturesSection() {
             >
               <div className="relative flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-6">
                 {/* Icon */}
-                <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-border bg-secondary/50 transition-colors duration-300 group-hover:border-foreground/10 group-hover:bg-secondary">
+                <div className={cn("flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border transition-colors duration-300", feature.accent.bg, feature.accent.border, feature.accent.hoverBg, feature.accent.hoverBorder)}>
                   <feature.icon
-                    className="h-5 w-5 text-foreground/70"
+                    className={cn("h-5 w-5", feature.accent.icon)}
                     aria-hidden="true"
                   />
                 </div>
@@ -120,7 +124,7 @@ export function FeaturesSection() {
 
                   {/* Stat pill */}
                   <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1.5">
-                    <span className="text-sm font-semibold text-foreground">
+                    <span className={cn("text-sm font-semibold", feature.accent.stat)}>
                       {feature.stat}
                     </span>
                     <span className="text-xs text-muted-foreground">
