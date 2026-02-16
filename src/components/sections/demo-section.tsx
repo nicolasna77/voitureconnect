@@ -49,7 +49,8 @@ export function DemoSection() {
   const { ref, isInView } = useInView();
 
   return (
-    <section id="demo" className="py-24 lg:py-36">
+    <section id="demo" className="relative py-24 lg:py-36 overflow-hidden">
+      <div className="pointer-events-none absolute top-0 left-1/2 -translate-x-1/2 h-[500px] w-[800px] rounded-full bg-chart-3/3 blur-[150px]" aria-hidden="true" />
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div
           className={cn(
@@ -58,10 +59,10 @@ export function DemoSection() {
           )}
         >
           <h2 className="font-serif text-balance text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-            Exemple concret
+            Voyez par vous-même
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Découvrez le type d{"'"}analyse que vous obtiendrez
+            Voici exactement ce que vous obtenez pour chaque véhicule analysé
           </p>
         </div>
 
@@ -149,7 +150,7 @@ export function DemoSection() {
               Problèmes connus
             </h3>
             <p className="mt-2 text-muted-foreground">
-              Pannes récurrentes identifiées sur ce modèle
+              Évitez les frais imprévus : voici ce qui casse le plus souvent
             </p>
 
             <div className="mt-6 space-y-3">

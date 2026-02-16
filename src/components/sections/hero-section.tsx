@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import SpecificationSearch from "@/components/specification/specification-search";
 
 const stats = [
   { value: "15K+", label: "Véhicules analysés", color: "text-chart-4" },
-  { value: "98%", label: "Précision IA", color: "text-chart-3" },
+  { value: "98%", label: "Données fiables", color: "text-chart-3" },
   { value: "50+", label: "Marques couvertes", color: "text-chart-2" },
   { value: "4.9/5", label: "Note utilisateurs", color: "text-primary" },
 ];
@@ -28,15 +28,17 @@ export function HeroSection() {
         {/* Radial fade so the grid fades out toward edges */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--background)_70%)]" />
         {/* Subtle primary glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-150 w-200 rounded-full bg-primary/4 blur-[120px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-150 w-200 rounded-full bg-primary/6 blur-[120px]" />
+        <div className="absolute -bottom-20 -left-32 h-80 w-80 rounded-full bg-chart-2/5 blur-[100px]" />
+        <div className="absolute -bottom-20 -right-32 h-80 w-80 rounded-full bg-chart-4/5 blur-[100px]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           {/* Badge */}
           <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm font-medium text-muted-foreground">
-            <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
-            <span>Propulsé par l{"'"}Intelligence Artificielle</span>
+            <Zap className="h-4 w-4 text-primary" aria-hidden="true" />
+            <span>Analyse automobile nouvelle génération</span>
           </div>
 
           {/* Heading */}
@@ -45,14 +47,15 @@ export function HeroSection() {
           </h1>
 
           <p className="animate-fade-up delay-200 mt-6 text-xl font-medium text-foreground/70 sm:text-2xl lg:text-3xl">
-            Analyse intelligente de la fiabilité
+            Ne payez plus jamais trop cher
             <br className="hidden sm:block" />
-            et de la valeur des véhicules
+            pour un véhicule peu fiable
           </p>
 
           <p className="animate-fade-up delay-300 mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
-            Fiches techniques complètes, fiabilité notée par IA, estimation de
-            prix et problèmes connus — basés sur des sources fiables.
+            Fiches techniques, score de fiabilité, problèmes connus et
+            estimation de prix — tout ce qu{"'"}il faut pour acheter en toute
+            confiance, en quelques secondes.
           </p>
 
           {/* Search bar */}
@@ -72,7 +75,7 @@ export function HeroSection() {
               className="group w-full sm:w-auto"
             >
               <Link href="/specification">
-                Voir toutes les fiches
+                Analyser un véhicule gratuitement
                 <ArrowRight
                   className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
                   aria-hidden="true"
@@ -85,7 +88,7 @@ export function HeroSection() {
               variant="outline"
               className="w-full sm:w-auto"
             >
-              <Link href="#how-it-works">Découvrir comment ça marche</Link>
+              <Link href="#how-it-works">Comment ça marche</Link>
             </Button>
           </div>
 

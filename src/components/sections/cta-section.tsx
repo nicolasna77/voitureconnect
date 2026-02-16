@@ -10,7 +10,7 @@ export function CTASection() {
   const { ref, isInView } = useInView();
 
   return (
-    <section className="py-24 lg:py-36">
+    <section className="py-24 lg:py-36 bg-accent/50">
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div
           className={cn(
@@ -18,8 +18,8 @@ export function CTASection() {
             isInView ? "animate-scale-in" : "opacity-0",
           )}
         >
-          {/* Subtle gradient background */}
-          <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-primary/3 to-transparent" aria-hidden="true" />
+          {/* Gradient background */}
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/5 via-chart-3/3 to-chart-4/5" aria-hidden="true" />
           <div className="relative px-8 py-20 text-center lg:px-16 lg:py-28">
             <div
               className={cn(

@@ -16,17 +16,17 @@ const steps = [
   {
     icon: Cpu,
     step: "02",
-    title: "DriveMetric analyse",
+    title: "Notre système analyse",
     description:
-      "Notre IA analyse les données et croise des milliers de sources automobiles.",
+      "DriveMetric croise des milliers de données issues de sources automobiles vérifiées.",
     color: { bg: "bg-chart-3/8", border: "border-chart-3/15", hover: "group-hover:bg-chart-3/12", icon: "text-chart-3", badge: "bg-chart-3" },
   },
   {
     icon: FileCheck,
     step: "03",
-    title: "Obtenez vos résultats",
+    title: "Décidez en confiance",
     description:
-      "Fiabilité, problèmes connus et estimation de prix en quelques secondes.",
+      "Fiabilité, pannes connues et juste prix : tout est là pour éviter les mauvais choix.",
     color: { bg: "bg-chart-4/8", border: "border-chart-4/15", hover: "group-hover:bg-chart-4/12", icon: "text-chart-4", badge: "bg-chart-4" },
   },
 ];
@@ -35,7 +35,7 @@ export function HowItWorksSection() {
   const { ref, isInView } = useInView();
 
   return (
-    <section id="how-it-works" className="py-24 lg:py-36">
+    <section id="how-it-works" className="py-24 lg:py-36 bg-accent/50">
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div
           className={cn(
@@ -47,7 +47,7 @@ export function HowItWorksSection() {
             Comment ça marche
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Simple, rapide et efficace
+            3 étapes, quelques secondes, zéro prise de tête
           </p>
         </div>
 
@@ -106,11 +106,10 @@ export function HowItWorksSection() {
           style={{ animationDelay: isInView ? "700ms" : undefined }}
         >
           <p className="text-lg font-medium text-card-foreground">
-            Décision plus éclairée, moins de mauvaises surprises
+            Résultat : vous savez exactement ce que vous achetez
           </p>
           <p className="mt-2 text-muted-foreground">
-            DriveMetric vous donne toutes les informations nécessaires pour
-            acheter sereinement.
+            Plus de doutes, plus de mauvaises surprises. Achetez sereinement.
           </p>
         </div>
       </div>

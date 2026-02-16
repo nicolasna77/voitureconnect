@@ -1,6 +1,6 @@
 "use client";
 
-import { Wrench, Bot, AlertTriangle, Euro, ArrowRight } from "lucide-react";
+import { Wrench, ShieldCheck, AlertTriangle, Euro, ArrowRight } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 
@@ -9,34 +9,34 @@ const features = [
     icon: Wrench,
     title: "Fiche technique complète",
     description:
-      "Toutes les données essentielles, claires et structurées pour chaque véhicule.",
+      "Plus de 200 caractéristiques par véhicule : moteur, dimensions, consommation, équipements. Fini les recherches interminables.",
     stat: "200+",
     statLabel: "données par fiche",
     accent: { bg: "bg-primary/5", border: "border-primary/15", hoverBg: "group-hover:bg-primary/10", hoverBorder: "group-hover:border-primary/25", icon: "text-primary", stat: "text-primary" },
   },
   {
-    icon: Bot,
-    title: "Fiabilité notée par IA",
+    icon: ShieldCheck,
+    title: "Score de fiabilité",
     description:
-      "Une note sur 10, expliquée et basée sur des sources de confiance.",
+      "Un score sur 10, calculé à partir de sources automobiles reconnues. Sachez exactement ce que vous achetez.",
     stat: "/10",
     statLabel: "score de fiabilité",
     accent: { bg: "bg-chart-3/8", border: "border-chart-3/15", hoverBg: "group-hover:bg-chart-3/12", hoverBorder: "group-hover:border-chart-3/25", icon: "text-chart-3", stat: "text-chart-3" },
   },
   {
     icon: AlertTriangle,
-    title: "Problèmes connus",
+    title: "Pannes & problèmes connus",
     description:
-      "Pannes récurrentes, gravité et kilométrage d'apparition détaillés.",
+      "Les pannes récurrentes, leur gravité et le kilométrage d'apparition. Anticipez les frais avant d'acheter.",
     stat: "3",
     statLabel: "niveaux de gravité",
     accent: { bg: "bg-destructive/5", border: "border-destructive/15", hoverBg: "group-hover:bg-destructive/10", hoverBorder: "group-hover:border-destructive/25", icon: "text-destructive", stat: "text-destructive" },
   },
   {
     icon: Euro,
-    title: "Valeur du marché",
+    title: "Estimation du juste prix",
     description:
-      "Fourchette de prix min / max selon l'état et la fiabilité du véhicule.",
+      "Fourchette de prix min/max basée sur l'état et la fiabilité. Ne payez jamais au-dessus du marché.",
     stat: "Min/Max",
     statLabel: "estimation précise",
     accent: { bg: "bg-chart-2/8", border: "border-chart-2/15", hoverBg: "group-hover:bg-chart-2/12", hoverBorder: "group-hover:border-chart-2/25", icon: "text-chart-2", stat: "text-chart-2" },
@@ -64,16 +64,16 @@ export function FeaturesSection() {
         >
           <div className="max-w-xl">
             <p className="text-sm font-medium uppercase tracking-widest text-accent-foreground">
-              Fonctionnalités
+              Pourquoi DriveMetric
             </p>
             <h2 className="mt-3 font-serif text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
               Tout savoir avant
-              <br />d{"'"}acheter
+              <br />de signer
             </h2>
           </div>
           <p className="max-w-md text-muted-foreground leading-relaxed lg:text-right">
-            Quatre analyses complémentaires pour une vision complète de chaque
-            véhicule.
+            4 analyses complémentaires qui vous évitent les mauvaises surprises
+            et les achats regrettés.
           </p>
         </div>
 

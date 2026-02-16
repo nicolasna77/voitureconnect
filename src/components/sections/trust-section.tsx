@@ -7,23 +7,23 @@ import { cn } from "@/lib/utils";
 const trustPoints = [
   {
     icon: Shield,
-    title: "AI Gateway",
-    text: "IA orchestrée via AI Gateway",
+    title: "Système intelligent",
+    text: "Analyse automatisée de milliers de points de données par véhicule",
   },
   {
     icon: Database,
     title: "Sources vérifiées",
-    text: "Sources automobiles contrôlées et vérifiées",
+    text: "Uniquement des bases de données automobiles reconnues et contrôlées",
   },
   {
     icon: CheckCircle2,
-    title: "Pas de forums",
-    text: "Pas de forums douteux, uniquement des sources fiables",
+    title: "Zéro forum douteux",
+    text: "Aucun avis non vérifié, que des informations factuelles et traçables",
   },
   {
     icon: Lock,
     title: "Données réelles",
-    text: "Pas de données inventées, tout est vérifiable",
+    text: "Chaque information est vérifiable et sourcée, rien n'est inventé",
   },
 ];
 
@@ -31,7 +31,10 @@ export function TrustSection() {
   const { ref, isInView } = useInView();
 
   return (
-    <section className="py-24 lg:py-36">
+    <section className="relative py-24 lg:py-36 bg-accent/50 overflow-hidden">
+      {/* Decorative blobs */}
+      <div className="pointer-events-none absolute -top-40 -right-40 h-96 w-96 rounded-full bg-primary/4 blur-[120px]" aria-hidden="true" />
+      <div className="pointer-events-none absolute -bottom-40 -left-40 h-96 w-96 rounded-full bg-chart-3/4 blur-[120px]" aria-hidden="true" />
       <div ref={ref} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div
           className={cn(
@@ -47,15 +50,13 @@ export function TrustSection() {
               </div>
 
               <h2 className="font-serif text-balance text-3xl font-bold text-card-foreground sm:text-4xl">
-                Des analyses fiables,
-                <br className="hidden sm:block" />
-                pas des avis au hasard
+                Des faits, pas des opinions
               </h2>
 
               <p className="mx-auto mt-6 max-w-2xl text-lg text-muted-foreground leading-relaxed">
-                Les résultats sont basés uniquement sur des sources automobiles
-                reconnues. Notre IA analyse des milliers de données pour vous
-                fournir des informations précises et vérifiables.
+                Chaque analyse repose sur des sources automobiles reconnues.
+                Notre système intelligent croise des milliers de données
+                pour vous donner des résultats précis, vérifiables et objectifs.
               </p>
 
               <div className="mt-12 grid gap-4 sm:grid-cols-2">
