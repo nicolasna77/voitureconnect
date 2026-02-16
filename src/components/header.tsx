@@ -82,7 +82,7 @@ export function Header() {
                 />
               </div>
               <span className="text-lg font-semibold text-foreground">
-                CarMetrix
+                DriveMetric
               </span>
             </Link>
 

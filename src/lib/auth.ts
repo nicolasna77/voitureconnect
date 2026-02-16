@@ -67,7 +67,7 @@ if (stripeClient && process.env.STRIPE_WEBHOOK_SECRET) {
 }
 
 export const auth = betterAuth({
-  appName: "CarMetrix",
+  appName: "DriveMetric",
 
   baseURL: process.env.BETTER_AUTH_URL || process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000",
 
@@ -90,7 +90,7 @@ export const auth = betterAuth({
 
       // Example with Resend:
       // await resend.emails.send({
-      //   from: "CarMetrix <noreply@carmetrix.com>",
+      //   from: "DriveMetric <noreply@drivemetric.com>",
       //   to: user.email,
       //   subject: "Réinitialisez votre mot de passe",
       //   html: `<a href="${url}">Cliquez ici pour réinitialiser votre mot de passe</a>`,

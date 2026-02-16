@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   CarIcon,
   Calendar,
@@ -19,73 +20,13 @@ interface Generation {
     name: string;
     carMake: {
       name: string;
+      logo_url?: string | null;
     };
   };
   carType?: {
     name: string;
   };
 }
-
-interface ListSpecificationProps {
-  data: { data: Generation[] } | null;
-  isPending: boolean;
-  isError: boolean;
-  unlockedIds?: number[];
-}
-
-// Hoisted state components (vercel-react-best-practices: rendering-hoist-jsx)
-const EmptyState = () => (
-  <div className="flex flex-col items-center justify-center w-full py-16 text-center">
-    <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
-      <FileSearch
-        className="w-8 h-8 text-muted-foreground"
-        aria-hidden="true"
-      />
-    </div>
-    <h3 className="text-lg font-semibold mb-2">Aucun résultat trouvé</h3>
-    <p className="text-muted-foreground max-w-md text-sm">
-      Essayez de modifier vos filtres ou recherchez une autre marque de
-      véhicule.
-    </p>
-  </div>
-);
-
-const ErrorState = () => (
-  <div className="flex flex-col items-center justify-center w-full py-16 text-center">
-    <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
-      <AlertCircle className="w-8 h-8 text-destructive" aria-hidden="true" />
-    </div>
-    <h3 className="text-lg font-semibold mb-2">
-      Une erreur s&apos;est produite
-    </h3>
-    <p className="text-muted-foreground max-w-md text-sm">
-      Impossible de charger les données. Veuillez réessayer ultérieurement.
-    </p>
-  </div>
-);
-
-const LoadingState = () => (
-  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-    {Array.from({ length: 8 }).map((_, i) => (
-      <div
-        key={i}
-        className="rounded-xl border border-border bg-card p-4 animate-pulse"
-      >
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 rounded-full bg-muted" />
-          <div className="flex-1 space-y-2">
-            <div className="h-4 bg-muted rounded w-3/4" />
-            <div className="h-3 bg-muted rounded w-1/2" />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <div className="h-3 bg-muted rounded w-full" />
-          <div className="h-3 bg-muted rounded w-2/3" />
-        </div>
-      </div>
-    ))}
-  </div>
-);
 
 // Brand color helper (generates consistent color from brand name)
 function getBrandColor(brandName: string): string {
@@ -103,8 +44,76 @@ function getBrandColor(brandName: string): string {
   return colors[index];
 }
 
-const SpecificationCard = ({ generation, isUnlocked }: { generation: Generation; isUnlocked: boolean }) => {
+// --- Explicit variant components (patterns-explicit-variants) ---
+
+export function SpecificationListSkeleton() {
+  return (
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div
+          key={i}
+          className="rounded-xl border border-border bg-card p-4 animate-pulse motion-reduce:animate-none"
+        >
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-12 h-12 rounded-full bg-muted" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 bg-muted rounded w-3/4" />
+              <div className="h-3 bg-muted rounded w-1/2" />
+            </div>
+          </div>
+          <div className="space-y-2">
+            <div className="h-3 bg-muted rounded w-full" />
+            <div className="h-3 bg-muted rounded w-2/3" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+export function SpecificationListEmpty() {
+  return (
+    <div className="flex flex-col items-center justify-center w-full py-16 text-center">
+      <div className="w-16 h-16 rounded-2xl bg-muted flex items-center justify-center mb-4">
+        <FileSearch
+          className="w-8 h-8 text-muted-foreground"
+          aria-hidden="true"
+        />
+      </div>
+      <h3 className="text-lg font-semibold mb-2 text-balance">Aucun résultat trouvé</h3>
+      <p className="text-muted-foreground max-w-md text-sm">
+        Essayez de modifier vos filtres ou recherchez une autre marque de
+        véhicule.
+      </p>
+    </div>
+  );
+}
+
+export function SpecificationListError() {
+  return (
+    <div className="flex flex-col items-center justify-center w-full py-16 text-center">
+      <div className="w-16 h-16 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
+        <AlertCircle className="w-8 h-8 text-destructive" aria-hidden="true" />
+      </div>
+      <h3 className="text-lg font-semibold mb-2 text-balance">
+        Une erreur s&apos;est produite
+      </h3>
+      <p className="text-muted-foreground max-w-md text-sm">
+        Impossible de charger les données. Veuillez réessayer ultérieurement.
+      </p>
+    </div>
+  );
+}
+
+function SpecificationCard({
+  generation,
+  isUnlocked,
+}: {
+  generation: Generation;
+  isUnlocked: boolean;
+}) {
   const makeName = generation.carModel.carMake.name;
+  const logoUrl = generation.carModel.carMake.logo_url;
   const modelName = generation.carModel.name;
   const yearRange = `${generation.year_begin || "?"} — ${generation.year_end || "présent"}`;
 
@@ -116,23 +125,40 @@ const SpecificationCard = ({ generation, isUnlocked }: { generation: Generation;
       <article
         className={cn(
           "h-full rounded-xl border border-border bg-card p-4",
-          "transition-all duration-200",
+          "transition-[box-shadow,border-color] duration-200 motion-reduce:transition-none",
           "hover:shadow-lg hover:shadow-primary/5 hover:border-primary/30",
           "group-focus-visible:border-primary",
         )}
       >
         {/* Header */}
         <div className="flex items-start gap-3 mb-4">
-          <div
-            className={cn(
-              "w-11 h-11 rounded-lg flex items-center justify-center text-white text-lg font-bold shrink-0",
-              "transition-transform group-hover:scale-105",
-              getBrandColor(makeName),
-            )}
-            aria-hidden="true"
-          >
-            {makeName.charAt(0)}
-          </div>
+          {logoUrl ? (
+            <div
+              className="relative w-11 h-11 rounded-lg bg-white shrink-0 transition-transform motion-reduce:transition-none group-hover:scale-105 border border-border overflow-hidden"
+              aria-hidden="true"
+            >
+              <Image
+                src={logoUrl}
+                alt={`Logo ${makeName}`}
+                fill
+                sizes="44px"
+                className="object-contain"
+                quality={100}
+                unoptimized
+              />
+            </div>
+          ) : (
+            <div
+              className={cn(
+                "w-11 h-11 rounded-lg flex items-center justify-center text-white text-lg font-bold shrink-0",
+                "transition-transform motion-reduce:transition-none group-hover:scale-105",
+                getBrandColor(makeName),
+              )}
+              aria-hidden="true"
+            >
+              {makeName.charAt(0)}
+            </div>
+          )}
           <div className="min-w-0 flex-1">
             <div className="flex items-center gap-2">
               <h3 className="font-semibold text-foreground truncate group-hover:text-primary transition-colors">
@@ -174,7 +200,7 @@ const SpecificationCard = ({ generation, isUnlocked }: { generation: Generation;
             <Sparkles className="h-3 w-3 text-primary" aria-hidden="true" />
             <span>Analyse IA disponible</span>
           </div>
-          <span className="flex items-center gap-1 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity">
+          <span className="flex items-center gap-1 text-xs font-medium text-primary opacity-0 group-hover:opacity-100 transition-opacity motion-reduce:transition-none">
             Voir la fiche
             <ArrowRight className="h-3 w-3" aria-hidden="true" />
           </span>
@@ -182,33 +208,24 @@ const SpecificationCard = ({ generation, isUnlocked }: { generation: Generation;
       </article>
     </Link>
   );
-};
+}
 
-const ListSpecification = ({
+// --- Main list component (data only, no loading/error states) ---
+
+export function SpecificationList({
   data,
-  isPending,
-  isError,
   unlockedIds = [],
-}: ListSpecificationProps) => {
-  if (isPending) {
-    return <LoadingState />;
-  }
-
-  if (isError) {
-    return <ErrorState />;
-  }
-
-  if (!data?.data?.length) {
-    return <EmptyState />;
-  }
-
+}: {
+  data: Generation[];
+  unlockedIds?: number[];
+}) {
   return (
     <div
       className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
       role="list"
       aria-label="Liste des fiches techniques"
     >
-      {data.data.map((generation) => (
+      {data.map((generation) => (
         <div key={generation.id_car_generation} role="listitem">
           <SpecificationCard
             generation={generation}
@@ -218,6 +235,28 @@ const ListSpecification = ({
       ))}
     </div>
   );
+}
+
+// --- Backwards-compatible default export (composes variants internally) ---
+
+interface ListSpecificationProps {
+  data: { data: Generation[] } | null;
+  isPending: boolean;
+  isError: boolean;
+  unlockedIds?: number[];
+}
+
+const ListSpecification = ({
+  data,
+  isPending,
+  isError,
+  unlockedIds = [],
+}: ListSpecificationProps) => {
+  if (isPending) return <SpecificationListSkeleton />;
+  if (isError) return <SpecificationListError />;
+  if (!data?.data?.length) return <SpecificationListEmpty />;
+
+  return <SpecificationList data={data.data} unlockedIds={unlockedIds} />;
 };
 
 export default ListSpecification;

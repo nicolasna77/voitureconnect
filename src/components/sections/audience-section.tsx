@@ -49,7 +49,7 @@ export function AudienceSection() {
           )}
         >
           <h2 className="font-serif text-balance text-3xl font-bold text-foreground sm:text-4xl lg:text-5xl">
-            À qui s{"'"}adresse CarMetrix ?
+            À qui s{"'"}adresse DriveMetric ?
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
             Une solution pour tous ceux qui veulent acheter malin

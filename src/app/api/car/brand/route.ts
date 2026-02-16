@@ -11,6 +11,7 @@ export const GET = async () => {
     ).findMany({
       select: {
         name: true,
+        logo_url: true,
       },
       orderBy: {
         name: "asc",

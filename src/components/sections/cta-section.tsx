@@ -47,7 +47,7 @@ export function CTASection() {
               )}
             >
               Rejoignez des milliers d{"'"}utilisateurs qui font confiance à
-              CarMetrix pour leurs achats automobiles.
+              DriveMetric pour leurs achats automobiles.
             </p>
 
             <div

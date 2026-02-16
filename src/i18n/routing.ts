@@ -7,6 +7,10 @@ export const routing = defineRouting({
 
   // Used when no locale matches
   defaultLocale: "fr",
+
+  // Only show locale prefix for non-default locales (e.g. /en/...)
+  // Default locale (fr) has no prefix: /specification instead of /fr/specification
+  localePrefix: "as-needed",
 });
 
 export type Locale = (typeof routing.locales)[number];

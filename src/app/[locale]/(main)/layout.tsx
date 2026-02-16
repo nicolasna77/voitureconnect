@@ -8,7 +8,7 @@ const font = Inter({
   subsets: ["latin"],
 });
 export const metadata: Metadata = {
-  title: "CarMetrix - Analyse intelligente de véhicules",
+  title: "DriveMetric - Analyse intelligente de véhicules",
   description: "Fiches techniques complètes, fiabilité notée par IA, estimation de prix et problèmes connus.",
 };
 export default async function RootLayout({

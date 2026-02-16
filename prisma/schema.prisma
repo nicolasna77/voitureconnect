@@ -350,6 +350,7 @@ model CarMakeFR {
   id_car_make Int       @id @default(autoincrement())
   id_car_type Int
   name        String
+  logo_url    String?
   date_create Int
   date_update String?   @default("NULL")
   cars        Car[]     @relation("CarToCarMakeFR")
@@ -540,6 +541,7 @@ model CarTypeEN {
 model CarMakeEN {
   id_car_make Int       @id @default(autoincrement())
   name        String
+  logo_url    String?
   date_create Int
   date_update String?   @default("NULL")
   id_car_type Int

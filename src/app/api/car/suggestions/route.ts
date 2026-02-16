@@ -22,7 +22,8 @@ export async function GET(req: NextRequest) {
         NULL as generation,
         NULL::integer as id_car_generation,
         NULL as year_begin,
-        NULL as year_end
+        NULL as year_end,
+        cm.logo_url as logo_url
       FROM "dataCarFR"."car_make" cm
       WHERE LOWER(cm.name) LIKE LOWER(${`%${query}%`})
 
@@ -35,7 +36,8 @@ export async function GET(req: NextRequest) {
         NULL as generation,
         NULL::integer as id_car_generation,
         NULL as year_begin,
-        NULL as year_end
+        NULL as year_end,
+        cm.logo_url as logo_url
       FROM "dataCarFR"."car_model" cmod
       JOIN "dataCarFR"."car_make" cm ON cm.id_car_make = cmod.id_car_make
       WHERE LOWER(cmod.name) LIKE LOWER(${`%${query}%`})
@@ -50,7 +52,8 @@ export async function GET(req: NextRequest) {
         cg.name as generation,
         cg.id_car_generation,
         cg.year_begin,
-        cg.year_end
+        cg.year_end,
+        cm.logo_url as logo_url
       FROM "dataCarFR"."car_generation" cg
       JOIN "dataCarFR"."car_model" cmod ON cmod.id_car_model = cg.id_car_model
       JOIN "dataCarFR"."car_make" cm ON cm.id_car_make = cmod.id_car_make

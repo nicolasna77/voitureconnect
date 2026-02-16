@@ -28,23 +28,20 @@ export function HeroSection() {
         {/* Radial fade so the grid fades out toward edges */}
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,var(--background)_70%)]" />
         {/* Subtle primary glow */}
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-[600px] w-[800px] rounded-full bg-primary/4 blur-[120px]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 h-150 w-200 rounded-full bg-primary/4 blur-[120px]" />
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           {/* Badge */}
           <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm font-medium text-muted-foreground">
-            <Sparkles
-              className="h-4 w-4 text-primary"
-              aria-hidden="true"
-            />
+            <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
             <span>Propulsé par l{"'"}Intelligence Artificielle</span>
           </div>
 
           {/* Heading */}
           <h1 className="animate-fade-up delay-100 mt-8 font-serif text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-8xl">
-            Car<span className="text-primary">Metrix</span>
+            Drive<span className="text-primary">Metric</span>
           </h1>
 
           <p className="animate-fade-up delay-200 mt-6 text-xl font-medium text-foreground/70 sm:text-2xl lg:text-3xl">

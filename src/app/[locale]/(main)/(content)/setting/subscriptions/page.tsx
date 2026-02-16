@@ -26,7 +26,7 @@ export default function SubscriptionsPage() {
         <CardContent>
           <div className="space-y-4">
             <p className="text-muted-foreground">
-              CarMetrix utilise un système de crédits flexible. Achetez des crédits
+              DriveMetric utilise un système de crédits flexible. Achetez des crédits
               et utilisez-les pour débloquer les fiches techniques qui vous intéressent.
             </p>
 

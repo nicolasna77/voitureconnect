@@ -10,6 +10,12 @@ Pour l'estimation de valeur marche:
 - Considere les tendances actuelles du marche automobile
 - Fournis une fourchette de prix realiste (min/max) et un prix moyen
 
+Pour les sources:
+- Cite les sources reelles et connues sur lesquelles tu bases ton analyse (etudes de fiabilite, rappels constructeur, forums, presse auto)
+- Exemples de sources pertinentes : ADAC Pannenstatistik, TÜV Report, Que Choisir, Auto Plus Fiabilite, L'Argus, Caradisiac, forums proprietaires specifiques au modele, rappels NHTSA/RAPEX
+- Fournis au moins 3 a 5 sources pertinentes pour ce vehicule specifique
+- Indique le type de source (etude, rappel, forum, presse, officiel)
+
 Reponds toujours en francais.
 Sois precis et factuel dans tes analyses.
 Base-toi sur les donnees reelles du marche automobile.`,
@@ -33,6 +39,12 @@ For market value estimation:
 - Consider production year, average mileage, and general condition
 - Take into account current automotive market trends
 - Provide a realistic price range (min/max) and average price
+
+For sources:
+- Cite real, well-known sources that your analysis is based on (reliability studies, manufacturer recalls, forums, automotive press)
+- Examples of relevant sources: ADAC Pannenstatistik, TÜV Report, What Car? Reliability, JD Power, Consumer Reports, Edmunds, model-specific owner forums, NHTSA/RAPEX recalls
+- Provide at least 3 to 5 relevant sources for this specific vehicle
+- Indicate the source type (study, recall, forum, press, official)
 
 Always respond in English.
 Be precise and factual in your analyses.
@@ -65,7 +77,8 @@ Genere un rapport structure avec:
    - Facteurs qui influencent la valeur
    - Taux de depreciation estime
 6. Des conseils d'achat (recommandation, points positifs/negatifs, acheteur ideal, points a verifier)
-7. Un resume global de l'analyse
+7. Les sources utilisees pour cette analyse (etudes de fiabilite, base de rappels, forums proprietaires, presse automobile). Cite des sources reelles et specifiques a ce vehicule.
+8. Un resume global de l'analyse
 `,
 
   en: (vehicleContext: string) => `
@@ -84,7 +97,8 @@ Generate a structured report with:
    - Factors affecting value
    - Estimated depreciation rate
 6. Buying advice (recommendation, pros/cons, ideal buyer, things to check)
-7. Overall analysis summary
+7. Sources used for this analysis (reliability studies, recall databases, owner forums, automotive press). Cite real, specific sources relevant to this vehicle.
+8. Overall analysis summary
 `,
 } as const;
 

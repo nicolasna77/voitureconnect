@@ -16,7 +16,7 @@ const steps = [
   {
     icon: Cpu,
     step: "02",
-    title: "CarMetrix analyse",
+    title: "DriveMetric analyse",
     description:
       "Notre IA analyse les données et croise des milliers de sources automobiles.",
     color: { bg: "bg-chart-3/8", border: "border-chart-3/15", hover: "group-hover:bg-chart-3/12", icon: "text-chart-3", badge: "bg-chart-3" },
@@ -109,7 +109,7 @@ export function HowItWorksSection() {
             Décision plus éclairée, moins de mauvaises surprises
           </p>
           <p className="mt-2 text-muted-foreground">
-            CarMetrix vous donne toutes les informations nécessaires pour
+            DriveMetric vous donne toutes les informations nécessaires pour
             acheter sereinement.
           </p>
         </div>

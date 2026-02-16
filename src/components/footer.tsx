@@ -23,7 +23,7 @@ export function Footer() {
   return (
     <footer className="relative border-t border-border/60 bg-card">
       {/* Subtle top gradient */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-linear-to-r from-transparent via-primary/20 to-transparent" />
 
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
         <div className="grid gap-10 lg:grid-cols-4">
@@ -36,7 +36,7 @@ export function Footer() {
                 />
               </div>
               <span className="text-xl font-bold text-card-foreground">
-                CarMetrix
+                DriveMetric
               </span>
             </Link>
             <p className="mt-4 max-w-xs text-sm text-muted-foreground leading-relaxed">
@@ -74,7 +74,7 @@ export function Footer() {
 
         <div className="mt-12 border-t border-border/40 pt-8">
           <p className="text-center text-sm text-muted-foreground">
-            &copy; {new Date().getFullYear()} CarMetrix. Tous droits réservés.
+            &copy; {new Date().getFullYear()} DriveMetric. Tous droits réservés.
           </p>
         </div>
       </div>

@@ -3,6 +3,7 @@
 import React, { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
+import Image from "next/image";
 import {
   Select,
   SelectContent,
@@ -145,9 +146,24 @@ export default function SpecificationFilter({
               )}
             </SelectTrigger>
             <SelectContent>
-              {brandsData?.data?.map((brand: { name: string }) => (
+              {brandsData?.data?.map((brand: { name: string; logo_url?: string | null }) => (
                 <SelectItem key={brand.name} value={brand.name}>
-                  {brand.name}
+                  <span className="flex items-center gap-2">
+                    {brand.logo_url ? (
+                      <span className="relative w-5 h-5 shrink-0">
+                        <Image
+                          src={brand.logo_url}
+                          alt=""
+                          fill
+                          sizes="20px"
+                          className="object-contain"
+                          quality={100}
+                          unoptimized
+                        />
+                      </span>
+                    ) : null}
+                    {brand.name}
+                  </span>
                 </SelectItem>
               ))}
             </SelectContent>

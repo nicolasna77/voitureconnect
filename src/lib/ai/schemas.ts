@@ -42,6 +42,12 @@ export const marketValuationSchema = z.object({
   })).describe('Key factors that affect the vehicle value'),
 });
 
+export const sourceSchema = z.object({
+  name: z.string().describe('Name of the source (e.g., "ADAC Pannenstatistik", "TÜV Report 2024", "Auto Plus Fiabilité")'),
+  type: z.enum(['study', 'recall', 'forum', 'press', 'official']).describe('Type of source: study (reliability studies), recall (official recalls), forum (owner forums/communities), press (automotive press/reviews), official (manufacturer data)'),
+  description: z.string().describe('Brief description of what this source provides regarding this vehicle'),
+});
+
 export const reliabilityReportSchema = z.object({
   reliabilityScore: z.number().min(0).max(100).describe('Overall reliability score from 0 to 100'),
   scoreExplanation: z.string().describe('Brief explanation of the reliability score'),
@@ -65,6 +71,8 @@ export const reliabilityReportSchema = z.object({
     thingsToCheck: z.array(z.string()).describe('Specific things to check before buying'),
   }),
 
+  sources: z.array(sourceSchema).describe('List of sources used for this analysis (reliability studies, recall databases, owner forums, automotive press). Provide at least 3-5 real, well-known sources relevant to this specific vehicle.'),
+
   overallSummary: z.string().describe('A comprehensive summary of the reliability analysis'),
 });
 
@@ -73,3 +81,4 @@ export type CommonProblem = z.infer<typeof commonProblemSchema>;
 export type RepairCost = z.infer<typeof repairCostSchema>;
 export type MaintenanceTip = z.infer<typeof maintenanceTipSchema>;
 export type MarketValuation = z.infer<typeof marketValuationSchema>;
+export type Source = z.infer<typeof sourceSchema>;

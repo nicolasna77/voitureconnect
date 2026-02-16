@@ -4,6 +4,7 @@ import React, { useState, useCallback, useRef, useEffect, useMemo } from "react"
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import axios from "axios";
+import Image from "next/image";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import {
@@ -29,6 +30,7 @@ interface Suggestion {
   model: string | null;
   generation: string | null;
   id_car_generation?: number;
+  logo_url?: string | null;
 }
 
 interface SpecificationSearchProps {
@@ -256,6 +258,19 @@ export default function SpecificationSearch({
                         onSelect={() => handleSelect(suggestion)}
                         className="flex items-center gap-3 px-3 py-2.5 cursor-pointer rounded-md aria-selected:bg-accent"
                       >
+                        {suggestion.logo_url && (
+                          <span className="relative w-5 h-5 shrink-0">
+                            <Image
+                              src={suggestion.logo_url}
+                              alt=""
+                              fill
+                              sizes="20px"
+                              className="object-contain"
+                              quality={100}
+                              unoptimized
+                            />
+                          </span>
+                        )}
                         <span className="flex-1 truncate font-medium">
                           {getSuggestionLabel(suggestion)}
                         </span>

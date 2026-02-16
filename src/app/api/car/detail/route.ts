@@ -165,6 +165,53 @@ const categorizeSpecifications = (
   }, {} as Record<string, TransformedSpecification[]>);
 };
 
+// Tri des trims par moteur (cylindrée, type) puis finition
+const sortTrimsByEngineAndFinition = (trims: CarTrim[]): CarTrim[] => {
+  return [...trims].sort((a, b) => {
+    const parseEngine = (name: string) => {
+      // Extract displacement like "1.6", "2.0", "1.5" at the start or after a space
+      const displacementMatch = name.match(/(\d+[.,]\d+)/);
+      const displacement = displacementMatch
+        ? parseFloat(displacementMatch[1].replace(",", "."))
+        : 999;
+
+      // Extract engine type: diesel (HDi, TDI, dCi, CDTi, D, d), electric, hybrid, or petrol
+      const nameLower = name.toLowerCase();
+      let engineType = 2; // default: petrol
+      if (/\b(hdi|tdi|dci|cdti|jtd|crdi|d\b|diesel|bluehdi|ecoblue|hpi)/i.test(name)) {
+        engineType = 1; // diesel
+      } else if (/\b(e-|electric|ev|electrique|électrique)\b/i.test(name)) {
+        engineType = 3; // electric
+      } else if (/\b(hybrid|hybride|phev|plug-in)\b/i.test(name)) {
+        engineType = 4; // hybrid
+      }
+
+      // Extract power like "110", "150" before ch/cv/hp/ps or standalone
+      const powerMatch = name.match(/(\d{2,3})\s*(?:ch|cv|hp|ps|bhp)/i);
+      const power = powerMatch ? parseInt(powerMatch[1]) : 0;
+
+      // Remaining part = finition (everything after engine info)
+      const finition = name
+        .replace(/[\d.,]+\s*[a-zA-Zé-]*\s*\d*\s*(?:ch|cv|hp|ps|bhp)?/i, "")
+        .trim();
+
+      return { displacement, engineType, power, finition };
+    };
+
+    const ea = parseEngine(a.name);
+    const eb = parseEngine(b.name);
+
+    // 1. Sort by engine type (diesel, petrol, electric, hybrid)
+    if (ea.engineType !== eb.engineType) return ea.engineType - eb.engineType;
+    // 2. Sort by displacement
+    if (ea.displacement !== eb.displacement) return ea.displacement - eb.displacement;
+    // 3. Sort by power
+    if (ea.power !== eb.power) return ea.power - eb.power;
+    // 4. Sort by finition name
+    return ea.finition.localeCompare(eb.finition);
+  });
+};
+
 // Fonction pour extraire les spécifications communes
 const getCommonSpecifications = (trims: CarTrim[]): SpecificationValue[] => {
   if (!trims?.length) return [];
@@ -244,11 +291,14 @@ export async function GET(req: NextRequest) {
 
     console.log("[API car/detail] Trims count:", trims?.length || 0);
 
-    // Create a virtual series structure with all trims
-    const virtualSeries = trims.length > 0 ? [{
+    // Sort trims by engine type, displacement, power, then finition
+    const sortedTrims = sortTrimsByEngineAndFinition(trims);
+
+    // Create a virtual series structure with sorted trims
+    const virtualSeries = sortedTrims.length > 0 ? [{
       id_car_serie: 0,
       name: generation.carModel?.name || "Motorisations",
-      trims: trims,
+      trims: sortedTrims,
     }] : [];
 
     // Combine generation with virtual series
