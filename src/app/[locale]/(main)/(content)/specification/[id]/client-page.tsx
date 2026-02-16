@@ -1,12 +1,13 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "@/i18n/routing";
 import { notFound, useParams } from "next/navigation";
 import { useLocale } from "next-intl";
+import { useSession } from "@/lib/auth-client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft } from "lucide-react";
@@ -20,6 +21,8 @@ import { QuickStats } from "./_components/quick-stats";
 import { AllSpecifications } from "./_components/all-specifications";
 import { ErrorState } from "./_components/error-state";
 import { LoadingState } from "./_components/loading-state";
+import { RecallsSection } from "./_components/recalls-section";
+import { CompareButton } from "./_components/compare-button";
 
 const AIReliabilityWidget = dynamic(
   () =>
@@ -50,6 +53,8 @@ export function SpecificationDetailPage() {
   const params = useParams();
   const id = params.id as string;
   const locale = useLocale() as "fr" | "en";
+  const { data: sessionData } = useSession();
+  const historyRecorded = useRef(false);
 
   const {
     data: generation,
@@ -87,6 +92,22 @@ export function SpecificationDetailPage() {
     );
   }, [effectiveTrimId, allTrims]);
 
+  // Record view history when generation loads
+  useEffect(() => {
+    if (!generation || !sessionData?.user || historyRecorded.current) return;
+    historyRecorded.current = true;
+
+    axios
+      .post("/api/history", {
+        generationId: generation.id_car_generation,
+        makeName: generation.carModel?.carMake?.name || "",
+        modelName: generation.carModel?.name || "",
+        generationName: generation.name || "",
+        imageUrl: generation.carModel?.carMake?.logo_url || null,
+      })
+      .catch(() => {});
+  }, [generation, sessionData]);
+
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState />;
   if (!generation) return notFound();
@@ -107,7 +128,9 @@ export function SpecificationDetailPage() {
 
       {/* Hero */}
       <AnimatedSection>
-        <VehicleHeader generation={generation} />
+        <VehicleHeader generation={generation}>
+          <CompareButton generation={generation} />
+        </VehicleHeader>
       </AnimatedSection>
 
       {/* Motorization Selector */}
@@ -130,6 +153,14 @@ export function SpecificationDetailPage() {
             locale={locale}
           />
         </div>
+      </AnimatedSection>
+
+      {/* NHTSA Recalls */}
+      <AnimatedSection delay={250}>
+        <RecallsSection
+          makeName={generation.carModel?.carMake?.name || ""}
+          modelName={generation.carModel?.name || ""}
+        />
       </AnimatedSection>
 
       {/* All Specifications for selected trim */}

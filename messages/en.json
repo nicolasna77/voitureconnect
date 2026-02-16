@@ -312,5 +312,39 @@
       "noSpecs": "No unlocked technical sheets",
       "browseSpecs": "Browse sheets"
     }
+  },
+  "History": {
+    "recentlyViewed": "Recently viewed",
+    "viewSheet": "View sheet"
+  },
+  "Recalls": {
+    "title": "Manufacturer Recalls (NHTSA)",
+    "description": "Data from NHTSA (National Highway Traffic Safety Administration)",
+    "noRecalls": "No known recalls for this model.",
+    "showMore": "Show {count} more recalls",
+    "showLess": "Show less",
+    "viewOnNhtsa": "View on NHTSA.gov"
+  },
+  "Compare": {
+    "title": "Vehicle Comparator",
+    "emptyDescription": "Select at least 2 vehicles from the technical sheets to compare them side by side.",
+    "browseSpecs": "Browse specifications",
+    "back": "Back",
+    "clearAll": "Clear all",
+    "add": "Add",
+    "compare": "Compare",
+    "compared": "Compared",
+    "remove": "Remove",
+    "categories": {
+      "engine": "Engine",
+      "performance": "Performance",
+      "dimensions": "Dimensions",
+      "weights": "Weights & capacity",
+      "gearbox": "Transmission",
+      "fuel": "Fuel consumption",
+      "suspension": "Chassis",
+      "body": "Body",
+      "other": "Other"
+    }
   }
 }

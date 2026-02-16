@@ -29,6 +29,7 @@ model User {
   credits             UserCredit?
   creditTransactions  CreditTransaction[]
   specificationAccess SpecificationAccess[]
+  viewHistory         ViewHistory[]
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
 
@@ -321,6 +322,22 @@ model Picture {
   car     Car?     @relation(fields: [carId], references: [id])
   Garage  Garage[]
 
+  @@schema("base")
+}
+
+model ViewHistory {
+  id             String   @id @default(uuid())
+  userId         String
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generationId   Int
+  makeName       String
+  modelName      String
+  generationName String
+  imageUrl       String?
+  visitedAt      DateTime @default(now())
+
+  @@index([userId, visitedAt])
+  @@map("view_history")
   @@schema("base")
 }
 

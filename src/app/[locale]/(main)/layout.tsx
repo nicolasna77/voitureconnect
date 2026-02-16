@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import Header from "@/components/header";
 import Footer from "@/components/footer";
+import { CompareFab } from "@/components/compare-fab";
 
 const font = Inter({
   weight: "400",
@@ -20,6 +21,7 @@ export default async function RootLayout({
     <div className="min-h-screen flex flex-col">
       <Header />
       <main className="flex-1 pt-16">{children}</main>
+      <CompareFab />
       <Footer />
     </div>
   );

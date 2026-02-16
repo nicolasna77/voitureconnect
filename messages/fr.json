@@ -319,5 +319,39 @@
       "noSpecs": "Aucune fiche technique débloquée",
       "browseSpecs": "Parcourir les fiches"
     }
+  },
+  "History": {
+    "recentlyViewed": "Consultés récemment",
+    "viewSheet": "Voir la fiche"
+  },
+  "Recalls": {
+    "title": "Rappels constructeur (NHTSA)",
+    "description": "Données issues de la NHTSA (National Highway Traffic Safety Administration)",
+    "noRecalls": "Aucun rappel connu pour ce modèle.",
+    "showMore": "Voir les {count} autres rappels",
+    "showLess": "Voir moins",
+    "viewOnNhtsa": "Voir sur NHTSA.gov"
+  },
+  "Compare": {
+    "title": "Comparateur de véhicules",
+    "emptyDescription": "Sélectionnez au moins 2 véhicules depuis les fiches techniques pour les comparer côte à côte.",
+    "browseSpecs": "Parcourir les fiches",
+    "back": "Retour",
+    "clearAll": "Tout effacer",
+    "add": "Ajouter",
+    "compare": "Comparer",
+    "compared": "Comparé",
+    "remove": "Retirer",
+    "categories": {
+      "engine": "Moteur",
+      "performance": "Performance",
+      "dimensions": "Dimensions",
+      "weights": "Poids & capacités",
+      "gearbox": "Transmission",
+      "fuel": "Consommation",
+      "suspension": "Châssis",
+      "body": "Carrosserie",
+      "other": "Autres"
+    }
   }
 }

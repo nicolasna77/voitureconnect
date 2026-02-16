@@ -11,7 +11,13 @@ import {
 } from "lucide-react";
 import type { Generation } from "./types";
 
-export function VehicleHeader({ generation }: { generation: Generation }) {
+export function VehicleHeader({
+  generation,
+  children,
+}: {
+  generation: Generation;
+  children?: React.ReactNode;
+}) {
   const makeName = generation.carModel?.carMake?.name || "";
   const modelName = generation.carModel?.name || "";
   const genName = generation.name || "";
@@ -101,6 +107,7 @@ export function VehicleHeader({ generation }: { generation: Generation }) {
 
           {/* Right: actions */}
           <div className="flex items-center gap-2 print:hidden shrink-0">
+            {children}
             <Button
               variant="outline"
               size="sm"

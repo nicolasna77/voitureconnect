@@ -17,6 +17,7 @@ import {
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
 import { cn } from "@/lib/utils";
+import { RecentHistory } from "./_components/recent-history";
 
 const fetchCarData = async (params: URLSearchParams) => {
   const response = await axios.get(`/api/car?${params.toString()}`);
@@ -194,6 +195,9 @@ const SpecificationPage = () => {
           </div>
         </div>
       </header>
+
+      {/* Recent history */}
+      <RecentHistory />
 
       {/* Active filters pills */}
       {hasActiveFilters && (
