@@ -43,6 +43,10 @@ const data = {
           title: "Abonnements",
           url: "/admin/subscriptions",
         },
+        {
+          title: "Scripts",
+          url: "/admin/scripts",
+        },
       ],
     },
   ],
