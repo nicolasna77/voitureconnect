@@ -73,10 +73,11 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 interface CompareContentProps {
-  isModal?: boolean;
+  header?: React.ReactNode;
+  className?: string;
 }
 
-export function CompareContent({ isModal = false }: CompareContentProps) {
+export function CompareContent({ header, className }: CompareContentProps) {
   const { items, remove, clear } = useCompare();
 
   const [selectedTrims, setSelectedTrims] = useState<Record<number, number>>(
@@ -204,27 +205,26 @@ export function CompareContent({ isModal = false }: CompareContentProps) {
     );
   }
 
-  return (
-    <div className={cn("space-y-6", !isModal && "py-6")}>
-      {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          {!isModal && (
-            <Button variant="ghost" size="sm" asChild>
-              <Link href="/specification">
-                <ChevronLeft className="h-4 w-4 mr-1" />
-                Retour
-              </Link>
-            </Button>
-          )}
-          <h1 className={cn("font-bold", isModal ? "text-lg" : "text-2xl")}>
-            Comparateur
-          </h1>
-        </div>
-        <Button variant="outline" size="sm" onClick={clear}>
-          Tout effacer
+  const defaultHeader = (
+    <div className="flex items-center justify-between">
+      <div className="flex items-center gap-3">
+        <Button variant="ghost" size="sm" asChild>
+          <Link href="/specification">
+            <ChevronLeft className="h-4 w-4 mr-1" />
+            Retour
+          </Link>
         </Button>
+        <h1 className="text-2xl font-bold">Comparateur</h1>
       </div>
+      <Button variant="outline" size="sm" onClick={clear}>
+        Tout effacer
+      </Button>
+    </div>
+  );
+
+  return (
+    <div className={cn("space-y-6", className)}>
+      {header !== undefined ? header : defaultHeader}
 
       {/* Vehicle headers with trim selectors */}
       <div

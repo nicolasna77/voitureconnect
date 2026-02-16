@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Sparkles } from "lucide-react";
+import { ArrowRight, Zap } from "lucide-react";
 import { useInView } from "@/hooks/use-in-view";
 import { cn } from "@/lib/utils";
 
@@ -27,8 +27,8 @@ export function CTASection() {
                 isInView ? "animate-fade-up" : "opacity-0",
               )}
             >
-              <Sparkles className="h-4 w-4 text-primary" aria-hidden="true" />
-              <span>Prêt à commencer ?</span>
+              <Zap className="h-4 w-4 text-primary" aria-hidden="true" />
+              <span>Gratuit pour commencer</span>
             </div>
 
             <h2
@@ -37,7 +37,8 @@ export function CTASection() {
                 isInView ? "animate-fade-up delay-100" : "opacity-0",
               )}
             >
-              Découvrez la fiabilité de votre futur véhicule
+              Arrêtez de deviner,{" "}
+              <span className="text-primary">commencez à savoir</span>
             </h2>
 
             <p
@@ -46,8 +47,8 @@ export function CTASection() {
                 isInView ? "animate-fade-up delay-200" : "opacity-0",
               )}
             >
-              Rejoignez des milliers d{"'"}utilisateurs qui font confiance à
-              DriveMetric pour leurs achats automobiles.
+              Des milliers d{"'"}acheteurs utilisent déjà DriveMetric pour éviter
+              les mauvaises affaires. Lancez votre première analyse maintenant.
             </p>
 
             <div
@@ -58,7 +59,7 @@ export function CTASection() {
             >
               <Button asChild size="lg" className="group w-full sm:w-auto">
                 <Link href="/specification">
-                  Analyser un véhicule maintenant
+                  Lancer une analyse gratuite
                   <ArrowRight
                     className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1"
                     aria-hidden="true"
@@ -71,7 +72,7 @@ export function CTASection() {
                 variant="outline"
                 className="w-full sm:w-auto"
               >
-                <Link href="#features">En savoir plus</Link>
+                <Link href="#features">Voir les fonctionnalités</Link>
               </Button>
             </div>
           </div>

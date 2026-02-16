@@ -10,7 +10,7 @@ const font = Inter({
 });
 export const metadata: Metadata = {
   title: "DriveMetric - Analyse intelligente de véhicules",
-  description: "Fiches techniques complètes, fiabilité notée par IA, estimation de prix et problèmes connus.",
+  description: "Fiches techniques, score de fiabilité, problèmes connus et estimation de prix pour chaque véhicule. Achetez en confiance.",
 };
 export default async function RootLayout({
   children,

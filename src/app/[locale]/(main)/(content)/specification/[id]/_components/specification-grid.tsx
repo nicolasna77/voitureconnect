@@ -12,12 +12,12 @@ export function SpecificationGrid({
       {specifications.map((spec, index) => (
         <div
           key={index}
-          className="flex items-center justify-between py-2.5 border-b border-dashed border-muted last:border-0"
+          className="flex items-start justify-between gap-4 py-2.5 border-b border-dashed border-muted last:border-0"
         >
-          <span className="text-sm text-muted-foreground truncate mr-4">
+          <span className="text-sm text-muted-foreground shrink-0">
             {spec.name}
           </span>
-          <span className="text-sm font-semibold tabular-nums whitespace-nowrap">
+          <span className="text-sm font-semibold tabular-nums text-right">
             {spec.value?.replace(/NULL$/i, "")}
             {spec.unit && spec.unit !== "NULL" && (
               <span className="text-muted-foreground font-normal ml-1">

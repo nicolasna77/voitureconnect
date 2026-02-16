@@ -54,7 +54,7 @@ export function AudienceSection() {
             À qui s{"'"}adresse DriveMetric ?
           </h2>
           <p className="mt-4 text-lg text-muted-foreground">
-            Une solution pour tous ceux qui veulent acheter malin
+            Que vous soyez novice ou expert, DriveMetric vous fait gagner du temps et de l{"'"}argent
           </p>
         </div>
 

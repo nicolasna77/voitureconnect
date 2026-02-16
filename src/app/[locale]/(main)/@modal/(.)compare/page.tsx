@@ -1,6 +1,8 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { useCompare } from "@/hooks/use-compare";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +10,19 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { CompareContent } from "@/components/compare-content";
+
+function ModalHeader() {
+  const { clear } = useCompare();
+
+  return (
+    <div className="flex items-center justify-between">
+      <h2 className="text-lg font-bold">Comparateur</h2>
+      <Button variant="outline" size="sm" onClick={clear}>
+        Tout effacer
+      </Button>
+    </div>
+  );
+}
 
 export default function CompareModal() {
   const router = useRouter();
@@ -23,7 +38,7 @@ export default function CompareModal() {
         <DialogHeader className="sr-only">
           <DialogTitle>Comparateur de véhicules</DialogTitle>
         </DialogHeader>
-        <CompareContent isModal />
+        <CompareContent header={<ModalHeader />} />
       </DialogContent>
     </Dialog>
   );

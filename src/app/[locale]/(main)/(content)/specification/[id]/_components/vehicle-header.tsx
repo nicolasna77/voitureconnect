@@ -84,14 +84,14 @@ export function VehicleHeader({
                 <Badge variant="secondary" className="gap-1.5">
                   <Calendar className="h-3.5 w-3.5" aria-hidden="true" />
                   <span className="tabular-nums">
-                    {generation.year_begin || "\u2013"} \u2014{" "}
+                    {generation.year_begin || "\u2013"} {"\u2014"}{" "}
                     {generation.year_end || "pr\u00E9sent"}
                   </span>
                 </Badge>
                 {generation.series?.length > 0 && (
                   <Badge variant="outline" className="gap-1.5">
                     <Car className="h-3.5 w-3.5" aria-hidden="true" />
-                    {generation.series.length} s\u00E9rie
+                    {generation.series.length} {"\u0073\u00E9rie"}
                     {generation.series.length > 1 ? "s" : ""}
                   </Badge>
                 )}

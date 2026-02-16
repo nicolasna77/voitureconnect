@@ -3,5 +3,5 @@
 import { CompareContent } from "@/components/compare-content";
 
 export default function ComparePage() {
-  return <CompareContent />;
+  return <CompareContent className="py-6" />;
 }

@@ -163,6 +163,33 @@ export const auth = betterAuth({
     },
   },
 
+  // Grant 3 free credits on sign-up
+  databaseHooks: {
+    user: {
+      create: {
+        after: async (user) => {
+          try {
+            await prisma.$transaction(async (tx) => {
+              await tx.userCredit.create({
+                data: { userId: user.id, balance: 3 },
+              });
+              await tx.creditTransaction.create({
+                data: {
+                  userId: user.id,
+                  type: "BONUS",
+                  amount: 3,
+                  description: "Bienvenue ! 3 crédits offerts à l'inscription",
+                },
+              });
+            });
+          } catch (error) {
+            console.error("[Auth] Error granting welcome credits:", error);
+          }
+        },
+      },
+    },
+  },
+
   // Rate limiting for security
   rateLimit: {
     enabled: true,
