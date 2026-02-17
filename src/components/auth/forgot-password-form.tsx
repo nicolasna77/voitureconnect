@@ -13,11 +13,11 @@ import { requestPasswordReset } from "@/lib/auth-client";
 // Hoisted success state component (vercel-react-best-practices: rendering-hoist-jsx)
 function SuccessState({ email }: { email: string }) {
   return (
-    <Card className="rounded-lg px-6 pb-4 pt-8">
+    <Card className="rounded-lg px-6 pb-4 pt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
       <CardContent className="pt-6">
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center">
-            <CheckCircle className="h-8 w-8 text-emerald-600" aria-hidden="true" />
+          <div className="h-16 w-16 rounded-full bg-emerald-500/10 flex items-center justify-center">
+            <CheckCircle className="h-8 w-8 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-semibold">Email envoyé</h2>
@@ -79,7 +79,7 @@ export default function ForgotPasswordForm() {
   }
 
   return (
-    <Card className="rounded-lg px-6 pb-4 pt-8">
+    <Card className="rounded-lg px-6 pb-4 pt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
       <CardHeader className="text-center">
         <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
           <Mail className="h-6 w-6 text-primary" aria-hidden="true" />

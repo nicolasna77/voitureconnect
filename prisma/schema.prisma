@@ -30,6 +30,8 @@ model User {
   creditTransactions  CreditTransaction[]
   specificationAccess SpecificationAccess[]
   viewHistory         ViewHistory[]
+  comments            Comment[]
+  commentReports      CommentReport[]
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
 
@@ -338,6 +340,51 @@ model ViewHistory {
 
   @@index([userId, visitedAt])
   @@map("view_history")
+  @@schema("base")
+}
+
+// ============= COMMENTAIRES =============
+enum CommentReportStatus {
+  PENDING
+  RESOLVED
+  DISMISSED
+
+  @@schema("base")
+}
+
+model Comment {
+  id           String          @id @default(uuid())
+  userId       String
+  user         User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  generationId Int
+  parentId     String?
+  parent       Comment?        @relation("CommentReplies", fields: [parentId], references: [id], onDelete: Cascade)
+  replies      Comment[]       @relation("CommentReplies")
+  content      String
+  isEdited     Boolean         @default(false)
+  reports      CommentReport[]
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+
+  @@index([generationId, createdAt])
+  @@map("comments")
+  @@schema("base")
+}
+
+model CommentReport {
+  id         String              @id @default(uuid())
+  commentId  String
+  comment    Comment             @relation(fields: [commentId], references: [id], onDelete: Cascade)
+  reporterId String
+  reporter   User                @relation(fields: [reporterId], references: [id], onDelete: Cascade)
+  reason     String
+  status     CommentReportStatus @default(PENDING)
+  resolvedAt DateTime?
+  resolvedBy String?
+  createdAt  DateTime            @default(now())
+
+  @@unique([commentId, reporterId])
+  @@map("comment_reports")
   @@schema("base")
 }
 

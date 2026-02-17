@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import { Key, Loader2, ArrowLeft, ShieldCheck, CheckCircle, AlertTriangle } from "lucide-react";
+import { Key, Loader2, ArrowLeft, ShieldCheck, CheckCircle, AlertTriangle, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -11,10 +11,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { resetPassword } from "@/lib/auth-client";
 
-// Hoisted state components (vercel-react-best-practices: rendering-hoist-jsx)
 function InvalidTokenState({ message }: { message: string }) {
   return (
-    <Card className="rounded-lg px-6 pb-4 pt-8">
+    <Card className="rounded-lg px-6 pb-4 pt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
       <CardContent className="pt-6">
         <div className="flex flex-col items-center text-center space-y-4">
           <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
@@ -43,11 +42,11 @@ function InvalidTokenState({ message }: { message: string }) {
 
 function SuccessState() {
   return (
-    <Card className="rounded-lg px-6 pb-4 pt-8">
+    <Card className="rounded-lg px-6 pb-4 pt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
       <CardContent className="pt-6">
         <div className="flex flex-col items-center text-center space-y-4">
-          <div className="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center">
-            <CheckCircle className="h-8 w-8 text-emerald-600" aria-hidden="true" />
+          <div className="h-16 w-16 rounded-full bg-emerald-500/10 flex items-center justify-center">
+            <CheckCircle className="h-8 w-8 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
           </div>
           <div className="space-y-2">
             <h2 className="text-xl font-semibold">Mot de passe réinitialisé</h2>
@@ -68,8 +67,6 @@ function SuccessState() {
 export default function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-
-  // Derive token directly during render (vercel-react-best-practices: rerender-derived-state-no-effect)
   const token = searchParams.get("token");
 
   const [password, setPassword] = useState("");
@@ -77,14 +74,14 @@ export default function ResetPasswordForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
 
-  // Stable callback with useCallback
   const handleSubmit = useCallback(
     async (e: React.FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       setError(null);
 
-      // Early validation (vercel-react-best-practices: js-early-exit)
       if (password !== confirmPassword) {
         setError("Les mots de passe ne correspondent pas.");
         return;
@@ -112,7 +109,6 @@ export default function ResetPasswordForm() {
           setError(result.error.message || "Une erreur est survenue.");
         } else {
           setIsSuccess(true);
-          // Redirect to login after 3 seconds
           setTimeout(() => {
             router.push("/login");
           }, 3000);
@@ -126,7 +122,6 @@ export default function ResetPasswordForm() {
     [password, confirmPassword, token, router]
   );
 
-  // Early returns for different states (vercel-react-best-practices: js-early-exit)
   if (!token) {
     return <InvalidTokenState message="Le lien de réinitialisation est invalide ou a expiré." />;
   }
@@ -136,7 +131,7 @@ export default function ResetPasswordForm() {
   }
 
   return (
-    <Card className="rounded-lg px-6 pb-4 pt-8">
+    <Card className="rounded-lg px-6 pb-4 pt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
       <CardHeader className="text-center">
         <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
           <ShieldCheck className="h-6 w-6 text-primary" aria-hidden="true" />
@@ -148,22 +143,22 @@ export default function ResetPasswordForm() {
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-4">
-          {error ? (
-            <Alert variant="destructive">
+          {error && (
+            <Alert variant="destructive" className="animate-in fade-in-0 slide-in-from-top-2 duration-300">
               <AlertDescription>{error}</AlertDescription>
             </Alert>
-          ) : null}
+          )}
 
           <div className="space-y-2">
             <Label htmlFor="password">Nouveau mot de passe</Label>
             <div className="relative">
               <Input
                 id="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="pl-10"
+                className="pl-10 pr-10"
                 required
                 minLength={8}
               />
@@ -171,6 +166,14 @@ export default function ResetPasswordForm() {
                 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
             <p className="text-xs text-muted-foreground">Minimum 8 caractères</p>
           </div>
@@ -180,11 +183,11 @@ export default function ResetPasswordForm() {
             <div className="relative">
               <Input
                 id="confirmPassword"
-                type="password"
+                type={showConfirm ? "text" : "password"}
                 placeholder="••••••••"
                 value={confirmPassword}
                 onChange={(e) => setConfirmPassword(e.target.value)}
-                className="pl-10"
+                className="pl-10 pr-10"
                 required
                 minLength={8}
               />
@@ -192,6 +195,14 @@ export default function ResetPasswordForm() {
                 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                 aria-hidden="true"
               />
+              <button
+                type="button"
+                onClick={() => setShowConfirm(!showConfirm)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={showConfirm ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              >
+                {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
           </div>
 

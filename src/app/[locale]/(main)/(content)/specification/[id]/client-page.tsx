@@ -23,6 +23,7 @@ import { ErrorState } from "./_components/error-state";
 import { LoadingState } from "./_components/loading-state";
 import { RecallsSection } from "./_components/recalls-section";
 import { CompareButton } from "./_components/compare-button";
+import { CommentsSection } from "./_components/comments/comments-section";
 
 const AIReliabilityWidget = dynamic(
   () =>
@@ -177,6 +178,11 @@ export function SpecificationDetailPage() {
           </Card>
         )}
       </main>
+
+      {/* Comments */}
+      <AnimatedSection delay={300}>
+        <CommentsSection generationId={generation.id_car_generation} />
+      </AnimatedSection>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 "use client";
-import React from "react";
 import { signIn } from "@/lib/auth-client";
-import { Button } from "../../components/ui/button";
+import { Button } from "@/components/ui/button";
 import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
@@ -26,18 +25,17 @@ const LoginSocial = () => {
   return (
     <Button
       variant="outline"
-      className="m-auto mb-4 w-full border flex gap-2"
+      className="w-full gap-3 h-11 text-sm font-medium transition-all duration-200 hover:bg-accent/80"
       type="button"
-      size="lg"
       onClick={onClick}
       disabled={isLoading}
     >
       {isLoading ? (
-        <Loader2 className="animate-spin" />
+        <Loader2 className="h-5 w-5 animate-spin" />
       ) : (
         <>
-          <FcGoogle size={24} />
-          S&apos;identifier avec Google
+          <FcGoogle className="h-5 w-5" />
+          Continuer avec Google
         </>
       )}
     </Button>

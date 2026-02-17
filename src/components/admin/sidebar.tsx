@@ -47,6 +47,10 @@ const data = {
           title: "Scripts",
           url: "/admin/scripts",
         },
+        {
+          title: "Signalements",
+          url: "/admin/reports",
+        },
       ],
     },
   ],
@@ -61,10 +65,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader className="overflow-hidden" aria-label="CarConnect Admin">
         {collapsed ? (
-          <span className="text-lg font-bold text-primary text-center" aria-hidden="true">C</span>
+          <span
+            className="text-lg font-bold text-primary text-center"
+            aria-hidden="true"
+          >
+            C
+          </span>
         ) : (
           <h3 className="text-2xl font-bold text-primary text-center whitespace-nowrap">
-            CarConnect{" "}
+            DriveMetric{" "}
             <span className="text-sm text-muted-foreground">Admin</span>
           </h3>
         )}

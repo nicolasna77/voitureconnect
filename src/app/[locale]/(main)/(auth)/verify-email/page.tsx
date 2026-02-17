@@ -1,7 +1,7 @@
 "use client";
 import { useSearchParams } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { CheckCircle2, XCircle, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import { useQuery } from "@tanstack/react-query";
@@ -33,49 +33,64 @@ const VerifyEmailPage = () => {
   const isSuccess = status === "success";
 
   return (
-    <main className="flex items-center justify-center min-h-[calc(100vh_-_theme(spacing.16))]">
-      <div className="relative mx-auto flex w-full max-w-md  flex-col space-y-2.5 p-4 md:-mt-32">
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl text-center">
-              Vérification de l&apos;email
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex flex-col items-center gap-4">
-            {isLoading && (
-              <div className="flex flex-col items-center gap-4">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-                <p>Vérification en cours...</p>
+    <Card className="rounded-lg px-6 pb-4 pt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+      <CardContent className="pt-6">
+        <div className="flex flex-col items-center text-center space-y-4">
+          {isLoading && (
+            <>
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center">
+                <Mail className="h-8 w-8 text-primary animate-pulse" aria-hidden="true" />
               </div>
-            )}
-
-            {isSuccess && (
-              <div className="flex flex-col items-center gap-4">
-                <CheckCircle2 className="h-16 w-16 text-green-500" />
-                <p className="text-center">{message}</p>
-                <Button asChild>
-                  <Link href="/login">Se connecter</Link>
-                </Button>
+              <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Vérification en cours</h2>
+                <p className="text-muted-foreground text-sm">
+                  Nous vérifions votre adresse email...
+                </p>
               </div>
-            )}
+              <div className="flex gap-1 pt-2">
+                <span className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:0ms]" />
+                <span className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:150ms]" />
+                <span className="h-2 w-2 rounded-full bg-primary animate-bounce [animation-delay:300ms]" />
+              </div>
+            </>
+          )}
 
-            {isError && (
-              <div className="flex flex-col items-center gap-4">
-                <XCircle className="h-16 w-16 text-red-500" />
-                <p className="text-center text-red-500">
+          {isSuccess && (
+            <>
+              <div className="h-16 w-16 rounded-full bg-emerald-500/10 flex items-center justify-center">
+                <CheckCircle2 className="h-8 w-8 text-emerald-600 dark:text-emerald-400" aria-hidden="true" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Email vérifié</h2>
+                <p className="text-muted-foreground text-sm">{message}</p>
+              </div>
+              <Button asChild className="w-full mt-2">
+                <Link href="/login">Se connecter</Link>
+              </Button>
+            </>
+          )}
+
+          {isError && (
+            <>
+              <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
+                <XCircle className="h-8 w-8 text-destructive" aria-hidden="true" />
+              </div>
+              <div className="space-y-2">
+                <h2 className="text-xl font-semibold">Erreur de vérification</h2>
+                <p className="text-muted-foreground text-sm">
                   {error instanceof Error
                     ? error.message
                     : "Une erreur est survenue"}
                 </p>
-                <Button asChild variant="outline">
-                  <Link href="/register">Retour à l&apos;inscription</Link>
-                </Button>
               </div>
-            )}
-          </CardContent>
-        </Card>
-      </div>
-    </main>
+              <Button asChild variant="outline" className="w-full mt-2">
+                <Link href="/register">Retour à l&apos;inscription</Link>
+              </Button>
+            </>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 

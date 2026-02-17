@@ -1,10 +1,24 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { AtSign, Key, AlertTriangle, Loader2 } from "lucide-react";
-import { Input } from "../ui/input";
-import { Label } from "../ui/label";
+import {
+  AtSign,
+  Key,
+  Loader2,
+  LogIn,
+  Eye,
+  EyeOff,
+} from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import LoginSocial from "./login-social";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -14,6 +28,7 @@ const LoginForm = () => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,95 +59,114 @@ const LoginForm = () => {
   };
 
   return (
-    <Card className="grid gap-6 border-border rounded-lg px-6 pb-4 pt-8">
-      <CardHeader>
+    <Card className="rounded-lg px-6 pb-4 pt-8 animate-in fade-in-0 slide-in-from-bottom-4 duration-500">
+      <CardHeader className="text-center">
+        <div className="mx-auto mb-4 h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center">
+          <LogIn className="h-6 w-6 text-primary" aria-hidden="true" />
+        </div>
         <CardTitle className="text-2xl">Connectez-vous</CardTitle>
+        <CardDescription>
+          Accédez à votre espace VoitureConnect
+        </CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className="space-y-6">
         <LoginSocial />
+
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
             <span className="w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Ou</span>
+            <span className="bg-card px-2 text-muted-foreground">Ou</span>
           </div>
         </div>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} className="space-y-4">
           {error && (
-            <div className="flex items-center gap-2 p-3 bg-red-100 rounded-md mb-4">
-              <AlertTriangle className="text-red-500 h-5 w-5" />
-              <p className="text-red-500 text-sm">{error}</p>
-            </div>
+            <Alert variant="destructive" className="animate-in fade-in-0 slide-in-from-top-2 duration-300">
+              <AlertDescription>{error}</AlertDescription>
+            </Alert>
           )}
-          <div className="w-full">
-            <div>
-              <Label
-                className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-                htmlFor="email"
-              >
-                Email
-              </Label>
-              <div className="relative">
-                <Input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                  id="email"
-                  type="email"
-                  name="email"
-                  placeholder="Entrez votre email"
-                  required
-                />
-                <AtSign className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-              </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="email">Email</Label>
+            <div className="relative">
+              <Input
+                id="email"
+                type="email"
+                name="email"
+                placeholder="votre@email.com"
+                className="pl-10"
+                required
+              />
+              <AtSign
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
             </div>
-            <div className="mt-4">
-              <Label
-                className="mb-3 mt-5 block text-xs font-medium text-gray-900"
-                htmlFor="password"
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="password">Mot de passe</Label>
+              <Link
+                href="/forgot-password"
+                className="text-xs text-primary hover:underline"
               >
-                Mot de passe
-              </Label>
-              <div className="relative">
-                <Input
-                  className="peer block w-full rounded-md border border-gray-200 py-[9px] pl-10 text-sm outline-2 placeholder:text-gray-500"
-                  id="password"
-                  type="password"
-                  name="password"
-                  placeholder="********"
-                  required
-                  minLength={6}
-                />
-                <Key className="pointer-events-none absolute left-3 top-1/2 h-[18px] w-[18px] -translate-y-1/2 text-gray-500 peer-focus:text-gray-900" />
-              </div>
-            </div>
-            <div>
-              <Link href="/forgot-password" className="text-sm text-primary">
-                Mot de passe oublie ?
+                Mot de passe oublié ?
               </Link>
             </div>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                name="password"
+                placeholder="••••••••"
+                className="pl-10 pr-10"
+                required
+                minLength={6}
+              />
+              <Key
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-4 w-4" />
+                ) : (
+                  <Eye className="h-4 w-4" />
+                )}
+              </button>
+            </div>
           </div>
-          <div className="py-4">
-            <Button
-              size={"lg"}
-              variant={"default"}
-              className="m-auto justify-center flex"
-              type="submit"
-              disabled={isLoading}
-            >
-              {isLoading ? (
-                <Loader2 className="animate-spin" />
-              ) : (
-                "Se Connecter"
-              )}
-            </Button>
-          </div>
+
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <>
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
+                Connexion...
+              </>
+            ) : (
+              "Se connecter"
+            )}
+          </Button>
         </form>
-        <div className="text-center m-auto">
-          <Link href="/register" className="text-sm text-primary ">
-            Vous n&apos;avez pas de compte ?
+
+        <p className="text-center text-sm text-muted-foreground">
+          Vous n&apos;avez pas de compte ?{" "}
+          <Link href="/register" className="text-primary font-medium hover:underline">
+            Créer un compte
           </Link>
-        </div>
+        </p>
       </CardContent>
     </Card>
   );
