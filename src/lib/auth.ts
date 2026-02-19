@@ -3,6 +3,13 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { stripe } from "@better-auth/stripe";
 import Stripe from "stripe";
 import prisma from "@/prisma";
+import {
+  sendPasswordResetEmail,
+  sendEmailVerification,
+  sendWelcomeEmail,
+  sendDeleteAccountVerification,
+  sendCreditPurchaseConfirmation,
+} from "@/lib/email";
 
 const stripeClient = process.env.STRIPE_SECRET_KEY
   ? new Stripe(process.env.STRIPE_SECRET_KEY)
@@ -55,6 +62,15 @@ if (stripeClient && process.env.STRIPE_WEBHOOK_SECRET) {
                 });
               });
 
+              // Send purchase confirmation email
+              const user = await prisma.user.findUnique({ where: { id: userId } });
+              if (user?.email) {
+                const amountTotal = session.amount_total || 0;
+                await sendCreditPurchaseConfirmation(user.email, user.name, credits, amountTotal).catch(
+                  (err) => console.error("[Email] Purchase confirmation error:", err)
+                );
+              }
+
               console.log(`[Stripe Plugin] Added ${credits} credits to user ${userId}`);
             } catch (error) {
               console.error("[Stripe Plugin] Error processing credit purchase:", error);
@@ -84,17 +100,9 @@ export const auth = betterAuth({
     requireEmailVerification: false,
     // Password reset handler
     sendResetPassword: async ({ user, url }) => {
-      // TODO: Integrate with email service (Resend, SendGrid, etc.)
-      // For now, log the reset URL (ONLY FOR DEVELOPMENT)
-      console.log(`[Password Reset] User: ${user.email}, URL: ${url}`);
-
-      // Example with Resend:
-      // await resend.emails.send({
-      //   from: "DriveMetric <noreply@drivemetric.com>",
-      //   to: user.email,
-      //   subject: "Réinitialisez votre mot de passe",
-      //   html: `<a href="${url}">Cliquez ici pour réinitialiser votre mot de passe</a>`,
-      // });
+      await sendPasswordResetEmail(user.email, url).catch(
+        (err) => console.error("[Email] Password reset error:", err)
+      );
     },
     // Password requirements
     minPasswordLength: 8,
@@ -102,10 +110,11 @@ export const auth = betterAuth({
 
   // Email verification (ready for when you add email service)
   emailVerification: {
-    sendOnSignUp: false, // Enable when email service is configured
+    sendOnSignUp: true,
     sendVerificationEmail: async ({ user, url }) => {
-      // TODO: Integrate with email service
-      console.log(`[Email Verification] User: ${user.email}, URL: ${url}`);
+      await sendEmailVerification(user.email, url).catch(
+        (err) => console.error("[Email] Verification error:", err)
+      );
     },
   },
 
@@ -134,15 +143,18 @@ export const auth = betterAuth({
     deleteUser: {
       enabled: true,
       sendDeleteAccountVerification: async ({ user, url }) => {
-        // Optional: send verification email before deletion
-        console.log(`[Delete Account] User: ${user.email}, URL: ${url}`);
+        await sendDeleteAccountVerification(user.email, url).catch(
+          (err) => console.error("[Email] Delete account verification error:", err)
+        );
       },
     },
     // Enable email change
     changeEmail: {
       enabled: true,
-      sendChangeEmailVerification: async ({ user, newEmail, url }) => {
-        console.log(`[Change Email] User: ${user.email} -> ${newEmail}, URL: ${url}`);
+      sendChangeEmailVerification: async ({ newEmail, url }) => {
+        await sendEmailVerification(newEmail, url).catch(
+          (err) => console.error("[Email] Change email verification error:", err)
+        );
       },
     },
   },
@@ -181,6 +193,13 @@ export const auth = betterAuth({
                 },
               });
             });
+
+            // Send welcome email
+            if (user.email) {
+              await sendWelcomeEmail(user.email, user.name || "").catch(
+                (err) => console.error("[Email] Welcome email error:", err)
+              );
+            }
           } catch (error) {
             console.error("[Auth] Error granting welcome credits:", error);
           }
