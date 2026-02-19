@@ -8,6 +8,7 @@ import {
   UserPlus,
   Eye,
   EyeOff,
+  Gift,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,6 +39,7 @@ const registerSchema = z.object({
   password: z
     .string()
     .min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+  referralCode: z.string().optional(),
 });
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
@@ -71,6 +73,19 @@ const RegisterForm = () => {
       if (result.error) {
         setError(result.error.message || t("errors.default"));
       } else {
+        // Apply referral code if provided
+        if (data.referralCode?.trim()) {
+          try {
+            await fetch("/api/referral/validate", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ code: data.referralCode.trim().toUpperCase() }),
+            });
+          } catch {
+            // Silent fail — don't block registration on referral error
+          }
+        }
+
         toast.success(t("success.title"), {
           description: t("success.description"),
         });
@@ -191,6 +206,28 @@ const RegisterForm = () => {
             ) : (
               <p className="text-xs text-muted-foreground">Minimum 8 caractères</p>
             )}
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="referralCode">Code de parrainage (optionnel)</Label>
+            <div className="relative">
+              <Input
+                id="referralCode"
+                type="text"
+                placeholder="ex: ABC123"
+                className="pl-10 uppercase font-mono tracking-widest"
+                autoComplete="off"
+                maxLength={6}
+                {...register("referralCode")}
+              />
+              <Gift
+                className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                aria-hidden="true"
+              />
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Vous et votre parrain recevrez chacun 3 crédits offerts
+            </p>
           </div>
 
           <Button

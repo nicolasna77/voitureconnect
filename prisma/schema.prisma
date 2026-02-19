@@ -35,6 +35,8 @@ model User {
   commentReports      CommentReport[]
   ratings             Rating[]
   ownedVehicles       OwnedVehicle[]
+  referralCode        ReferralCode?
+  referrals           Referral[]            @relation("UserReferrals")
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
 
@@ -421,6 +423,33 @@ model MaintenanceEntry {
   ownedVehicle   OwnedVehicle @relation(fields: [ownedVehicleId], references: [id], onDelete: Cascade)
 
   @@map("maintenance_entries")
+  @@schema("base")
+}
+
+// ============= PARRAINAGE =============
+model ReferralCode {
+  id        String     @id @default(uuid())
+  userId    String     @unique
+  code      String     @unique
+  usedCount Int        @default(0)
+  createdAt DateTime   @default(now())
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  referrals Referral[]
+
+  @@map("referral_codes")
+  @@schema("base")
+}
+
+model Referral {
+  id             String       @id @default(uuid())
+  referralCodeId String
+  referredUserId String       @unique
+  rewardGiven    Boolean      @default(false)
+  createdAt      DateTime     @default(now())
+  referralCode   ReferralCode @relation(fields: [referralCodeId], references: [id])
+  referredUser   User         @relation("UserReferrals", fields: [referredUserId], references: [id])
+
+  @@map("referrals")
   @@schema("base")
 }
 
