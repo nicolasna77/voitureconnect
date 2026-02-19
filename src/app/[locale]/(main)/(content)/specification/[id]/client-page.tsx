@@ -25,6 +25,8 @@ import { RecallsSection } from "./_components/recalls-section";
 import { CompareButton } from "./_components/compare-button";
 import { CommentsSection } from "./_components/comments/comments-section";
 import { FavoriteButton } from "@/components/favorite-button";
+import { RatingWidget } from "@/components/specification/rating-widget";
+import { GarageButton } from "@/components/garage-button";
 
 const AIReliabilityWidget = dynamic(
   () =>
@@ -138,6 +140,16 @@ export function SpecificationDetailPage() {
             generationName={generation.name || ""}
             imageUrl={generation.carModel?.carMake?.logo_url || null}
           />
+          <GarageButton
+            generationId={generation.id_car_generation}
+            makeName={generation.carModel?.carMake?.name || ""}
+            modelName={generation.carModel?.name || ""}
+            generationName={generation.name || ""}
+            trims={allTrims.map(({ trim }) => ({
+              id_car_trim: trim.id_car_trim,
+              name: trim.name,
+            }))}
+          />
           <CompareButton generation={generation} />
         </VehicleHeader>
       </AnimatedSection>
@@ -160,6 +172,16 @@ export function SpecificationDetailPage() {
           <AIReliabilityWidget
             generationId={generation.id_car_generation}
             locale={locale}
+          />
+        </div>
+      </AnimatedSection>
+
+      {/* Rating Widget */}
+      <AnimatedSection delay={220}>
+        <div className="print:hidden">
+          <RatingWidget
+            generationId={generation.id_car_generation}
+            trimId={effectiveTrimId || undefined}
           />
         </div>
       </AnimatedSection>
