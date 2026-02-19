@@ -152,7 +152,7 @@ export function CompareContent({ header, className, showShareButton }: CompareCo
       }
       return { vehicle: v, specs: allSpecs };
     });
-  }, [vehicles, selectedTrims]);
+  }, [vehicles, getSelectedTrim]);
 
   const categories = useMemo(() => {
     const catMap = new Map<string, Set<string>>();

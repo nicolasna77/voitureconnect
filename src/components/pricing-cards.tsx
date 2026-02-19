@@ -85,6 +85,14 @@ export function PricingCards({
                 )
               : 0;
 
+          const formattedPrice = new Intl.NumberFormat("fr-FR", {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+          }).format(pkg.price);
+          const [priceParts] = [formattedPrice.split(",")];
+          const priceInt = priceParts[0];
+          const priceDec = formattedPrice.split(",")[1];
+
           return (
             <div
               key={pkg.id}
@@ -137,10 +145,10 @@ export function PricingCards({
                       accent.price
                     )}
                   >
-                    {pkg.price.toFixed(0)}
+                    {priceInt}
                   </span>
                   <span className="text-lg font-medium text-muted-foreground">
-                    ,{pkg.price.toFixed(2).split(".")[1]}€
+                    ,{priceDec}€
                   </span>
                 </div>
                 <p className="mt-1 text-sm text-muted-foreground">

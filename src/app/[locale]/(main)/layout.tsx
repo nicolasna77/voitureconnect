@@ -22,7 +22,7 @@ export default async function RootLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main className="flex-1 pt-16">{children}</main>
+      <main id="main" className="flex-1 pt-16">{children}</main>
       {modal}
       <CompareFab />
       <Footer />

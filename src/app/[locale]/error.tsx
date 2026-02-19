@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 enum Erreur {
@@ -18,13 +17,8 @@ const mapErreurs = {
 };
 
 export default function PageErreurAuth() {
-  const [error, setError] = useState<Erreur | null>(null);
   const searchParams = useSearchParams();
-
-  useEffect(() => {
-    const errorParam = searchParams.get("error") as Erreur;
-    setError(errorParam);
-  }, [searchParams]);
+  const error = searchParams.get("error") as Erreur | null;
 
   return (
     <div className="flex h-screen w-full flex-col items-center justify-center">

@@ -103,7 +103,7 @@ export function DeleteAccountForm() {
               <ul className="list-disc list-inside space-y-1 text-sm">
                 <li>Votre profil et vos informations personnelles</li>
                 <li>Vos crédits restants</li>
-                <li>Votre historique d'analyses</li>
+                <li>Votre historique d&apos;analyses</li>
                 <li>Vos véhicules favoris</li>
               </ul>
             </AlertDialogDescription>

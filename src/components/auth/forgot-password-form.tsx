@@ -22,7 +22,7 @@ function SuccessState({ email }: { email: string }) {
           <div className="space-y-2">
             <h2 className="text-xl font-semibold">Email envoyé</h2>
             <p className="text-muted-foreground text-sm">
-              Si un compte existe avec l'adresse <strong>{email}</strong>,
+              Si un compte existe avec l&apos;adresse <strong>{email}</strong>,
               vous recevrez un email avec les instructions pour réinitialiser votre mot de passe.
             </p>
           </div>

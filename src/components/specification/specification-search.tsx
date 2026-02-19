@@ -107,7 +107,7 @@ export default function SpecificationSearch({
       },
       {} as Record<string, Suggestion[]>
     );
-  }, [suggestions?.data]);
+  }, [suggestions]);
 
   const handleSelect = useCallback(
     (suggestion: Suggestion) => {
@@ -151,6 +151,7 @@ export default function SpecificationSearch({
 
   useEffect(() => {
     if (debouncedQuery.length >= 2) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setOpen(true);
     }
   }, [debouncedQuery]);
@@ -233,7 +234,7 @@ export default function SpecificationSearch({
                   <div className="flex flex-col items-center gap-2">
                     <Search className="h-8 w-8 text-muted-foreground/50" aria-hidden="true" />
                     <p className="text-sm text-muted-foreground">
-                      Aucun résultat pour "<span className="font-medium text-foreground">{debouncedQuery}</span>"
+                      Aucun résultat pour &quot;<span className="font-medium text-foreground">{debouncedQuery}</span>&quot;
                     </p>
                   </div>
                 </CommandEmpty>
