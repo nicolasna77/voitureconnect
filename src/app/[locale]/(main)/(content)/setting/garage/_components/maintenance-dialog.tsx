@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Plus, Trash2, Wrench, OilCan } from "lucide-react";
+import { Loader2, Plus, Trash2, Wrench, Droplets } from "lucide-react";
 import type { OwnedVehicleWithMaintenance, MaintenanceEntry } from "./types";
 import { MAINTENANCE_TYPES } from "./types";
 import { cn } from "@/lib/utils";
@@ -33,7 +33,7 @@ interface MaintenanceDialogProps {
 }
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
-  oil_change: <OilCan className="h-4 w-4" aria-hidden="true" />,
+  oil_change: <Droplets className="h-4 w-4" aria-hidden="true" />,
   timing_belt: <Wrench className="h-4 w-4" aria-hidden="true" />,
   brakes: <Wrench className="h-4 w-4" aria-hidden="true" />,
   tires: <Wrench className="h-4 w-4" aria-hidden="true" />,

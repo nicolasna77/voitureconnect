@@ -69,14 +69,10 @@ export default function GaragePage() {
               onMaintenance={setMaintenanceVehicle}
             />
           ))}
-          <button
-            onClick={() => {}}
-            className="h-full min-h-[180px] rounded-xl border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center gap-2 text-muted-foreground hover:border-primary/40 hover:text-primary transition-colors cursor-pointer bg-transparent"
-            aria-label="Ajouter un véhicule"
-          >
+          <div className="h-full min-h-[180px] rounded-xl border-2 border-dashed border-muted-foreground/20 flex flex-col items-center justify-center gap-3 text-muted-foreground">
             <PlusCircle className="h-8 w-8" aria-hidden="true" />
-            <span className="text-sm font-medium">Ajouter un véhicule</span>
-          </button>
+            <AddVehicleDialog />
+          </div>
         </div>
       )}
 
