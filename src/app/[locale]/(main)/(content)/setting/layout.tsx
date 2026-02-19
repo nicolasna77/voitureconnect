@@ -2,7 +2,7 @@
 
 import React from "react";
 import { SidebarNav } from "@/components/sidebar-nav";
-import { User, CreditCard, Coins, Settings, Heart, History, Gift } from "lucide-react";
+import { User, CreditCard, Coins, Settings, Heart, History, Car, Gift } from "lucide-react";
 
 const sidebarNavItems = [
   {
@@ -29,6 +29,11 @@ const sidebarNavItems = [
     title: "Abonnements",
     href: "/setting/subscriptions",
     icon: CreditCard,
+  },
+  {
+    title: "Mon Garage",
+    href: "/setting/garage",
+    icon: Car,
   },
   {
     title: "Parrainage",

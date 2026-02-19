@@ -33,6 +33,8 @@ model User {
   favorites           Favorite[]
   comments            Comment[]
   commentReports      CommentReport[]
+  ratings             Rating[]
+  ownedVehicles       OwnedVehicle[]
   referralCode        ReferralCode?
   referrals           Referral[]            @relation("UserReferrals")
   createdAt           DateTime              @default(now())
@@ -360,6 +362,67 @@ model ViewHistory {
 
   @@index([userId, visitedAt])
   @@map("view_history")
+  @@schema("base")
+}
+
+// ============= AVIS / NOTES =============
+model Rating {
+  id           String   @id @default(uuid())
+  userId       String
+  generationId Int
+  trimId       Int?
+  stars        Int
+  title        String?
+  comment      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, generationId, trimId])
+  @@index([generationId])
+  @@map("ratings")
+  @@schema("base")
+}
+
+// ============= MON GARAGE =============
+model OwnedVehicle {
+  id             String             @id @default(uuid())
+  userId         String
+  generationId   Int
+  trimId         Int?
+  makeName       String
+  modelName      String
+  generationName String
+  trimName       String?
+  year           Int?
+  km             Int?
+  color          String?
+  notes          String?
+  purchaseDate   DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+  user           User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  maintenances   MaintenanceEntry[]
+
+  @@unique([userId, generationId, trimId])
+  @@map("owned_vehicles")
+  @@schema("base")
+}
+
+model MaintenanceEntry {
+  id             String       @id @default(uuid())
+  ownedVehicleId String
+  type           String
+  label          String?
+  date           DateTime
+  km             Int?
+  notes          String?
+  nextDueDate    DateTime?
+  nextDueKm      Int?
+  createdAt      DateTime     @default(now())
+  ownedVehicle   OwnedVehicle @relation(fields: [ownedVehicleId], references: [id], onDelete: Cascade)
+
+  @@map("maintenance_entries")
   @@schema("base")
 }
 
