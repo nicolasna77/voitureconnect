@@ -2,13 +2,23 @@
 
 import React from "react";
 import { SidebarNav } from "@/components/sidebar-nav";
-import { User, CreditCard, Coins, Settings } from "lucide-react";
+import { User, CreditCard, Coins, Settings, Heart, History } from "lucide-react";
 
 const sidebarNavItems = [
   {
     title: "Profil",
     href: "/setting/profile",
     icon: User,
+  },
+  {
+    title: "Favoris",
+    href: "/setting/favorites",
+    icon: Heart,
+  },
+  {
+    title: "Historique",
+    href: "/setting/history",
+    icon: History,
   },
   {
     title: "Crédits",

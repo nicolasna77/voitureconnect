@@ -24,6 +24,7 @@ import { LoadingState } from "./_components/loading-state";
 import { RecallsSection } from "./_components/recalls-section";
 import { CompareButton } from "./_components/compare-button";
 import { CommentsSection } from "./_components/comments/comments-section";
+import { FavoriteButton } from "@/components/favorite-button";
 
 const AIReliabilityWidget = dynamic(
   () =>
@@ -130,6 +131,13 @@ export function SpecificationDetailPage() {
       {/* Hero */}
       <AnimatedSection>
         <VehicleHeader generation={generation}>
+          <FavoriteButton
+            generationId={generation.id_car_generation}
+            makeName={generation.carModel?.carMake?.name || ""}
+            modelName={generation.carModel?.name || ""}
+            generationName={generation.name || ""}
+            imageUrl={generation.carModel?.carMake?.logo_url || null}
+          />
           <CompareButton generation={generation} />
         </VehicleHeader>
       </AnimatedSection>
