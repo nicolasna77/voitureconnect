@@ -143,7 +143,7 @@ Fournis une analyse complète avec :
       model: getAIModel(),
       system: systemPrompt,
       prompt: userPrompt,
-      maxTokens: 1200,
+      maxOutputTokens: 1200,
     });
 
     return result.toTextStreamResponse();
