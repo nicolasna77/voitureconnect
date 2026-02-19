@@ -25,6 +25,7 @@ import { RecallsSection } from "./_components/recalls-section";
 import { CompareButton } from "./_components/compare-button";
 import { CommentsSection } from "./_components/comments/comments-section";
 import { FavoriteButton } from "@/components/favorite-button";
+import { MarketValueWidget } from "@/components/specification/market-value-widget";
 import { RatingWidget } from "@/components/specification/rating-widget";
 import { GarageButton } from "@/components/garage-button";
 
@@ -182,6 +183,18 @@ export function SpecificationDetailPage() {
           <RatingWidget
             generationId={generation.id_car_generation}
             trimId={effectiveTrimId || undefined}
+          />
+        </div>
+      </AnimatedSection>
+
+      {/* Market Value Widget */}
+      <AnimatedSection delay={230}>
+        <div className="print:hidden">
+          <MarketValueWidget
+            generationId={generation.id_car_generation}
+            trimId={effectiveTrimId || undefined}
+            makeName={generation.carModel?.carMake?.name || ""}
+            modelName={generation.carModel?.name || ""}
           />
         </div>
       </AnimatedSection>
