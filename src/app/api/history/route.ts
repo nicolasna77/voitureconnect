@@ -29,6 +29,30 @@ export async function GET() {
   }
 }
 
+export async function DELETE() {
+  try {
+    const session = await auth.api.getSession({
+      headers: await headers(),
+    });
+
+    if (!session?.user) {
+      return NextResponse.json({ error: "Non autorisé" }, { status: 401 });
+    }
+
+    await prisma.viewHistory.deleteMany({
+      where: { userId: session.user.id },
+    });
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("History DELETE error:", error);
+    return NextResponse.json(
+      { error: "Erreur lors de la suppression" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const session = await auth.api.getSession({
