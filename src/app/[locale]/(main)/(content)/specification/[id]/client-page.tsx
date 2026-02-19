@@ -25,6 +25,7 @@ import { RecallsSection } from "./_components/recalls-section";
 import { CompareButton } from "./_components/compare-button";
 import { CommentsSection } from "./_components/comments/comments-section";
 import { FavoriteButton } from "@/components/favorite-button";
+import { RatingWidget } from "@/components/specification/rating-widget";
 
 const AIReliabilityWidget = dynamic(
   () =>
@@ -160,6 +161,16 @@ export function SpecificationDetailPage() {
           <AIReliabilityWidget
             generationId={generation.id_car_generation}
             locale={locale}
+          />
+        </div>
+      </AnimatedSection>
+
+      {/* Rating Widget */}
+      <AnimatedSection delay={220}>
+        <div className="print:hidden">
+          <RatingWidget
+            generationId={generation.id_car_generation}
+            trimId={effectiveTrimId || undefined}
           />
         </div>
       </AnimatedSection>
