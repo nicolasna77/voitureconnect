@@ -64,6 +64,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: oklch(0 0 0);
   --foreground: oklch(1 0 0);
   --card: oklch(0.1448 0 0);
@@ -167,4 +168,9 @@
   --shadow-lg: var(--shadow-lg);
   --shadow-xl: var(--shadow-xl);
   --shadow-2xl: var(--shadow-2xl);
+}
+
+/* Skip link target — offset for fixed header (64px + 8px buffer) */
+#main {
+  scroll-margin-top: 4.5rem;
 }

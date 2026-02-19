@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import {
   Card,
   CardContent,
@@ -481,7 +481,7 @@ function ScriptCard({
   }, []);
 
   // Scroll on new logs
-  useState(() => {
+  useEffect(() => {
     scrollToBottom();
   });
 

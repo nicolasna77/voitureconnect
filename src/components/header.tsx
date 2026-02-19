@@ -74,7 +74,7 @@ export function Header() {
         >
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group">
+            <Link href="/" className="flex items-center gap-2.5 group rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary motion-safe:transition-transform group-hover:scale-105">
                 <Gauge
                   className="h-5 w-5 text-primary-foreground"

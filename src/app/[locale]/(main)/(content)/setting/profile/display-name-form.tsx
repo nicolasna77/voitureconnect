@@ -48,12 +48,12 @@ export function DisplayNameForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="max-w-sm">
         {/* Display Name */}
         <div className="space-y-2">
           <Label htmlFor="display_name" className="flex items-center gap-2">
             <User className="h-4 w-4 text-muted-foreground" aria-hidden="true" />
-            Nom d'affichage
+            Nom d&apos;affichage
           </Label>
           <Input
             id="display_name"
@@ -69,23 +69,6 @@ export function DisplayNameForm() {
           />
           <p className="text-xs text-muted-foreground">
             Ce nom sera visible par les autres utilisateurs.
-          </p>
-        </div>
-
-        {/* Email (read-only) */}
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-muted-foreground">
-            Adresse email
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            value={session?.user?.email || ""}
-            disabled
-            className="bg-muted"
-          />
-          <p className="text-xs text-muted-foreground">
-            L'email ne peut pas être modifié.
           </p>
         </div>
       </div>

@@ -33,11 +33,11 @@ export default function SubscriptionsPage() {
             <ul className="space-y-2">
               <li className="flex items-center gap-2 text-sm">
                 <Check className="h-4 w-4 text-emerald-500" aria-hidden="true" />
-                <span>Pas d'abonnement obligatoire</span>
+                <span>Pas d&apos;abonnement obligatoire</span>
               </li>
               <li className="flex items-center gap-2 text-sm">
                 <Check className="h-4 w-4 text-emerald-500" aria-hidden="true" />
-                <span>Crédits sans date d'expiration</span>
+                <span>Crédits sans date d&apos;expiration</span>
               </li>
               <li className="flex items-center gap-2 text-sm">
                 <Check className="h-4 w-4 text-emerald-500" aria-hidden="true" />
@@ -77,15 +77,15 @@ export default function SubscriptionsPage() {
                 </span>
               </CardTitle>
               <CardDescription>
-                Des formules d'abonnement arrivent prochainement
+                Des formules d&apos;abonnement arrivent prochainement
               </CardDescription>
             </div>
           </div>
         </CardHeader>
         <CardContent>
           <p className="text-sm text-muted-foreground">
-            Nous travaillons sur des formules d'abonnement pour les utilisateurs réguliers
-            et les professionnels. Restez informé pour profiter d'offres avantageuses.
+            Nous travaillons sur des formules d&apos;abonnement pour les utilisateurs réguliers
+            et les professionnels. Restez informé pour profiter d&apos;offres avantageuses.
           </p>
         </CardContent>
       </Card>

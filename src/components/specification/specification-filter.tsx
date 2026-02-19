@@ -48,7 +48,7 @@ const fetchGenerations = async (model: string) => {
 };
 
 const LoadingIndicator = () => (
-  <span className="flex items-center gap-2 text-muted-foreground">
+  <span role="status" aria-live="polite" className="flex items-center gap-2 text-muted-foreground">
     <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
     <span>Chargement…</span>
   </span>

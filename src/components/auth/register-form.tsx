@@ -123,6 +123,7 @@ const RegisterForm = () => {
                 type="text"
                 placeholder={t("usernamePlaceholder")}
                 className="pl-10"
+                autoComplete="username"
                 {...register("name")}
               />
               <User
@@ -143,6 +144,8 @@ const RegisterForm = () => {
                 type="email"
                 placeholder={t("emailPlaceholder")}
                 className="pl-10"
+                autoComplete="email"
+                spellCheck={false}
                 {...register("email")}
               />
               <AtSign
@@ -163,6 +166,7 @@ const RegisterForm = () => {
                 type={showPassword ? "text" : "password"}
                 placeholder={t("passwordPlaceholder")}
                 className="pl-10 pr-10"
+                autoComplete="new-password"
                 {...register("password")}
               />
               <Key
@@ -172,7 +176,7 @@ const RegisterForm = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
               >
                 {showPassword ? (
@@ -197,7 +201,7 @@ const RegisterForm = () => {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-                Inscription...
+                Inscription…
               </>
             ) : (
               t("submit")

@@ -98,6 +98,8 @@ const LoginForm = () => {
                 placeholder="votre@email.com"
                 className="pl-10"
                 required
+                autoComplete="email"
+                spellCheck={false}
               />
               <AtSign
                 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
@@ -125,6 +127,7 @@ const LoginForm = () => {
                 className="pl-10 pr-10"
                 required
                 minLength={6}
+                autoComplete="current-password"
               />
               <Key
                 className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
@@ -133,7 +136,7 @@ const LoginForm = () => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1"
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
               >
                 {showPassword ? (
@@ -153,7 +156,7 @@ const LoginForm = () => {
             {isLoading ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" aria-hidden="true" />
-                Connexion...
+                Connexion…
               </>
             ) : (
               "Se connecter"
