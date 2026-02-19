@@ -26,6 +26,7 @@ import { CompareButton } from "./_components/compare-button";
 import { CommentsSection } from "./_components/comments/comments-section";
 import { FavoriteButton } from "@/components/favorite-button";
 import { RatingWidget } from "@/components/specification/rating-widget";
+import { GarageButton } from "@/components/garage-button";
 
 const AIReliabilityWidget = dynamic(
   () =>
@@ -138,6 +139,16 @@ export function SpecificationDetailPage() {
             modelName={generation.carModel?.name || ""}
             generationName={generation.name || ""}
             imageUrl={generation.carModel?.carMake?.logo_url || null}
+          />
+          <GarageButton
+            generationId={generation.id_car_generation}
+            makeName={generation.carModel?.carMake?.name || ""}
+            modelName={generation.carModel?.name || ""}
+            generationName={generation.name || ""}
+            trims={allTrims.map(({ trim }) => ({
+              id_car_trim: trim.id_car_trim,
+              name: trim.name,
+            }))}
           />
           <CompareButton generation={generation} />
         </VehicleHeader>
