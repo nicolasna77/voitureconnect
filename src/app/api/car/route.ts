@@ -12,6 +12,9 @@ export async function GET(req: NextRequest) {
   const model = searchParams.get("model") || undefined;
   const generation = searchParams.get("generation") || undefined;
   const page = Math.max(1, parseInt(searchParams.get("page") || "1", 10));
+  const yearMin = searchParams.get("yearMin") || undefined;
+  const yearMax = searchParams.get("yearMax") || undefined;
+  const sortBy = searchParams.get("sortBy") || "name_asc";
 
   const isFR = locale.toLowerCase() === "fr";
 
@@ -29,6 +32,37 @@ export async function GET(req: NextRequest) {
       where.name = { contains: generation, mode: "insensitive" };
     }
 
+    // Year range filter (year_begin is stored as string e.g. "2010")
+    if (yearMin || yearMax) {
+      const yearConditions: Record<string, unknown>[] = [];
+      if (yearMin) {
+        yearConditions.push({ year_begin: { gte: yearMin } });
+      }
+      if (yearMax) {
+        yearConditions.push({ year_begin: { lte: yearMax } });
+      }
+      if (yearConditions.length > 0) {
+        where.AND = yearConditions;
+      }
+    }
+
+    // Sort order
+    const orderBy = (() => {
+      switch (sortBy) {
+        case "year_asc":
+          return [{ year_begin: "asc" as const }, { carModel: { carMake: { name: "asc" as const } } }];
+        case "year_desc":
+          return [{ year_begin: "desc" as const }, { carModel: { carMake: { name: "asc" as const } } }];
+        case "make_asc":
+        default:
+          return [
+            { carModel: { carMake: { name: "asc" as const } } },
+            { carModel: { name: "asc" as const } },
+            { name: "asc" as const },
+          ];
+      }
+    })();
+
     const generationModel = isFR
       ? prisma.carGenerationFR
       : prisma.carGenerationEN;
@@ -44,11 +78,7 @@ export async function GET(req: NextRequest) {
           },
           carType: true,
         },
-        orderBy: [
-          { carModel: { carMake: { name: "asc" } } },
-          { carModel: { name: "asc" } },
-          { name: "asc" },
-        ],
+        orderBy,
         skip: (page - 1) * PAGE_SIZE,
         take: PAGE_SIZE,
       }),

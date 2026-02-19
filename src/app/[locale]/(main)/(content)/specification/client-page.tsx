@@ -41,6 +41,9 @@ const SpecificationPage = () => {
       marque: searchParams.get("marque") || "",
       model: searchParams.get("model") || "",
       generation: searchParams.get("generation") || "",
+      yearMin: searchParams.get("yearMin") || "",
+      yearMax: searchParams.get("yearMax") || "",
+      sortBy: searchParams.get("sortBy") || "make_asc",
       page: parseInt(searchParams.get("page") || "1", 10),
     }),
     [searchParams]
@@ -87,6 +90,9 @@ const SpecificationPage = () => {
       if (newState.marque) params.append("marque", newState.marque);
       if (newState.model) params.append("model", newState.model);
       if (newState.generation) params.append("generation", newState.generation);
+      if (newState.yearMin) params.append("yearMin", newState.yearMin);
+      if (newState.yearMax) params.append("yearMax", newState.yearMax);
+      if (newState.sortBy && newState.sortBy !== "make_asc") params.append("sortBy", newState.sortBy);
       if (newState.page > 1) params.append("page", newState.page.toString());
 
       router.push(`?${params.toString()}`, { scroll: false });
@@ -104,14 +110,8 @@ const SpecificationPage = () => {
   );
 
   const clearFilter = useCallback(
-    (type: "marque" | "model" | "generation") => {
-      if (type === "marque") {
-        updateFormState("marque", "");
-      } else if (type === "model") {
-        updateFormState("model", "");
-      } else {
-        updateFormState("generation", "");
-      }
+    (type: "marque" | "model" | "generation" | "yearMin" | "yearMax" | "sortBy") => {
+      updateFormState(type, "");
     },
     [updateFormState]
   );
@@ -122,10 +122,16 @@ const SpecificationPage = () => {
 
   // Active filters for display
   const activeFilters = useMemo(() => {
-    const filters: { type: "marque" | "model" | "generation"; value: string }[] = [];
+    const filters: { type: "marque" | "model" | "generation" | "yearMin" | "yearMax" | "sortBy"; value: string }[] = [];
     if (formState.marque) filters.push({ type: "marque", value: formState.marque });
     if (formState.model) filters.push({ type: "model", value: formState.model });
     if (formState.generation) filters.push({ type: "generation", value: formState.generation });
+    if (formState.yearMin) filters.push({ type: "yearMin", value: `≥ ${formState.yearMin}` });
+    if (formState.yearMax) filters.push({ type: "yearMax", value: `≤ ${formState.yearMax}` });
+    if (formState.sortBy && formState.sortBy !== "make_asc") {
+      const sortLabel = formState.sortBy === "year_desc" ? "Récent en premier" : "Ancien en premier";
+      filters.push({ type: "sortBy", value: sortLabel });
+    }
     return filters;
   }, [formState]);
 
