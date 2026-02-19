@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import prisma from "@/prisma";
+import { getCachedSession } from "@/lib/cached-session";
 
 function getStripe() {
   if (!process.env.STRIPE_SECRET_KEY) {
@@ -13,9 +12,7 @@ function getStripe() {
 
 export async function POST(req: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCachedSession();
 
     if (!session?.user) {
       return NextResponse.json({ error: "Non autorise" }, { status: 401 });

@@ -28,20 +28,20 @@ interface Generation {
   };
 }
 
+const BRAND_COLORS = [
+  "bg-blue-500",
+  "bg-emerald-500",
+  "bg-violet-500",
+  "bg-amber-500",
+  "bg-rose-500",
+  "bg-cyan-500",
+  "bg-indigo-500",
+  "bg-pink-500",
+];
+
 // Brand color helper (generates consistent color from brand name)
 function getBrandColor(brandName: string): string {
-  const colors = [
-    "bg-blue-500",
-    "bg-emerald-500",
-    "bg-violet-500",
-    "bg-amber-500",
-    "bg-rose-500",
-    "bg-cyan-500",
-    "bg-indigo-500",
-    "bg-pink-500",
-  ];
-  const index = brandName.charCodeAt(0) % colors.length;
-  return colors[index];
+  return BRAND_COLORS[brandName.charCodeAt(0) % BRAND_COLORS.length];
 }
 
 // --- Explicit variant components (patterns-explicit-variants) ---

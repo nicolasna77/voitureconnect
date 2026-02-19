@@ -1,16 +1,13 @@
 import prisma from "@/prisma";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
+import { getCachedSession } from "@/lib/cached-session";
 
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ commentId: string }> }
 ) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCachedSession();
 
     if (!session?.user) {
       return new NextResponse("Unauthorized", { status: 401 });

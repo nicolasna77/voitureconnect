@@ -1,17 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import prisma from "@/prisma";
 import { AI_ANALYSIS_CREDIT_COST } from "@/config/credits";
+import { getCachedSession } from "@/lib/cached-session";
 
 export async function POST(req: NextRequest) {
   try {
-    const sessionPromise = auth.api.getSession({
-      headers: await headers(),
-    });
-    const bodyPromise = req.json();
-
-    const [session, body] = await Promise.all([sessionPromise, bodyPromise]);
+    const [session, body] = await Promise.all([getCachedSession(), req.json()]);
 
     if (!session?.user) {
       return NextResponse.json({ error: "Non autorise" }, { status: 401 });

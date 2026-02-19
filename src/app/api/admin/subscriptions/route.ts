@@ -1,16 +1,13 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import prisma from "@/prisma";
 import { NextRequest, NextResponse } from "next/server";
 import { Prisma } from "@prisma/client";
+import { getCachedSession } from "@/lib/cached-session";
 
 const PAGE_SIZE = 10;
 
 export async function GET(request: NextRequest) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCachedSession();
 
     if (!session?.user || session.user.role !== "ADMIN") {
       return new NextResponse("Unauthorized", { status: 401 });

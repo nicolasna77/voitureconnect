@@ -51,12 +51,12 @@ export default function FavoritesPage() {
   });
 
   const { mutate: removeFavorite } = useMutation({
-    mutationFn: async (generationId: number) => {
+    mutationFn: async (fav: Favorite) => {
       await axios.post("/api/favorites", {
-        generationId,
-        makeName: "",
-        modelName: "",
-        generationName: "",
+        generationId: fav.generationId,
+        makeName: fav.makeName,
+        modelName: fav.modelName,
+        generationName: fav.generationName,
       });
     },
     onSuccess: () => {
@@ -133,7 +133,7 @@ export default function FavoritesPage() {
                       variant="ghost"
                       size="icon"
                       className="h-7 w-7 hover:text-destructive"
-                      onClick={() => removeFavorite(fav.generationId)}
+                      onClick={() => removeFavorite(fav)}
                       aria-label="Retirer des favoris"
                     >
                       <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />

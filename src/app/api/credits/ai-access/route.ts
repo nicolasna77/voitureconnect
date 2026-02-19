@@ -1,8 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import prisma from "@/prisma";
 import { AI_ANALYSIS_CREDIT_COST } from "@/config/credits";
+import { getCachedSession } from "@/lib/cached-session";
 
 export interface AIAccessResponse {
   hasAccess: boolean;
@@ -15,9 +14,7 @@ export interface AIAccessResponse {
 
 export async function GET(req: NextRequest): Promise<NextResponse<AIAccessResponse | { error: string }>> {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCachedSession();
 
     if (!session?.user) {
       return NextResponse.json({

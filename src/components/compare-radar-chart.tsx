@@ -46,6 +46,7 @@ const RADAR_LABELS: Record<string, string> = {
 const LOWER_IS_BETTER = new Set(["Consommation mixte", "0-100 km/h", "Masse à vide"]);
 
 const COLORS = ["#6366f1", "#f59e0b", "#10b981"];
+const CHART_MARGIN = { top: 10, right: 30, bottom: 10, left: 30 };
 
 function extractNum(val: string): number | null {
   const match = val.match(/^[\d,.]+/);
@@ -105,7 +106,7 @@ export default function CompareRadarChart({
       </CardHeader>
       <CardContent>
         <ResponsiveContainer width="100%" height={320}>
-          <RechartsRadarChart data={radarData} margin={{ top: 10, right: 30, bottom: 10, left: 30 }}>
+          <RechartsRadarChart data={radarData} margin={CHART_MARGIN}>
             <PolarGrid />
             <PolarAngleAxis dataKey="spec" tick={{ fontSize: 12 }} />
             <PolarRadiusAxis domain={[0, 100]} tick={{ fontSize: 10 }} />

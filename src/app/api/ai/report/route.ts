@@ -1,9 +1,8 @@
 import { streamObject } from "ai";
 import { NextRequest } from "next/server";
-import { headers } from "next/headers";
 
 import prisma from "@/prisma";
-import { auth } from "@/lib/auth";
+import { getCachedSession } from "@/lib/cached-session";
 import {
   getSystemPrompt,
   getReportPrompt,
@@ -37,9 +36,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check authentication
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCachedSession();
 
     if (!session?.user) {
       return new Response(
@@ -95,20 +92,28 @@ export async function POST(request: NextRequest) {
     if (validLocale === "fr") {
       const generation = await prisma.carGenerationFR.findUnique({
         where: { id_car_generation: generationId },
-        include: {
+        select: {
+          name: true,
+          year_begin: true,
+          year_end: true,
           carModel: {
-            include: {
-              carMake: true,
+            select: {
+              name: true,
+              carMake: { select: { name: true } },
             },
           },
-          carType: true,
+          carType: { select: { name: true } },
           series: {
-            include: {
+            select: {
+              name: true,
               trims: {
-                include: {
+                select: {
+                  name: true,
                   specifications: {
-                    include: {
-                      carSpecification: true,
+                    select: {
+                      value: true,
+                      unit: true,
+                      carSpecification: { select: { name: true } },
                     },
                     take: 20,
                   },
@@ -148,20 +153,28 @@ export async function POST(request: NextRequest) {
     } else {
       const generation = await prisma.carGenerationEN.findUnique({
         where: { id_car_generation: generationId },
-        include: {
+        select: {
+          name: true,
+          year_begin: true,
+          year_end: true,
           carModel: {
-            include: {
-              carMake: true,
+            select: {
+              name: true,
+              carMake: { select: { name: true } },
             },
           },
-          carType: true,
+          carType: { select: { name: true } },
           series: {
-            include: {
+            select: {
+              name: true,
               trims: {
-                include: {
+                select: {
+                  name: true,
                   specifications: {
-                    include: {
-                      carSpecification: true,
+                    select: {
+                      value: true,
+                      unit: true,
+                      carSpecification: { select: { name: true } },
                     },
                     take: 20,
                   },

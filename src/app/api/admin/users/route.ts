@@ -1,14 +1,11 @@
 import prisma from "@/prisma";
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import { Role } from "@prisma/client";
+import { getCachedSession } from "@/lib/cached-session";
 
 export async function GET(request: Request) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCachedSession();
     const { searchParams } = new URL(request.url);
 
     if (!session?.user || session?.user.role !== "ADMIN") {
@@ -74,9 +71,7 @@ export async function GET(request: Request) {
 
 export async function PATCH(request: Request) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCachedSession();
 
     if (!session?.user || session?.user.role !== "ADMIN") {
       return new NextResponse("Unauthorized", { status: 401 });
@@ -109,9 +104,7 @@ export async function PATCH(request: Request) {
 
 export async function DELETE(request: Request) {
   try {
-    const session = await auth.api.getSession({
-      headers: await headers(),
-    });
+    const session = await getCachedSession();
     const { searchParams } = new URL(request.url);
     const userId = searchParams.get("userId");
 

@@ -21,9 +21,10 @@ export async function GET(req: NextRequest) {
       return new Response("2 ou 3 ids requis", { status: 400 });
     }
 
-    const vehicles = await Promise.all(
-      ids.map(async (id) => {
-        const generation = await prisma.carGenerationFR.findUnique({
+    // Phase 1: fetch all generations in parallel
+    const generations = await Promise.all(
+      ids.map((id) =>
+        prisma.carGenerationFR.findUnique({
           where: { id_car_generation: id },
           include: {
             carModel: {
@@ -32,11 +33,15 @@ export async function GET(req: NextRequest) {
               },
             },
           },
-        });
+        })
+      )
+    );
 
-        if (!generation) return null;
-
-        const trims = await prisma.carTrimFR.findMany({
+    // Phase 2: fetch all trims in parallel (now that we have all model IDs)
+    const trimsPerGeneration = await Promise.all(
+      generations.map((generation) => {
+        if (!generation) return Promise.resolve(null);
+        return prisma.carTrimFR.findMany({
           where: { id_car_model: generation.id_car_model },
           include: {
             specifications: {
@@ -49,54 +54,61 @@ export async function GET(req: NextRequest) {
             },
           },
         });
-
-        const sortedTrims = sortTrimsByEngineAndFinition(trims);
-
-        const virtualSeries =
-          sortedTrims.length > 0
-            ? [
-                {
-                  id_car_serie: 0,
-                  name: generation.carModel?.name || "Motorisations",
-                  trims: sortedTrims,
-                },
-              ]
-            : [];
-
-        const series = virtualSeries.map((serie) => {
-          const commonSpecs = getCommonSpecifications(serie.trims);
-          const commonSpecsByCategory = categorizeSpecifications(commonSpecs);
-
-          return {
-            ...serie,
-            commonSpecifications: commonSpecsByCategory,
-            trims: serie.trims.map((trim) => {
-              const uniqueSpecs = trim.specifications.filter(
-                (spec) =>
-                  !commonSpecs.some(
-                    (cs) =>
-                      cs.carSpecification.name ===
-                        spec.carSpecification.name &&
-                      cs.value === spec.value &&
-                      cs.unit === spec.unit
-                  )
-              );
-
-              return {
-                ...trim,
-                specificationsByCategory:
-                  categorizeSpecifications(uniqueSpecs),
-              };
-            }),
-          };
-        });
-
-        return {
-          ...generation,
-          series,
-        };
       })
     );
+
+    const vehicles = generations.map((generation, idx) => {
+      if (!generation) return null;
+
+      const trims = trimsPerGeneration[idx];
+      if (!trims) return null;
+
+      const sortedTrims = sortTrimsByEngineAndFinition(trims);
+
+      const virtualSeries =
+        sortedTrims.length > 0
+          ? [
+              {
+                id_car_serie: 0,
+                name: generation.carModel?.name || "Motorisations",
+                trims: sortedTrims,
+              },
+            ]
+          : [];
+
+      const series = virtualSeries.map((serie) => {
+        const commonSpecs = getCommonSpecifications(serie.trims);
+        const commonSpecsByCategory = categorizeSpecifications(commonSpecs);
+
+        return {
+          ...serie,
+          commonSpecifications: commonSpecsByCategory,
+          trims: serie.trims.map((trim) => {
+            const uniqueSpecs = trim.specifications.filter(
+              (spec) =>
+                !commonSpecs.some(
+                  (cs) =>
+                    cs.carSpecification.name ===
+                      spec.carSpecification.name &&
+                    cs.value === spec.value &&
+                    cs.unit === spec.unit
+                )
+            );
+
+            return {
+              ...trim,
+              specificationsByCategory:
+                categorizeSpecifications(uniqueSpecs),
+            };
+          }),
+        };
+      });
+
+      return {
+        ...generation,
+        series,
+      };
+    });
 
     const validVehicles = vehicles.filter(Boolean);
 

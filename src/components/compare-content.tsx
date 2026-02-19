@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useCompare } from "@/hooks/use-compare";
@@ -77,6 +77,8 @@ const CATEGORY_LABELS: Record<string, string> = {
 };
 
 // Lower is better for these specs (fuel consumption, weight, etc.)
+const TABLE_STYLE = { fontVariantNumeric: "tabular-nums" } as const;
+
 const LOWER_IS_BETTER = new Set([
   "consommation mixte",
   "consommation urbaine",
@@ -121,9 +123,16 @@ export function CompareContent({ header, className, showShareButton }: CompareCo
     return (selectedId && trims.find((t) => t.id_car_trim === selectedId)) || trims[0];
   };
 
-  const handleTrimChange = (generationId: number, trimId: string) => {
+  const gridStyle = useMemo(
+    () => ({
+      gridTemplateColumns: `200px repeat(${items.length}, 1fr)${items.length < 3 ? " 1fr" : ""}`,
+    }),
+    [items.length]
+  );
+
+  const handleTrimChange = useCallback((generationId: number, trimId: string) => {
     setSelectedTrims((prev) => ({ ...prev, [generationId]: Number(trimId) }));
-  };
+  }, []);
 
   const vehicleSpecs = useMemo(() => {
     if (!vehicles) return [];
@@ -257,7 +266,7 @@ export function CompareContent({ header, className, showShareButton }: CompareCo
       {/* Vehicle headers with trim selectors */}
       <div
         className="grid gap-4"
-        style={{ gridTemplateColumns: `200px repeat(${items.length}, 1fr)${items.length < 3 ? " 1fr" : ""}` }}
+        style={gridStyle}
       >
         <div />
         {items.map((item) => {
@@ -363,7 +372,7 @@ export function CompareContent({ header, className, showShareButton }: CompareCo
                 <CardTitle className="text-base">{CATEGORY_LABELS[category] || category}</CardTitle>
               </CardHeader>
               <CardContent className="p-0">
-                <table className="w-full text-sm" style={{ fontVariantNumeric: "tabular-nums" }}>
+                <table className="w-full text-sm" style={TABLE_STYLE}>
                   <tbody>
                     {Array.from(specNames).map((specName) => {
                       const values = vehicleSpecs.map(({ specs }) => {
