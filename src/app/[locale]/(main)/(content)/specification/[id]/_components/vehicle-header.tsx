@@ -8,7 +8,9 @@ import {
   Cog,
   Share2,
   Printer,
+  Download,
 } from "lucide-react";
+import { useParams } from "next/navigation";
 import type { Generation } from "./types";
 
 export function VehicleHeader({
@@ -18,6 +20,8 @@ export function VehicleHeader({
   generation: Generation;
   children?: React.ReactNode;
 }) {
+  const params = useParams();
+  const generationId = params.id as string;
   const makeName = generation.carModel?.carMake?.name || "";
   const modelName = generation.carModel?.name || "";
   const genName = generation.name || "";
@@ -127,6 +131,22 @@ export function VehicleHeader({
             >
               <Printer className="h-4 w-4 mr-2" aria-hidden="true" />
               Imprimer
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="bg-background/60 backdrop-blur-sm"
+            >
+              <a
+                href={`/specification/${generationId}/print`}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label="Télécharger la fiche technique en PDF"
+              >
+                <Download className="h-4 w-4 mr-2" aria-hidden="true" />
+                PDF
+              </a>
             </Button>
           </div>
         </div>
