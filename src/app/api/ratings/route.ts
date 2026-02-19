@@ -41,12 +41,15 @@ export async function GET(req: NextRequest) {
         : null,
     ]);
 
-    const totalStars = ratings.reduce((sum, r) => sum + r.stars, 0);
+    const totalStars = ratings.reduce(
+      (sum: number, r: { stars: number }) => sum + r.stars,
+      0
+    );
     const average = ratings.length > 0 ? totalStars / ratings.length : 0;
 
     const distribution = [1, 2, 3, 4, 5].map((star) => ({
       star,
-      count: ratings.filter((r) => r.stars === star).length,
+      count: ratings.filter((r: { stars: number }) => r.stars === star).length,
     }));
 
     return NextResponse.json({
