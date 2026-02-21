@@ -5,12 +5,24 @@ import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Link } from "@/i18n/routing";
-import { notFound, useParams } from "next/navigation";
+import {
+  notFound,
+  useParams,
+  usePathname,
+  useRouter,
+  useSearchParams,
+} from "next/navigation";
 import { useLocale } from "next-intl";
 import { useSession } from "@/lib/auth-client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ChevronLeft } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import {
+  ChevronLeft,
+  Wrench,
+  TrendingUp,
+  Star,
+} from "lucide-react";
 
 import type { Generation } from "./_components/types";
 import { getAllTrims, getMergedSpecs } from "./_components/helpers";
@@ -49,6 +61,9 @@ const AIReliabilityWidget = dynamic(
   },
 );
 
+const VALID_TABS = ["fiche", "analyse", "avis"] as const;
+type TabValue = (typeof VALID_TABS)[number];
+
 async function getGenerationDetails(id: string): Promise<Generation> {
   const { data } = await axios.get(`/api/car/detail?id=${id}`);
   return data;
@@ -60,6 +75,21 @@ export function SpecificationDetailPage() {
   const locale = useLocale() as "fr" | "en";
   const { data: sessionData } = useSession();
   const historyRecorded = useRef(false);
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const rawTab = searchParams.get("tab");
+  const activeTab: TabValue =
+    rawTab && (VALID_TABS as readonly string[]).includes(rawTab)
+      ? (rawTab as TabValue)
+      : "fiche";
+
+  const handleTabChange = (value: string) => {
+    const next = new URLSearchParams(searchParams.toString());
+    next.set("tab", value);
+    router.replace(`${pathname}?${next.toString()}`, { scroll: false });
+  };
 
   const {
     data: generation,
@@ -72,7 +102,6 @@ export function SpecificationDetailPage() {
     retry: 2,
   });
 
-  // Get all trims and default to first one
   const allTrims = useMemo(
     () => (generation ? getAllTrims(generation) : []),
     [generation],
@@ -80,11 +109,9 @@ export function SpecificationDetailPage() {
 
   const [selectedTrimId, setSelectedTrimId] = useState<string>("");
 
-  // Auto-select first trim when data loads
   const effectiveTrimId =
     selectedTrimId || allTrims[0]?.trim.id_car_trim.toString() || "";
 
-  // Compute merged specs for the selected trim
   const mergedSpecs = useMemo(() => {
     if (!effectiveTrimId || allTrims.length === 0) return {};
     const found = allTrims.find(
@@ -97,11 +124,9 @@ export function SpecificationDetailPage() {
     );
   }, [effectiveTrimId, allTrims]);
 
-  // Record view history when generation loads
   useEffect(() => {
     if (!generation || !sessionData?.user || historyRecorded.current) return;
     historyRecorded.current = true;
-
     axios
       .post("/api/history", {
         generationId: generation.id_car_generation,
@@ -120,7 +145,7 @@ export function SpecificationDetailPage() {
   const hasSpecs = Object.keys(mergedSpecs).length > 0;
 
   return (
-    <div className="space-y-8 print:space-y-4">
+    <div className="space-y-6 print:space-y-4">
       {/* Back Link */}
       <nav aria-label="Navigation retour" className="print:hidden">
         <Button variant="ghost" size="sm" asChild>
@@ -160,79 +185,127 @@ export function SpecificationDetailPage() {
         </VehicleHeader>
       </AnimatedSection>
 
-      {/* Motorization Selector */}
-      <AnimatedSection delay={100}>
-        <MotorizationSelector
-          generation={generation}
-          selectedTrimId={effectiveTrimId}
-          onSelect={setSelectedTrimId}
-        />
-      </AnimatedSection>
-
-      {/* Quick Stats for selected trim */}
-      {hasSpecs && <QuickStats specsByCategory={mergedSpecs} />}
-
-      {/* AI Reliability Widget */}
-      <AnimatedSection delay={200}>
-        <div className="print:hidden">
-          <AIReliabilityWidget
-            generationId={generation.id_car_generation}
-            locale={locale}
-          />
+      {/* Tabbed sections */}
+      <Tabs
+        value={activeTab}
+        onValueChange={handleTabChange}
+        className="space-y-0"
+      >
+        {/* Sticky tab bar */}
+        <div className="sticky top-14 z-20 -mx-4 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b print:hidden">
+          <TabsList className="w-full h-auto rounded-none bg-transparent p-0 gap-0 justify-start">
+            <TabsTrigger
+              value="fiche"
+              className="relative gap-2 rounded-none px-4 py-3 text-sm font-medium text-muted-foreground data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent data-[state=active]:bg-transparent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded-full data-[state=active]:after:bg-primary focus-visible:ring-inset"
+            >
+              <Wrench className="h-4 w-4" aria-hidden="true" />
+              <span>Fiche technique</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="analyse"
+              className="relative gap-2 rounded-none px-4 py-3 text-sm font-medium text-muted-foreground data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent data-[state=active]:bg-transparent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded-full data-[state=active]:after:bg-primary focus-visible:ring-inset"
+            >
+              <TrendingUp className="h-4 w-4" aria-hidden="true" />
+              <span>Analyse</span>
+            </TabsTrigger>
+            <TabsTrigger
+              value="avis"
+              className="relative gap-2 rounded-none px-4 py-3 text-sm font-medium text-muted-foreground data-[state=active]:text-foreground data-[state=active]:shadow-none bg-transparent data-[state=active]:bg-transparent after:absolute after:inset-x-0 after:bottom-0 after:h-0.5 after:rounded-full data-[state=active]:after:bg-primary focus-visible:ring-inset"
+            >
+              <Star className="h-4 w-4" aria-hidden="true" />
+              <span>Avis</span>
+            </TabsTrigger>
+          </TabsList>
         </div>
-      </AnimatedSection>
 
-      {/* Rating Widget */}
-      <AnimatedSection delay={220}>
-        <div className="print:hidden">
-          <Suspense fallback={<div className="h-32 w-full rounded-xl animate-pulse bg-muted" />}>
-            <RatingWidget
+        {/* ── Fiche technique ───────────────────────────────────────── */}
+        <TabsContent
+          value="fiche"
+          className="space-y-6 mt-6 outline-none print:!block"
+        >
+          <AnimatedSection delay={60}>
+            <MotorizationSelector
+              generation={generation}
+              selectedTrimId={effectiveTrimId}
+              onSelect={setSelectedTrimId}
+            />
+          </AnimatedSection>
+
+          {hasSpecs && (
+            <AnimatedSection delay={100}>
+              <QuickStats specsByCategory={mergedSpecs} />
+            </AnimatedSection>
+          )}
+
+          <AnimatedSection delay={140}>
+            <section aria-label="Spécifications techniques complètes">
+              {hasSpecs ? (
+                <AllSpecifications specsByCategory={mergedSpecs} />
+              ) : (
+                <Card>
+                  <CardContent className="py-8 text-center">
+                    <p className="text-muted-foreground">
+                      Aucune spécification disponible pour ce véhicule.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
+            </section>
+          </AnimatedSection>
+        </TabsContent>
+
+        {/* ── Analyse ───────────────────────────────────────────────── */}
+        <TabsContent
+          value="analyse"
+          className="space-y-6 mt-6 outline-none print:!block"
+        >
+          <AnimatedSection delay={60}>
+            <AIReliabilityWidget
+              generationId={generation.id_car_generation}
+              locale={locale}
+            />
+          </AnimatedSection>
+
+          <AnimatedSection delay={120}>
+            <MarketValueWidget
               generationId={generation.id_car_generation}
               trimId={effectiveTrimId || undefined}
+              makeName={generation.carModel?.carMake?.name || ""}
+              modelName={generation.carModel?.name || ""}
             />
-          </Suspense>
-        </div>
-      </AnimatedSection>
+          </AnimatedSection>
 
-      {/* Market Value Widget */}
-      <AnimatedSection delay={230}>
-        <div className="print:hidden">
-          <MarketValueWidget
-            generationId={generation.id_car_generation}
-            trimId={effectiveTrimId || undefined}
-            makeName={generation.carModel?.carMake?.name || ""}
-            modelName={generation.carModel?.name || ""}
-          />
-        </div>
-      </AnimatedSection>
+          <AnimatedSection delay={180}>
+            <RecallsSection
+              makeName={generation.carModel?.carMake?.name || ""}
+              modelName={generation.carModel?.name || ""}
+            />
+          </AnimatedSection>
+        </TabsContent>
 
-      {/* NHTSA Recalls */}
-      <AnimatedSection delay={250}>
-        <RecallsSection
-          makeName={generation.carModel?.carMake?.name || ""}
-          modelName={generation.carModel?.name || ""}
-        />
-      </AnimatedSection>
+        {/* ── Avis ──────────────────────────────────────────────────── */}
+        <TabsContent
+          value="avis"
+          className="space-y-6 mt-6 outline-none print:!block"
+        >
+          <AnimatedSection delay={60}>
+            <Suspense
+              fallback={
+                <div className="h-32 w-full rounded-xl animate-pulse bg-muted motion-reduce:animate-none" />
+              }
+            >
+              <RatingWidget
+                generationId={generation.id_car_generation}
+                trimId={effectiveTrimId || undefined}
+              />
+            </Suspense>
+          </AnimatedSection>
 
-      {/* All Specifications for selected trim */}
-      <section aria-label="Spécifications techniques">
-        {hasSpecs ? (
-          <AllSpecifications specsByCategory={mergedSpecs} />
-        ) : (
-          <Card>
-            <CardContent className="py-8 text-center">
-              <p className="text-muted-foreground">
-                Aucune spécification disponible pour ce véhicule.
-              </p>
-            </CardContent>
-          </Card>
-        )}
-      </section>
-
-      {/* Comments */}
-      <AnimatedSection delay={300}>
-        <CommentsSection generationId={generation.id_car_generation} />
-      </AnimatedSection>
+          <AnimatedSection delay={120}>
+            <CommentsSection generationId={generation.id_car_generation} />
+          </AnimatedSection>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }
