@@ -6,6 +6,17 @@ import { Calendar, User } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import DOMPurify from "isomorphic-dompurify";
 
+export const revalidate = 3600; // revalidate every hour
+export const dynamicParams = true;
+
+export async function generateStaticParams() {
+  const posts = await prisma.blogPost.findMany({
+    where: { status: BlogPostStatus.PUBLISHED },
+    select: { slug: true },
+  });
+  return posts.map((p) => ({ slug: p.slug }));
+}
+
 export default async function BlogPostPage({
   params,
 }: {

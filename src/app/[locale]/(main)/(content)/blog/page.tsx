@@ -2,6 +2,8 @@ import prisma from "@/prisma";
 import { BlogPostStatus } from "@prisma/client";
 import { BlogCard } from "@/components/blog/blog-card";
 
+export const revalidate = 3600; // revalidate every hour
+
 export default async function BlogPage({
   params,
 }: {

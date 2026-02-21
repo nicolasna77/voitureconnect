@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
@@ -185,10 +185,12 @@ export function SpecificationDetailPage() {
       {/* Rating Widget */}
       <AnimatedSection delay={220}>
         <div className="print:hidden">
-          <RatingWidget
-            generationId={generation.id_car_generation}
-            trimId={effectiveTrimId || undefined}
-          />
+          <Suspense fallback={<div className="h-32 w-full rounded-xl animate-pulse bg-muted" />}>
+            <RatingWidget
+              generationId={generation.id_car_generation}
+              trimId={effectiveTrimId || undefined}
+            />
+          </Suspense>
         </div>
       </AnimatedSection>
 
