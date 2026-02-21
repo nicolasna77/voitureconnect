@@ -1,8 +1,21 @@
+import type { Metadata } from "next";
 import prisma from "@/prisma";
 import { BlogPostStatus } from "@prisma/client";
 import { BlogCard } from "@/components/blog/blog-card";
 
 export const revalidate = 3600; // revalidate every hour
+
+export async function generateMetadata(): Promise<Metadata> {
+  return {
+    title: "Blog | VoitureConnect",
+    description: "Articles et actualités automobiles",
+    openGraph: {
+      title: "Blog VoitureConnect",
+      description: "Articles et actualités automobiles",
+      type: "website",
+    },
+  };
+}
 
 export default async function BlogPage({
   params,
