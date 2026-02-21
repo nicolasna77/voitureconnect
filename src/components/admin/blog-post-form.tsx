@@ -2,7 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { TiptapEditor } from "@/components/blog/tiptap-editor";
+import dynamic from "next/dynamic";
+
+const TiptapEditor = dynamic(
+  () => import("@/components/blog/tiptap-editor").then((m) => m.TiptapEditor),
+  { ssr: false, loading: () => <div className="h-[300px] rounded-md border border-input animate-pulse motion-reduce:animate-none bg-muted" /> }
+);
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
