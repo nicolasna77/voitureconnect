@@ -45,6 +45,7 @@ export function TiptapEditor({
       Link.configure({ openOnClick: false, autolink: true }),
       Placeholder.configure({ placeholder }),
     ],
+    immediatelyRender: false,
     content: value,
     onUpdate: ({ editor }) => {
       onChange(editor.getHTML());
@@ -124,7 +125,7 @@ export function TiptapEditor({
   return (
     <div className="rounded-md border border-input bg-background">
       {/* Toolbar */}
-      <div className="flex flex-wrap gap-1 border-b p-2">
+      <div role="toolbar" aria-label="Barre d'outils de l'éditeur" className="flex flex-wrap gap-1 border-b p-2">
         <Button
           type="button"
           variant="ghost"
@@ -132,8 +133,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("bold"))}
           onClick={() => editor.chain().focus().toggleBold().run()}
           title="Gras"
+          aria-label="Gras"
+          aria-pressed={editor.isActive("bold")}
         >
-          <Bold className="h-4 w-4" />
+          <Bold className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <Button
@@ -143,8 +146,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("italic"))}
           onClick={() => editor.chain().focus().toggleItalic().run()}
           title="Italique"
+          aria-label="Italique"
+          aria-pressed={editor.isActive("italic")}
         >
-          <Italic className="h-4 w-4" />
+          <Italic className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <div className="mx-1 w-px bg-border" />
@@ -156,8 +161,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("heading", { level: 1 }))}
           onClick={() => editor.chain().focus().toggleHeading({ level: 1 }).run()}
           title="Titre 1"
+          aria-label="Titre 1"
+          aria-pressed={editor.isActive("heading", { level: 1 })}
         >
-          <Heading1 className="h-4 w-4" />
+          <Heading1 className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <Button
@@ -167,8 +174,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("heading", { level: 2 }))}
           onClick={() => editor.chain().focus().toggleHeading({ level: 2 }).run()}
           title="Titre 2"
+          aria-label="Titre 2"
+          aria-pressed={editor.isActive("heading", { level: 2 })}
         >
-          <Heading2 className="h-4 w-4" />
+          <Heading2 className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <Button
@@ -178,8 +187,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("heading", { level: 3 }))}
           onClick={() => editor.chain().focus().toggleHeading({ level: 3 }).run()}
           title="Titre 3"
+          aria-label="Titre 3"
+          aria-pressed={editor.isActive("heading", { level: 3 })}
         >
-          <Heading3 className="h-4 w-4" />
+          <Heading3 className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <div className="mx-1 w-px bg-border" />
@@ -191,8 +202,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("bulletList"))}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           title="Liste à puces"
+          aria-label="Liste à puces"
+          aria-pressed={editor.isActive("bulletList")}
         >
-          <List className="h-4 w-4" />
+          <List className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <Button
@@ -202,8 +215,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("orderedList"))}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
           title="Liste numérotée"
+          aria-label="Liste numérotée"
+          aria-pressed={editor.isActive("orderedList")}
         >
-          <ListOrdered className="h-4 w-4" />
+          <ListOrdered className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <Button
@@ -213,8 +228,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("blockquote"))}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           title="Citation"
+          aria-label="Citation"
+          aria-pressed={editor.isActive("blockquote")}
         >
-          <Quote className="h-4 w-4" />
+          <Quote className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <Button
@@ -224,8 +241,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("codeBlock"))}
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           title="Bloc de code"
+          aria-label="Bloc de code"
+          aria-pressed={editor.isActive("codeBlock")}
         >
-          <Code className="h-4 w-4" />
+          <Code className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <div className="mx-1 w-px bg-border" />
@@ -237,8 +256,10 @@ export function TiptapEditor({
           className={toolbarBtn(editor.isActive("link"))}
           onClick={setLink}
           title="Lien"
+          aria-label="Insérer un lien"
+          aria-pressed={editor.isActive("link")}
         >
-          <LinkIcon className="h-4 w-4" />
+          <LinkIcon className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <Button
@@ -248,8 +269,9 @@ export function TiptapEditor({
           className={toolbarBtn(false)}
           onClick={() => fileInputRef.current?.click()}
           title="Insérer une image"
+          aria-label="Insérer une image"
         >
-          <ImageIcon className="h-4 w-4" />
+          <ImageIcon className="h-4 w-4" aria-hidden="true" />
         </Button>
 
         <Button
@@ -259,8 +281,9 @@ export function TiptapEditor({
           className={toolbarBtn(false)}
           onClick={addYoutube}
           title="Intégrer YouTube"
+          aria-label="Intégrer une vidéo YouTube"
         >
-          <YoutubeIcon className="h-4 w-4" />
+          <YoutubeIcon className="h-4 w-4" aria-hidden="true" />
         </Button>
       </div>
 
@@ -274,6 +297,8 @@ export function TiptapEditor({
         accept="image/jpeg,image/png,image/webp,image/gif"
         className="hidden"
         onChange={handleImageFile}
+        aria-hidden="true"
+        tabIndex={-1}
       />
     </div>
   );
