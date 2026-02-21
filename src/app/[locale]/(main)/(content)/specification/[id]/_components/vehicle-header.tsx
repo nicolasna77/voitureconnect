@@ -1,3 +1,5 @@
+"use client";
+
 import { useMemo, useCallback } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
