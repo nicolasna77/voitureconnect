@@ -8,6 +8,7 @@ import LoginMenu from "@/components/auth/login-menu";
 import { useSession } from "@/lib/auth-client";
 import { CreditBalance } from "@/components/credits/credit-balance";
 import LocaleSwitcher from "@/components/local-switcher";
+import { Separator } from "@/components/ui/separator";
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -30,7 +31,6 @@ export function Header() {
   useEffect(() => {
     if (isMenuOpen) {
       document.addEventListener("keydown", handleKeyDown);
-      // Focus first focusable element in menu
       const firstFocusable = menuRef.current?.querySelector<HTMLElement>(
         'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
       );
@@ -74,12 +74,12 @@ export function Header() {
         >
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2.5 group rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+            <Link
+              href="/"
+              className="flex items-center gap-2.5 group rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary motion-safe:transition-transform group-hover:scale-105">
-                <Gauge
-                  className="h-5 w-5 text-primary-foreground"
-                  aria-hidden="true"
-                />
+                <Gauge className="h-5 w-5 text-primary-foreground" aria-hidden="true" />
               </div>
               <span className="text-lg font-semibold text-foreground">
                 DriveMetric
@@ -93,14 +93,60 @@ export function Header() {
               <LoginMenu />
             </div>
 
-            {/* Mobile */}
-            <div className="flex items-center gap-2 md:hidden">
-              <LocaleSwitcher />
-              {session?.user && <CreditBalance />}
-              <LoginMenu />
+            {/* Mobile: hamburger button only */}
+            <div className="flex items-center md:hidden">
+              <Button
+                ref={menuButtonRef}
+                variant="ghost"
+                size="icon"
+                aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu"
+                onClick={() => setIsMenuOpen((prev) => !prev)}
+              >
+                {isMenuOpen ? (
+                  <X className="h-5 w-5" />
+                ) : (
+                  <Menu className="h-5 w-5" />
+                )}
+              </Button>
             </div>
           </div>
         </nav>
+
+        {/* Mobile slide-down menu */}
+        {isMenuOpen && (
+          <div
+            id="mobile-menu"
+            ref={menuRef}
+            className="border-t border-border bg-background md:hidden"
+          >
+            <nav className="mx-auto max-w-7xl px-4 py-4 space-y-1">
+              <Link
+                href="/blog"
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Blog
+              </Link>
+              <Link
+                href="/"
+                className="flex items-center px-3 py-2 rounded-md text-sm font-medium hover:bg-accent hover:text-accent-foreground transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                Recherche
+              </Link>
+
+              <Separator className="my-3" />
+
+              <div className="flex items-center gap-2 px-1 flex-wrap">
+                <LocaleSwitcher />
+                {session?.user && <CreditBalance />}
+                <LoginMenu />
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
     </>
   );
