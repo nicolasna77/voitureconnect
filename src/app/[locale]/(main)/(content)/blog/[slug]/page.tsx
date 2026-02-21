@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import prisma from "@/prisma";
 import { BlogPostStatus } from "@prisma/client";
@@ -5,19 +6,38 @@ import Image from "next/image";
 import { Calendar, User } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 
-export default async function BlogPostPage({
-  params,
-}: {
-  params: Promise<{ slug: string; locale: string }>;
-}) {
-  const { slug, locale } = await params;
+type Props = { params: Promise<{ slug: string; locale: string }> };
 
-  const post = await prisma.blogPost.findFirst({
+async function getPost(slug: string) {
+  return prisma.blogPost.findFirst({
     where: { slug, status: BlogPostStatus.PUBLISHED },
     include: {
       author: { select: { name: true, picture: true } },
     },
   });
+}
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { slug } = await params;
+  const post = await getPost(slug);
+  if (!post) return {};
+  return {
+    title: `${post.title} | VoitureConnect`,
+    description: post.excerpt ?? undefined,
+    openGraph: {
+      title: post.title,
+      description: post.excerpt ?? undefined,
+      images: post.coverImage ? [{ url: post.coverImage }] : [],
+      type: "article",
+      publishedTime: post.publishedAt?.toISOString(),
+    },
+  };
+}
+
+export default async function BlogPostPage({ params }: Props) {
+  const { slug, locale } = await params;
+
+  const post = await getPost(slug);
 
   if (!post) {
     notFound();
@@ -30,8 +50,23 @@ export default async function BlogPostPage({
       )
     : null;
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: post.title,
+    description: post.excerpt ?? undefined,
+    datePublished: post.publishedAt?.toISOString(),
+    author: { "@type": "Person", name: post.author.name },
+    image: post.coverImage ?? undefined,
+  };
+
   return (
     <div className="container mx-auto py-8 max-w-3xl">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+
       {/* Cover image */}
       {post.coverImage && (
         <div className="relative h-64 sm:h-80 w-full rounded-lg overflow-hidden mb-8">
