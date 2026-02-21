@@ -4,6 +4,7 @@ import { BlogPostStatus } from "@prisma/client";
 import Image from "next/image";
 import { Calendar, User } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import DOMPurify from "isomorphic-dompurify";
 
 export default async function BlogPostPage({
   params,
@@ -76,7 +77,7 @@ export default async function BlogPostPage({
       {/* Article content — rendered as HTML from Tiptap */}
       <article
         className="prose prose-sm sm:prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: post.content }}
+        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
       />
     </div>
   );
