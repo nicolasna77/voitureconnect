@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import prisma from "@/prisma";
 import { SpecificationDetailPage } from "./client-page";
+import { LoadingState } from "./_components/loading-state";
 
 interface Props {
   params: Promise<{ id: string; locale: string }>;
@@ -99,7 +101,9 @@ export default async function Page({ params }: Props) {
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       )}
-      <SpecificationDetailPage />
+      <Suspense fallback={<LoadingState />}>
+        <SpecificationDetailPage />
+      </Suspense>
     </>
   );
 }
