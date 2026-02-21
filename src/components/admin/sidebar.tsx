@@ -51,6 +51,10 @@ const data = {
           title: "Signalements",
           url: "/admin/reports",
         },
+        {
+          title: "Blog",
+          url: "/admin/blog",
+        },
       ],
     },
   ],

@@ -16,7 +16,7 @@ export async function GET(req: NextRequest) {
 
     const where = {
       generationId: Number(generationId),
-      trimId: trimId ? Number(trimId) : null,
+      trimId: trimId ? Number(trimId) : 0,
     };
 
     const [ratings, userRating] = await Promise.all([
@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
               userId_generationId_trimId: {
                 userId: session.user.id,
                 generationId: Number(generationId),
-                trimId: trimId ? Number(trimId) : null,
+                trimId: trimId ? Number(trimId) : 0,
               },
             },
           })
@@ -84,13 +84,13 @@ export async function POST(req: NextRequest) {
         userId_generationId_trimId: {
           userId: session.user.id,
           generationId: Number(generationId),
-          trimId: trimId ? Number(trimId) : null,
+          trimId: trimId ? Number(trimId) : 0,
         },
       },
       create: {
         userId: session.user.id,
         generationId: Number(generationId),
-        trimId: trimId ? Number(trimId) : null,
+        trimId: trimId ? Number(trimId) : 0,
         stars: Number(stars),
         title: title || null,
         comment: comment || null,

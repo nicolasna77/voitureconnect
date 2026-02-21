@@ -1,7 +1,16 @@
-import { useMemo } from "react";
+"use client";
+
+import { useMemo, useCallback } from "react";
 import Image from "next/image";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   Calendar,
   Car,
@@ -9,6 +18,7 @@ import {
   Share2,
   Printer,
   Download,
+  ChevronDown,
 } from "lucide-react";
 import { useParams } from "next/navigation";
 import type { Generation } from "./types";
@@ -35,7 +45,7 @@ export function VehicleHeader({
     return count;
   }, [generation.series]);
 
-  const handleShare = async () => {
+  const handleShare = useCallback(async () => {
     if (navigator.share) {
       await navigator.share({
         title: `${makeName} ${modelName} ${genName}`,
@@ -44,31 +54,30 @@ export function VehicleHeader({
     } else {
       await navigator.clipboard.writeText(window.location.href);
     }
-  };
+  }, [makeName, modelName, genName]);
 
-  const handlePrint = () => {
+  const handlePrint = useCallback(() => {
     window.print();
-  };
+  }, []);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary/5 via-primary/2 to-transparent border">
+    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-primary/2 to-transparent border">
       <div className="p-6 lg:p-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           {/* Left: brand initial + title */}
           <div className="flex items-center gap-5">
             {logoUrl ? (
               <div
-                className="relative w-20 h-20 lg:w-28 lg:h-28 rounded-2xl bg-white shrink-0 shadow-lg shadow-primary/20 overflow-hidden"
+                className="relative w-20 h-20 lg:w-32 lg:h-32 rounded-2xl  shrink-0 shadow-primary/20 overflow-hidden"
                 aria-hidden="true"
               >
                 <Image
                   src={logoUrl}
-                  alt={`Logo ${makeName}`}
+                  alt=""
                   fill
-                  sizes="(min-width: 1024px) 96px, 80px"
                   className="object-contain"
                   quality={100}
-                  unoptimized
+                  priority
                 />
               </div>
             ) : (
@@ -110,44 +119,49 @@ export function VehicleHeader({
           </div>
 
           {/* Right: actions */}
-          <div className="flex items-center gap-2 print:hidden shrink-0">
+          <div className="flex flex-wrap items-center gap-2 print:hidden shrink-0">
+            {/* User actions: Favoris, Garage, Comparer */}
             {children}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleShare}
-              aria-label="Partager cette fiche"
-              className="bg-background/60 backdrop-blur-sm"
-            >
-              <Share2 className="h-4 w-4 mr-2" aria-hidden="true" />
-              Partager
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handlePrint}
-              aria-label="Imprimer cette fiche"
-              className="bg-background/60 backdrop-blur-sm"
-            >
-              <Printer className="h-4 w-4 mr-2" aria-hidden="true" />
-              Imprimer
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              asChild
-              className="bg-background/60 backdrop-blur-sm"
-            >
-              <a
-                href={`/specification/${generationId}/print`}
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="Télécharger la fiche technique en PDF"
-              >
-                <Download className="h-4 w-4 mr-2" aria-hidden="true" />
-                PDF
-              </a>
-            </Button>
+
+            {/* Export dropdown: Partager, Imprimer, PDF */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="bg-background/60 backdrop-blur-sm"
+                >
+                  <Share2 className="h-4 w-4 mr-2" aria-hidden="true" />
+                  Exporter
+                  <ChevronDown
+                    className="h-3.5 w-3.5 ml-1.5 opacity-60"
+                    aria-hidden="true"
+                  />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-44">
+                <DropdownMenuItem onClick={handleShare}>
+                  <Share2 className="h-4 w-4 mr-2" aria-hidden="true" />
+                  Partager
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={handlePrint}>
+                  <Printer className="h-4 w-4 mr-2" aria-hidden="true" />
+                  Imprimer
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <a
+                    href={`/specification/${generationId}/print`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Télécharger PDF (ouvre dans un nouvel onglet)"
+                  >
+                    <Download className="h-4 w-4 mr-2" aria-hidden="true" />
+                    Télécharger PDF
+                  </a>
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
       </div>

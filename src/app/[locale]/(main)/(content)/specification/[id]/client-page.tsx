@@ -111,7 +111,7 @@ export function SpecificationDetailPage() {
         imageUrl: generation.carModel?.carMake?.logo_url || null,
       })
       .catch(() => {});
-  }, [generation, sessionData]);
+  }, [generation?.id_car_generation, sessionData?.user?.id]); // eslint-disable-line react-hooks/exhaustive-deps
 
   if (isLoading) return <LoadingState />;
   if (isError) return <ErrorState />;
@@ -122,7 +122,7 @@ export function SpecificationDetailPage() {
   return (
     <div className="space-y-8 print:space-y-4">
       {/* Back Link */}
-      <nav className="print:hidden">
+      <nav aria-label="Navigation retour" className="print:hidden">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/specification">
             <ChevronLeft className="h-4 w-4 mr-1" aria-hidden="true" />
@@ -140,6 +140,7 @@ export function SpecificationDetailPage() {
             modelName={generation.carModel?.name || ""}
             generationName={generation.name || ""}
             imageUrl={generation.carModel?.carMake?.logo_url || null}
+            className="rounded-r-none border-r-0 focus-visible:z-10"
           />
           <GarageButton
             generationId={generation.id_car_generation}
@@ -150,8 +151,12 @@ export function SpecificationDetailPage() {
               id_car_trim: trim.id_car_trim,
               name: trim.name,
             }))}
+            className="rounded-none border-x-0 focus-visible:z-10"
           />
-          <CompareButton generation={generation} />
+          <CompareButton
+            generation={generation}
+            className="rounded-l-none border-l-0 focus-visible:z-10"
+          />
         </VehicleHeader>
       </AnimatedSection>
 
@@ -208,7 +213,7 @@ export function SpecificationDetailPage() {
       </AnimatedSection>
 
       {/* All Specifications for selected trim */}
-      <main>
+      <section aria-label="Spécifications techniques">
         {hasSpecs ? (
           <AllSpecifications specsByCategory={mergedSpecs} />
         ) : (
@@ -220,7 +225,7 @@ export function SpecificationDetailPage() {
             </CardContent>
           </Card>
         )}
-      </main>
+      </section>
 
       {/* Comments */}
       <AnimatedSection delay={300}>

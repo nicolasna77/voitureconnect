@@ -10,9 +10,14 @@ const nextConfig: NextConfig = {
   },
   experimental: {
     authInterrupts: true,
+    optimizePackageImports: ["lucide-react"],
   },
   images: {
     remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "5wteeckrb7tzxhwc.public.blob.vercel-storage.com",
+      },
       { protocol: "https", hostname: "loremflickr.com" },
       { protocol: "http", hostname: "localhost" },
       { protocol: "https", hostname: "cdn.pixabay.com" },

@@ -1,9 +1,6 @@
-"use client";
-
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Zap } from "lucide-react";
-import SpecificationSearch from "@/components/specification/specification-search";
 
 const stats = [
   { value: "15K+", label: "Véhicules analysés", color: "text-chart-4" },
@@ -36,38 +33,30 @@ export function HeroSection() {
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl text-center">
           {/* Badge */}
-          <div className="animate-fade-up inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm font-medium text-muted-foreground">
+          <div className="animate-fade-up motion-reduce:animate-none inline-flex items-center gap-2 rounded-full border border-primary/20 bg-primary/5 px-5 py-2 text-sm font-medium text-muted-foreground">
             <Zap className="h-4 w-4 text-primary" aria-hidden="true" />
             <span>Analyse automobile nouvelle génération</span>
           </div>
 
           {/* Heading */}
-          <h1 className="animate-fade-up delay-100 mt-8 font-serif text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-8xl">
+          <h1 className="animate-fade-up motion-reduce:animate-none delay-100 mt-8 font-serif text-5xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-8xl">
             Drive<span className="text-primary">Metric</span>
           </h1>
 
-          <p className="animate-fade-up delay-200 mt-6 text-xl font-medium text-foreground/70 sm:text-2xl lg:text-3xl">
+          <p className="animate-fade-up motion-reduce:animate-none delay-200 mt-6 text-xl font-medium text-foreground/70 sm:text-2xl lg:text-3xl">
             Ne payez plus jamais trop cher
             <br className="hidden sm:block" />
             pour un véhicule peu fiable
           </p>
 
-          <p className="animate-fade-up delay-300 mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
+          <p className="animate-fade-up motion-reduce:animate-none delay-300 mx-auto mt-6 max-w-2xl text-pretty text-lg text-muted-foreground">
             Fiches techniques, score de fiabilité, problèmes connus et
             estimation de prix — tout ce qu{"'"}il faut pour acheter en toute
             confiance, en quelques secondes.
           </p>
 
-          {/* Search bar */}
-          <div className="animate-fade-up delay-400 mx-auto mt-10 max-w-xl">
-            <SpecificationSearch
-              placeholder="Rechercher une marque ou un modèle..."
-              size="lg"
-            />
-          </div>
-
           {/* Quick actions */}
-          <div className="animate-fade-up delay-500 mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="animate-fade-up motion-reduce:animate-none delay-400 mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Button
               asChild
               size="lg"
@@ -93,7 +82,7 @@ export function HeroSection() {
           </div>
 
           {/* Stats */}
-          <div className="animate-fade-up delay-600 mt-20 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border sm:grid-cols-4">
+          <div className="animate-fade-up motion-reduce:animate-none delay-500 mt-20 grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border sm:grid-cols-4">
             {stats.map((stat) => (
               <div key={stat.label} className="bg-card p-6 text-center">
                 <p className={`text-3xl font-bold lg:text-4xl ${stat.color}`}>
