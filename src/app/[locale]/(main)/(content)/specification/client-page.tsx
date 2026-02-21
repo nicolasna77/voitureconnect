@@ -60,7 +60,16 @@ const SpecificationPage = () => {
 
   const updateFormState = useCallback(
     (type: string, value: string | number) => {
-      const newState = { ...formState, [type]: value };
+      const current = {
+        marque: searchParams.get("marque") || "",
+        model: searchParams.get("model") || "",
+        generation: searchParams.get("generation") || "",
+        yearMin: searchParams.get("yearMin") || "",
+        yearMax: searchParams.get("yearMax") || "",
+        sortBy: searchParams.get("sortBy") || "make_asc",
+        page: parseInt(searchParams.get("page") || "1", 10),
+      };
+      const newState = { ...current, [type]: value };
 
       if (type === "marque") {
         newState.model = "";
@@ -83,7 +92,7 @@ const SpecificationPage = () => {
 
       router.push(`?${params.toString()}`, { scroll: false });
     },
-    [formState, router]
+    [searchParams, router]
   );
 
   const handlePageChange = useCallback(
