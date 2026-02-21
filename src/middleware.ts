@@ -1,5 +1,9 @@
+import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
-import proxy from "@/proxy";
+import { routing } from "@/i18n/routing";
+
+// Edge-compatible: no Node.js APIs (no better-auth/crypto)
+const intlMiddleware = createMiddleware(routing);
 
 // In-memory rate limit store: ip → { count, resetAt }
 const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
@@ -31,7 +35,7 @@ function isRateLimited(ip: string): boolean {
   return false;
 }
 
-export default async function middleware(request: NextRequest) {
+export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   // Rate limiting for public blog API routes
@@ -43,13 +47,18 @@ export default async function middleware(request: NextRequest) {
         headers: { "Retry-After": "60", "Content-Type": "text/plain" },
       });
     }
+    return NextResponse.next();
   }
 
-  return proxy(request);
+  // Internationalization routing — auth protection is handled by
+  // (protected)/layout.tsx and (protected)/admin/layout.tsx server components
+  return intlMiddleware(request);
 }
 
 export const config = {
   matcher: [
     "/api/blog/:path*",
-    "/((?!api|_next|_vercel|.*\\..*).*)"],
+    // Match all paths except Next.js internals and static assets
+    "/((?!api|_next|_vercel|.*\\..*).*)",
+  ],
 };
