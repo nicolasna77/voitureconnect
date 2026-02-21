@@ -37,6 +37,7 @@ model User {
   ownedVehicles       OwnedVehicle[]
   referralCode        ReferralCode?
   referrals           Referral[]            @relation("UserReferrals")
+  blogPosts           BlogPost[]
   createdAt           DateTime              @default(now())
   updatedAt           DateTime              @updatedAt
 
@@ -450,6 +451,32 @@ model Referral {
   referredUser   User         @relation("UserReferrals", fields: [referredUserId], references: [id])
 
   @@map("referrals")
+  @@schema("base")
+}
+
+// ============= BLOG =============
+model BlogPost {
+  id          String          @id @default(uuid())
+  slug        String          @unique
+  title       String
+  excerpt     String?
+  content     String
+  coverImage  String?
+  status      BlogPostStatus  @default(DRAFT)
+  author      User            @relation(fields: [authorId], references: [id])
+  authorId    String
+  publishedAt DateTime?
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  @@map("blog_posts")
+  @@schema("base")
+}
+
+enum BlogPostStatus {
+  DRAFT
+  PUBLISHED
+
   @@schema("base")
 }
 
