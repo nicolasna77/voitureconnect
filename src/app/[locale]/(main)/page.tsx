@@ -1,5 +1,18 @@
 import dynamic from "next/dynamic";
+import prisma from "@/prisma";
 import { HeroSection } from "@/components/sections/hero-section";
+
+const DEFAULT_PICTURE =
+  "https://cdn.pixabay.com/photo/2016/08/08/09/17/avatar-1577909_960_720.png";
+
+async function getHeroUsers() {
+  return prisma.user.findMany({
+    where: { picture: { not: DEFAULT_PICTURE } },
+    select: { name: true, picture: true },
+    orderBy: { id: "desc" },
+    take: 4,
+  });
+}
 
 // Lazy load below-the-fold sections (vercel-react-best-practices: bundle-dynamic-imports)
 const FeaturesSection = dynamic(
@@ -56,11 +69,13 @@ const CTASection = dynamic(
   { ssr: true },
 );
 
-export default function Home() {
+export default async function Home() {
+  const heroUsers = await getHeroUsers();
+
   return (
     <div className="flex flex-col w-full">
       <main className="w-full">
-        <HeroSection />
+        <HeroSection users={heroUsers} />
         <FeaturesSection />
         <TrustSection />
         <DemoSection />
