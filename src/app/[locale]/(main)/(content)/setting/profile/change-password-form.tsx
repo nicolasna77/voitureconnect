@@ -68,7 +68,7 @@ export function ChangePasswordForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <Alert variant="destructive" className="animate-in fade-in-0 slide-in-from-top-2 duration-300">
+        <Alert variant="destructive" className="animate-in fade-in-0 slide-in-from-top-2 duration-300 motion-reduce:animate-none">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
@@ -159,7 +159,7 @@ export function ChangePasswordForm() {
       <Button
         type="submit"
         disabled={!currentPassword || !newPassword || !confirmPassword || isPending}
-        className={cn("min-w-40 transition-all", isSuccess && "bg-emerald-600 hover:bg-emerald-600")}
+        className={cn("min-w-40 transition-colors", isSuccess && "bg-emerald-600 hover:bg-emerald-600")}
       >
         {isPending ? (
           <>

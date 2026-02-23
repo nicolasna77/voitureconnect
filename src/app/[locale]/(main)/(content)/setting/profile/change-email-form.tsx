@@ -51,13 +51,13 @@ export function ChangeEmailForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <Alert variant="destructive" className="animate-in fade-in-0 slide-in-from-top-2 duration-300">
+        <Alert variant="destructive" className="animate-in fade-in-0 slide-in-from-top-2 duration-300 motion-reduce:animate-none">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {isSent && (
-        <Alert className="border-emerald-500/50 bg-emerald-500/10 animate-in fade-in-0 slide-in-from-top-2 duration-300">
+        <Alert className="border-emerald-500/50 bg-emerald-500/10 animate-in fade-in-0 slide-in-from-top-2 duration-300 motion-reduce:animate-none">
           <Mail className="h-4 w-4 text-emerald-600" aria-hidden="true" />
           <AlertDescription className="text-emerald-700 dark:text-emerald-400">
             Un email de confirmation a été envoyé. Cliquez sur le lien pour valider le changement.
@@ -97,7 +97,7 @@ export function ChangeEmailForm() {
             required
             autoComplete="email"
             spellCheck={false}
-            className={cn("transition-all", hasChanges && "border-primary/50 bg-primary/5")}
+            className={cn("transition-[border-color,background-color]", hasChanges && "border-primary/50 bg-primary/5")}
           />
         </div>
       </div>
