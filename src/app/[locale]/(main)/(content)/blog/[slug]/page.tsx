@@ -5,7 +5,7 @@ import { BlogPostStatus } from "@prisma/client";
 import Image from "next/image";
 import { Calendar, User } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
-import DOMPurify from "isomorphic-dompurify";
+import sanitizeHtml from "sanitize-html";
 
 export const revalidate = 3600; // revalidate every hour
 export const dynamicParams = true;
@@ -123,7 +123,14 @@ export default async function BlogPostPage({ params }: Props) {
       {/* Article content — rendered as HTML from Tiptap */}
       <article
         className="prose prose-sm sm:prose max-w-none"
-        dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(post.content, {
+          allowedTags: sanitizeHtml.defaults.allowedTags.concat(["img", "figure", "figcaption"]),
+          allowedAttributes: {
+            ...sanitizeHtml.defaults.allowedAttributes,
+            img: ["src", "alt", "width", "height", "loading"],
+            "*": ["class"],
+          },
+        }) }}
       />
     </div>
   );
