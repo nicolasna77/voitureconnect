@@ -1,8 +1,19 @@
 {
   "HomePage": {
     "hero": {
+      "sectionLabel": "Section héros — DriveMetric",
+      "badge": "Analyse automobile nouvelle génération",
+      "tagline": "Ne payez plus jamais trop cher\npour un véhicule peu fiable",
+      "description": "Fiches techniques, score de fiabilité, problèmes connus et estimation de prix — tout ce qu'il faut pour acheter en toute confiance, en quelques secondes.",
+      "ctaPrimary": "Analyser un véhicule gratuitement",
+      "ctaSecondary": "Comment ça marche",
+      "stats": {
+        "vehicles": "Véhicules analysés",
+        "reliability": "Données fiables",
+        "brands": "Marques couvertes",
+        "rating": "Note utilisateurs"
+      },
       "title": "Analysez la fiabilité de votre futur véhicule",
-      "description": "Utilisez notre IA pour obtenir une analyse complète de la fiabilité, des problèmes courants et des coûts de réparation de n'importe quel véhicule.",
       "searchPlaceholder": "Rechercher une marque…",
       "searchLabel": "Rechercher une marque de voiture",
       "searchButton": "Rechercher",
