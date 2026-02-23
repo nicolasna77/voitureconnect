@@ -406,6 +406,7 @@ model OwnedVehicle {
   maintenances   MaintenanceEntry[]
 
   @@unique([userId, generationId, trimId])
+  @@index([userId])
   @@map("owned_vehicles")
   @@schema("base")
 }
@@ -423,6 +424,7 @@ model MaintenanceEntry {
   createdAt      DateTime     @default(now())
   ownedVehicle   OwnedVehicle @relation(fields: [ownedVehicleId], references: [id], onDelete: Cascade)
 
+  @@index([ownedVehicleId])
   @@map("maintenance_entries")
   @@schema("base")
 }
@@ -469,6 +471,9 @@ model BlogPost {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
+  // Listing: WHERE status = PUBLISHED ORDER BY publishedAt DESC
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([authorId])
   @@map("blog_posts")
   @@schema("base")
 }
