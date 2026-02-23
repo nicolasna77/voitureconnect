@@ -61,7 +61,7 @@ export function VehicleHeader({
   }, []);
 
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-primary/2 to-transparent border">
+    <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary/5 via-primary/2 to-transparent border">
       <div className="p-6 lg:p-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
           {/* Left: brand initial + title */}

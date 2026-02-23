@@ -1,6 +1,12 @@
 "use client";
 
-import React, { useState, useCallback, useRef, useEffect, useMemo } from "react";
+import React, {
+  useState,
+  useCallback,
+  useRef,
+  useEffect,
+  useMemo,
+} from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import axios from "axios";
@@ -55,7 +61,11 @@ interface SearchWithFiltersProps {
 
 // ── Hoisted constants ─────────────────────────────────────────────────────────
 
-const TYPE_ORDER: Array<"marque" | "model" | "generation"> = ["marque", "model", "generation"];
+const TYPE_ORDER: Array<"marque" | "model" | "generation"> = [
+  "marque",
+  "model",
+  "generation",
+];
 
 const DEFAULT_FILTERS: FilterState = {
   marque: "",
@@ -67,9 +77,16 @@ const DEFAULT_FILTERS: FilterState = {
 };
 
 const TYPE_ICONS: Record<string, React.ReactNode> = {
-  marque: <Building2 className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />,
+  marque: (
+    <Building2 className="h-4 w-4 text-primary shrink-0" aria-hidden="true" />
+  ),
   model: <Car className="h-4 w-4 text-blue-500 shrink-0" aria-hidden="true" />,
-  generation: <Calendar className="h-4 w-4 text-emerald-500 shrink-0" aria-hidden="true" />,
+  generation: (
+    <Calendar
+      className="h-4 w-4 text-emerald-500 shrink-0"
+      aria-hidden="true"
+    />
+  ),
 };
 
 const TYPE_LABELS: Record<string, string> = {
@@ -101,7 +118,7 @@ function getSuggestionLabel(suggestion: Suggestion): string {
 
 async function fetchSuggestions(
   query: string,
-  brand?: string
+  brand?: string,
 ): Promise<{ data: Suggestion[] }> {
   if (!query || query.length < 2) return { data: [] };
   const params = new URLSearchParams({ q: query });
@@ -191,7 +208,7 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
         acc[s.type].push(s);
         return acc;
       },
-      {} as Record<string, Suggestion[]>
+      {} as Record<string, Suggestion[]>,
     );
   }, [suggestions]);
 
@@ -212,7 +229,7 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
   useEffect(() => {
     if (activeIndex < 0 || !listRef.current) return;
     const item = listRef.current.querySelector<HTMLElement>(
-      `[data-index="${activeIndex}"]`
+      `[data-index="${activeIndex}"]`,
     );
     item?.scrollIntoView({ block: "nearest" });
   }, [activeIndex]);
@@ -241,16 +258,22 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
         return;
       }
       if (suggestion.type === "model") {
-        setSelectedBrand({ name: suggestion.brand, logo_url: suggestion.logo_url ?? null });
+        setSelectedBrand({
+          name: suggestion.brand,
+          logo_url: suggestion.logo_url ?? null,
+        });
         setSelectedModel(suggestion.model);
         inputRef.current?.focus();
         return;
       }
-      setSelectedBrand({ name: suggestion.brand, logo_url: suggestion.logo_url ?? null });
+      setSelectedBrand({
+        name: suggestion.brand,
+        logo_url: suggestion.logo_url ?? null,
+      });
       setSelectedModel(null);
       inputRef.current?.focus();
     },
-    [router]
+    [router],
   );
 
   const handleSubmit = useCallback(
@@ -267,10 +290,12 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
         return;
       }
       if (query.trim()) {
-        router.push(`/specification?marque=${encodeURIComponent(query.trim())}`);
+        router.push(
+          `/specification?marque=${encodeURIComponent(query.trim())}`,
+        );
       }
     },
-    [selectedBrand, selectedModel, query, router]
+    [selectedBrand, selectedModel, query, router],
   );
 
   const handleKeyDown = useCallback(
@@ -302,15 +327,20 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
         return;
       }
     },
-    [suggestionsOpen, hasResults, flatSuggestions, activeIndex, handleSelect]
+    [suggestionsOpen, hasResults, flatSuggestions, activeIndex, handleSelect],
   );
 
   // Filter handlers
   const handleFilterChange = useCallback((type: string, value: string) => {
     setFilters((prev) => {
       const next = { ...prev, [type]: value };
-      if (type === "marque") { next.model = ""; next.generation = ""; }
-      if (type === "model") { next.generation = ""; }
+      if (type === "marque") {
+        next.model = "";
+        next.generation = "";
+      }
+      if (type === "model") {
+        next.generation = "";
+      }
       return next;
     });
   }, []);
@@ -331,7 +361,8 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
     if (filters.generation) params.set("generation", filters.generation);
     if (filters.yearMin) params.set("yearMin", filters.yearMin);
     if (filters.yearMax) params.set("yearMax", filters.yearMax);
-    if (filters.sortBy && filters.sortBy !== "make_asc") params.set("sortBy", filters.sortBy);
+    if (filters.sortBy && filters.sortBy !== "make_asc")
+      params.set("sortBy", filters.sortBy);
     router.push(`/specification?${params.toString()}`);
     setFiltersOpen(false);
   }, [filters, router]);
@@ -348,13 +379,15 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
   const indexedGroups = useMemo(() => {
     if (!groupedSuggestions) return [];
     let flatIndex = 0;
-    return TYPE_ORDER.filter((t) => groupedSuggestions[t]?.length).map((type) => {
-      const items = groupedSuggestions[type].map((s) => ({
-        suggestion: s,
-        index: flatIndex++,
-      }));
-      return { type, items };
-    });
+    return TYPE_ORDER.filter((t) => groupedSuggestions[t]?.length).map(
+      (type) => {
+        const items = groupedSuggestions[type].map((s) => ({
+          suggestion: s,
+          index: flatIndex++,
+        }));
+        return { type, items };
+      },
+    );
   }, [groupedSuggestions]);
 
   return (
@@ -370,7 +403,7 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
             className={cn(
               "flex items-center gap-1.5",
               "rounded-lg border-2 border-transparent bg-secondary/50",
-              "transition-all focus-within:border-primary focus-within:bg-background focus-within:shadow-lg focus-within:shadow-primary/5"
+              "transition-all focus-within:border-primary focus-within:bg-background focus-within:shadow-lg focus-within:shadow-primary/5",
             )}
           >
             <Search
@@ -399,7 +432,9 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
                   setQuery(e.target.value);
                   if (e.target.value.length >= 2) setSuggestionsOpen(true);
                 }}
-                onFocus={() => debouncedQuery.length >= 2 && setSuggestionsOpen(true)}
+                onFocus={() =>
+                  debouncedQuery.length >= 2 && setSuggestionsOpen(true)
+                }
                 onKeyDown={handleKeyDown}
                 autoComplete="off"
                 aria-label="Rechercher des fiches techniques"
@@ -460,7 +495,9 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
               >
                 <div className="p-4 space-y-4">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-sm font-semibold">Filtres de recherche</h2>
+                    <h2 className="text-sm font-semibold">
+                      Filtres de recherche
+                    </h2>
                     {activeCount > 0 && (
                       <button
                         type="button"
@@ -489,7 +526,10 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
                         </Badge>
                       )}
                     </Button>
-                    <Button variant="outline" onClick={() => setFiltersOpen(false)}>
+                    <Button
+                      variant="outline"
+                      onClick={() => setFiltersOpen(false)}
+                    >
                       Annuler
                     </Button>
                   </div>
@@ -501,7 +541,7 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
 
         {/* Suggestions dropdown — plain HTML for reliable keyboard control */}
         <PopoverContent
-          className="w-[var(--radix-popover-trigger-width)] p-0 shadow-xl border-border/50"
+          className="w-(--radix-popover-trigger-width) p-0 shadow-xl border-border/50"
           align="start"
           sideOffset={8}
           onOpenAutoFocus={(e) => e.preventDefault()}
@@ -540,7 +580,7 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
                       "flex items-center gap-3 mx-1 px-3 py-2.5 cursor-pointer rounded-md text-sm transition-colors",
                       fi === activeIndex
                         ? "bg-accent text-accent-foreground"
-                        : "hover:bg-accent/60"
+                        : "hover:bg-accent/60",
                     )}
                   >
                     {suggestion.logo_url && (
@@ -584,15 +624,21 @@ export function SearchWithFilters({ className }: SearchWithFiltersProps) {
             </span>
             <span className="hidden sm:flex items-center gap-2">
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">↑↓</kbd>
+                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                  ↑↓
+                </kbd>
                 <span>naviguer</span>
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">↵</kbd>
+                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                  ↵
+                </kbd>
                 <span>sélectionner</span>
               </span>
               <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">esc</kbd>
+                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                  esc
+                </kbd>
                 <span>fermer</span>
               </span>
             </span>
