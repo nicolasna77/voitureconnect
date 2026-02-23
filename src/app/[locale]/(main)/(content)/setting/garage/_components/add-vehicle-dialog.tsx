@@ -23,13 +23,11 @@ import {
 } from "@/components/ui/select";
 import { Loader2, Plus, Search } from "lucide-react";
 
-interface Make {
-  id_car_make: number;
+interface Brand {
   name: string;
 }
 
 interface Model {
-  id_car_model: number;
   name: string;
 }
 
@@ -63,8 +61,6 @@ export function AddVehicleDialog({
 
   const [makeName, setMakeName] = useState(initialMakeName || "");
   const [modelName, setModelName] = useState(initialModelName || "");
-  const [selectedMakeId, setSelectedMakeId] = useState<number | null>(null);
-  const [selectedModelId, setSelectedModelId] = useState<number | null>(null);
   const [selectedGenerationId, setSelectedGenerationId] = useState<number | null>(
     initialGenerationId || null
   );
@@ -77,33 +73,33 @@ export function AddVehicleDialog({
   const [km, setKm] = useState("");
   const [color, setColor] = useState("");
 
-  const { data: makes = [], isFetching: makesLoading } = useQuery<Make[]>({
-    queryKey: ["makes"],
+  const { data: brands = [], isFetching: brandsLoading } = useQuery<Brand[]>({
+    queryKey: ["brands"],
     queryFn: async () => {
       const res = await axios.get("/api/car/brand");
-      return res.data;
+      return res.data.data ?? [];
     },
     enabled: open,
     staleTime: 10 * 60 * 1000,
   });
 
   const { data: models = [], isFetching: modelsLoading } = useQuery<Model[]>({
-    queryKey: ["models", selectedMakeId],
+    queryKey: ["models-by-name", makeName],
     queryFn: async () => {
-      const res = await axios.get(`/api/car/model?makeId=${selectedMakeId}`);
-      return res.data;
+      const res = await axios.get(`/api/car/model?name=${encodeURIComponent(makeName)}`);
+      return res.data.data ?? [];
     },
-    enabled: !!selectedMakeId,
+    enabled: !!makeName,
     staleTime: 10 * 60 * 1000,
   });
 
   const { data: generations = [], isFetching: generationsLoading } = useQuery<Generation[]>({
-    queryKey: ["generations", selectedModelId],
+    queryKey: ["generations-by-name", modelName],
     queryFn: async () => {
-      const res = await axios.get(`/api/car/generation?modelId=${selectedModelId}`);
-      return res.data;
+      const res = await axios.get(`/api/car/generation?model=${encodeURIComponent(modelName)}`);
+      return res.data.data ?? [];
     },
-    enabled: !!selectedModelId,
+    enabled: !!modelName,
     staleTime: 10 * 60 * 1000,
   });
 
@@ -146,10 +142,7 @@ export function AddVehicleDialog({
       resetForm();
     },
     onError: (err: unknown) => {
-      if (
-        axios.isAxiosError(err) &&
-        err.response?.status === 409
-      ) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
         toast.error("Ce véhicule est déjà dans votre garage");
       } else {
         toast.error("Erreur lors de l'ajout");
@@ -159,12 +152,10 @@ export function AddVehicleDialog({
 
   const resetForm = () => {
     if (!initialGenerationId) {
-      setSelectedMakeId(null);
-      setSelectedModelId(null);
-      setSelectedGenerationId(null);
-      setSelectedGenerationName("");
       setMakeName("");
       setModelName("");
+      setSelectedGenerationId(null);
+      setSelectedGenerationName("");
     }
     setSelectedTrimId(null);
     setSelectedTrimName("");
@@ -193,36 +184,28 @@ export function AddVehicleDialog({
           {!initialGenerationId && (
             <>
               <div className="space-y-2">
-                <Label>Marque</Label>
-                {makesLoading ? (
+                <Label id="label-make">Marque</Label>
+                {brandsLoading ? (
                   <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                     Chargement…
                   </div>
                 ) : (
                   <Select
                     onValueChange={(val) => {
-                      const make = makes.find(
-                        (m) => m.id_car_make === Number(val)
-                      );
-                      setSelectedMakeId(Number(val));
-                      setMakeName(make?.name || "");
-                      setSelectedModelId(null);
+                      setMakeName(val);
                       setModelName("");
                       setSelectedGenerationId(null);
                       setSelectedGenerationName("");
                     }}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger aria-labelledby="label-make">
                       <SelectValue placeholder="Sélectionner une marque" />
                     </SelectTrigger>
                     <SelectContent>
-                      {makes.map((make) => (
-                        <SelectItem
-                          key={make.id_car_make}
-                          value={String(make.id_car_make)}
-                        >
-                          {make.name}
+                      {brands.map((brand) => (
+                        <SelectItem key={brand.name} value={brand.name}>
+                          {brand.name}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -230,35 +213,28 @@ export function AddVehicleDialog({
                 )}
               </div>
 
-              {selectedMakeId && (
+              {makeName && (
                 <div className="space-y-2">
-                  <Label>Modèle</Label>
+                  <Label id="label-model">Modèle</Label>
                   {modelsLoading ? (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                       Chargement…
                     </div>
                   ) : (
                     <Select
                       onValueChange={(val) => {
-                        const model = models.find(
-                          (m) => m.id_car_model === Number(val)
-                        );
-                        setSelectedModelId(Number(val));
-                        setModelName(model?.name || "");
+                        setModelName(val);
                         setSelectedGenerationId(null);
                         setSelectedGenerationName("");
                       }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger aria-labelledby="label-model">
                         <SelectValue placeholder="Sélectionner un modèle" />
                       </SelectTrigger>
                       <SelectContent>
                         {models.map((model) => (
-                          <SelectItem
-                            key={model.id_car_model}
-                            value={String(model.id_car_model)}
-                          >
+                          <SelectItem key={model.name} value={model.name}>
                             {model.name}
                           </SelectItem>
                         ))}
@@ -268,12 +244,12 @@ export function AddVehicleDialog({
                 </div>
               )}
 
-              {selectedModelId && (
+              {modelName && (
                 <div className="space-y-2">
-                  <Label>Génération</Label>
+                  <Label id="label-generation">Génération</Label>
                   {generationsLoading ? (
                     <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
                       Chargement…
                     </div>
                   ) : (
@@ -286,7 +262,7 @@ export function AddVehicleDialog({
                         setSelectedGenerationName(gen?.name || "");
                       }}
                     >
-                      <SelectTrigger>
+                      <SelectTrigger aria-labelledby="label-generation">
                         <SelectValue placeholder="Sélectionner une génération" />
                       </SelectTrigger>
                       <SelectContent>
@@ -296,7 +272,8 @@ export function AddVehicleDialog({
                             value={String(gen.id_car_generation)}
                           >
                             {gen.name}
-                            {gen.year_begin && ` (${gen.year_begin}${gen.year_end ? `—${gen.year_end}` : ""})`}
+                            {gen.year_begin &&
+                              ` (${gen.year_begin}${gen.year_end ? `—${gen.year_end}` : ""})`}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -320,7 +297,7 @@ export function AddVehicleDialog({
 
           {selectedGenerationId && trims.length > 0 && (
             <div className="space-y-2">
-              <Label>Motorisation (optionnel)</Label>
+              <Label id="label-trim">Motorisation (optionnel)</Label>
               <Select
                 onValueChange={(val) => {
                   const trim = trims.find((t) => t.id_car_trim === Number(val));
@@ -328,7 +305,7 @@ export function AddVehicleDialog({
                   setSelectedTrimName(trim?.name || "");
                 }}
               >
-                <SelectTrigger>
+                <SelectTrigger aria-labelledby="label-trim">
                   <SelectValue placeholder="Sélectionner une motorisation" />
                 </SelectTrigger>
                 <SelectContent>

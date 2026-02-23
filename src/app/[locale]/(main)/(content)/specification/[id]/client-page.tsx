@@ -221,7 +221,7 @@ export function SpecificationDetailPage() {
         {/* ── Fiche technique ───────────────────────────────────────── */}
         <TabsContent
           value="fiche"
-          className="space-y-6 mt-6 outline-none print:!block"
+          className="space-y-6 mt-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 print:!block"
         >
           <AnimatedSection delay={60}>
             <MotorizationSelector
@@ -257,7 +257,7 @@ export function SpecificationDetailPage() {
         {/* ── Analyse ───────────────────────────────────────────────── */}
         <TabsContent
           value="analyse"
-          className="space-y-6 mt-6 outline-none print:!block"
+          className="space-y-6 mt-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 print:!block"
         >
           <AnimatedSection delay={60}>
             <AIReliabilityWidget
@@ -286,7 +286,7 @@ export function SpecificationDetailPage() {
         {/* ── Avis ──────────────────────────────────────────────────── */}
         <TabsContent
           value="avis"
-          className="space-y-6 mt-6 outline-none print:!block"
+          className="space-y-6 mt-6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 print:!block"
         >
           <AnimatedSection delay={60}>
             <Suspense

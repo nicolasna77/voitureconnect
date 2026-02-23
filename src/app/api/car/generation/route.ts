@@ -20,7 +20,10 @@ export const GET = async (req: Request) => {
           }
         : undefined,
       select: {
+        id_car_generation: true,
         name: true,
+        year_begin: true,
+        year_end: true,
       },
       orderBy: {
         name: "asc",

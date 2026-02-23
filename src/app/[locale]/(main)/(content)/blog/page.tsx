@@ -1,3 +1,4 @@
+import React from "react";
 import type { Metadata } from "next";
 import prisma from "@/prisma";
 import { BlogPostStatus } from "@prisma/client";
@@ -77,13 +78,13 @@ function PaginationBar({
         {sorted.map((page, i) => {
           const prev = sorted[i - 1];
           return (
-            <>
+            <React.Fragment key={page}>
               {prev && page - prev > 1 && (
-                <PaginationItem key={`ellipsis-${page}`}>
+                <PaginationItem>
                   <PaginationEllipsis />
                 </PaginationItem>
               )}
-              <PaginationItem key={page}>
+              <PaginationItem>
                 <PaginationLink
                   href={buildHref(page, q)}
                   isActive={page === currentPage}
@@ -92,7 +93,7 @@ function PaginationBar({
                   {page}
                 </PaginationLink>
               </PaginationItem>
-            </>
+            </React.Fragment>
           );
         })}
 

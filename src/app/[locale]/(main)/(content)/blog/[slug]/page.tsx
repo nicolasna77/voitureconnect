@@ -94,19 +94,19 @@ export default async function BlogPostPage({ params }: Props) {
       )}
 
       {/* Title */}
-      <h1 className="text-3xl sm:text-4xl font-bold leading-tight mb-4">
+      <h1 className="text-3xl sm:text-4xl font-bold leading-tight mb-4 text-balance">
         {post.title}
       </h1>
 
       {/* Meta */}
       <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-6">
         <div className="flex items-center gap-1.5">
-          <User className="h-4 w-4" />
+          <User className="h-4 w-4" aria-hidden="true" />
           {post.author.name}
         </div>
         {publishedDate && (
           <div className="flex items-center gap-1.5">
-            <Calendar className="h-4 w-4" />
+            <Calendar className="h-4 w-4" aria-hidden="true" />
             {publishedDate}
           </div>
         )}
