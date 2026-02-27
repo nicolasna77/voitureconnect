@@ -192,7 +192,7 @@ export function SpecificationDetailPage() {
         className="space-y-0"
       >
         {/* Sticky tab bar */}
-        <div className="sticky top-14 z-20 -mx-4 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b print:hidden">
+        <div className="sticky top-16 z-20 -mx-4 px-4 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/80 border-b print:hidden">
           <TabsList className="w-full h-auto rounded-none bg-transparent p-0 gap-0 justify-start">
             <TabsTrigger
               value="fiche"

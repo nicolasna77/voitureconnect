@@ -45,8 +45,8 @@ function extractQuickStats(specsByCategory: Record<string, Specification[]>): {
       value: power.value?.replace(/NULL$/i, "") || "\u2013",
       unit: power.unit && power.unit !== "NULL" ? power.unit : "ch",
       icon: <Zap className="h-5 w-5" aria-hidden="true" />,
-      color: "text-green-600",
-      bgColor: "bg-green-50",
+      color: "text-chart-3",
+      bgColor: "bg-chart-3/10",
     });
   }
 
@@ -57,8 +57,8 @@ function extractQuickStats(specsByCategory: Record<string, Specification[]>): {
       value: engine.value?.replace(/NULL$/i, "") || "\u2013",
       unit: engine.unit && engine.unit !== "NULL" ? engine.unit : "cm\u00B3",
       icon: <Cog className="h-5 w-5" aria-hidden="true" />,
-      color: "text-red-600",
-      bgColor: "bg-red-50",
+      color: "text-destructive",
+      bgColor: "bg-destructive/10",
     });
   }
 
@@ -72,8 +72,8 @@ function extractQuickStats(specsByCategory: Record<string, Specification[]>): {
           ? consumption.unit
           : "L/100km",
       icon: <Droplets className="h-5 w-5" aria-hidden="true" />,
-      color: "text-amber-600",
-      bgColor: "bg-amber-50",
+      color: "text-chart-2",
+      bgColor: "bg-chart-2/10",
     });
   }
 
@@ -84,20 +84,20 @@ function extractQuickStats(specsByCategory: Record<string, Specification[]>): {
       value: topSpeed.value?.replace(/NULL$/i, "") || "\u2013",
       unit: topSpeed.unit && topSpeed.unit !== "NULL" ? topSpeed.unit : "km/h",
       icon: <Wind className="h-5 w-5" aria-hidden="true" />,
-      color: "text-blue-600",
-      bgColor: "bg-blue-50",
+      color: "text-primary",
+      bgColor: "bg-primary/10",
     });
   }
 
   const accel = find(["0 à 100", "0-100", "acceleration"]);
   if (accel && stats.length < 4) {
     stats.push({
-      label: "0 à 100 km/h",
+      label: "0–100 km/h",
       value: accel.value?.replace(/NULL$/i, "") || "\u2013",
       unit: accel.unit && accel.unit !== "NULL" ? accel.unit : "s",
       icon: <Activity className="h-5 w-5" aria-hidden="true" />,
-      color: "text-purple-600",
-      bgColor: "bg-purple-50",
+      color: "text-chart-4",
+      bgColor: "bg-chart-4/10",
     });
   }
 
@@ -117,7 +117,7 @@ export function QuickStats({
   if (stats.length === 0) return null;
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+    <dl className="grid grid-cols-2 lg:grid-cols-4 gap-3">
       {stats.map((stat, index) => (
         <AnimatedSection key={stat.label} delay={index * 100}>
           <Card className="relative overflow-hidden">
@@ -133,20 +133,20 @@ export function QuickStats({
                 {stat.icon}
               </div>
               <div className="min-w-0">
-                <p className="text-2xl font-bold tabular-nums leading-tight truncate">
+                <dd className="text-2xl font-bold tabular-nums leading-tight truncate">
                   {stat.value}
                   <span className="text-sm font-normal text-muted-foreground ml-1">
                     {stat.unit}
                   </span>
-                </p>
-                <p className="text-xs text-muted-foreground mt-0.5">
+                </dd>
+                <dt className="text-xs text-muted-foreground mt-0.5">
                   {stat.label}
-                </p>
+                </dt>
               </div>
             </CardContent>
           </Card>
         </AnimatedSection>
       ))}
-    </div>
+    </dl>
   );
 }
