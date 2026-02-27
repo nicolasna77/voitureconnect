@@ -2,8 +2,9 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Gauge } from "lucide-react";
+import { Menu, X, Gauge, Search } from "lucide-react";
 import LoginMenu from "@/components/auth/login-menu";
 import { useSession } from "@/lib/auth-client";
 import { CreditBalance } from "@/components/credits/credit-balance";
@@ -12,19 +13,38 @@ import { SearchWithFilters } from "@/components/specification/search-with-filter
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const { data: session } = useSession();
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const pathname = usePathname();
 
-  // Close menu on Escape key
-  const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (event.key === "Escape") {
-      setIsMenuOpen(false);
-      menuButtonRef.current?.focus();
-    }
-  }, []);
+  // Close menu and search on route change — derived state during render
+  const [prevPathname, setPrevPathname] = useState(pathname);
+  if (prevPathname !== pathname) {
+    setPrevPathname(pathname);
+    if (isMenuOpen) setIsMenuOpen(false);
+    if (isSearchOpen) setIsSearchOpen(false);
+  }
 
-  // Focus trap: return focus to button when menu closes
+  // Close on Escape key
+  const handleKeyDown = useCallback(
+    (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        if (isSearchOpen) {
+          setIsSearchOpen(false);
+          return;
+        }
+        if (isMenuOpen) {
+          setIsMenuOpen(false);
+          menuButtonRef.current?.focus();
+        }
+      }
+    },
+    [isMenuOpen, isSearchOpen],
+  );
+
+  // Focus trap: move focus into menu when it opens
   useEffect(() => {
     if (isMenuOpen) {
       document.addEventListener("keydown", handleKeyDown);
@@ -35,6 +55,13 @@ export function Header() {
     }
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [isMenuOpen, handleKeyDown]);
+
+  // Also listen to Escape when search is open (not inside menu)
+  useEffect(() => {
+    if (!isSearchOpen) return;
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, [isSearchOpen, handleKeyDown]);
 
   // Close menu on click outside
   useEffect(() => {
@@ -53,6 +80,11 @@ export function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMenuOpen]);
+
+  const toggleSearch = () => {
+    setIsSearchOpen((prev) => !prev);
+    if (isMenuOpen) setIsMenuOpen(false);
+  };
 
   return (
     <>
@@ -92,8 +124,21 @@ export function Header() {
               <LoginMenu />
             </div>
 
-            {/* Mobile: LoginMenu + hamburger — col 3 */}
+            {/* Mobile: Search icon + LoginMenu + hamburger — col 3 */}
             <div className="flex items-center justify-end gap-1 md:hidden">
+              <Button
+                variant="ghost"
+                size="icon"
+                aria-label={isSearchOpen ? "Fermer la recherche" : "Rechercher"}
+                aria-expanded={isSearchOpen}
+                onClick={toggleSearch}
+              >
+                {isSearchOpen ? (
+                  <X className="h-5 w-5" aria-hidden="true" />
+                ) : (
+                  <Search className="h-5 w-5" aria-hidden="true" />
+                )}
+              </Button>
               <LoginMenu />
               <Button
                 ref={menuButtonRef}
@@ -113,10 +158,12 @@ export function Header() {
             </div>
           </div>
 
-          {/* Mobile: search row (always visible) */}
-          <div className="pb-3 md:hidden">
-            <SearchWithFilters className="w-full" />
-          </div>
+          {/* Mobile: collapsible search row */}
+          {isSearchOpen && (
+            <div className="pb-3 md:hidden animate-fade-up motion-reduce:animate-none">
+              <SearchWithFilters className="w-full" autoFocus />
+            </div>
+          )}
         </nav>
 
         {/* Mobile slide-down menu */}

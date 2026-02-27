@@ -57,6 +57,8 @@ interface FilterState {
 
 interface SearchWithFiltersProps {
   className?: string;
+  /** Auto-focus the text input on mount (e.g. when mobile search bar opens) */
+  autoFocus?: boolean;
 }
 
 // ── Hoisted constants ─────────────────────────────────────────────────────────
@@ -167,10 +169,17 @@ function Chip({
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
-export function SearchWithFilters({ className }: SearchWithFiltersProps) {
+export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLDivElement>(null);
+
+  // Focus input when autoFocus is set (mobile search bar opening)
+  useEffect(() => {
+    if (!autoFocus) return;
+    const t = setTimeout(() => inputRef.current?.focus(), 60);
+    return () => clearTimeout(t);
+  }, [autoFocus]);
 
   // Search state
   const [query, setQuery] = useState("");
