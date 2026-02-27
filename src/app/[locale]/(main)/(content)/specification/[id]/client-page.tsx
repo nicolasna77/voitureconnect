@@ -37,7 +37,7 @@ import { RecallsSection } from "./_components/recalls-section";
 import { CompareButton } from "./_components/compare-button";
 import { CommentsSection } from "./_components/comments/comments-section";
 import { FavoriteButton } from "@/components/favorite-button";
-import { MarketValueWidget } from "@/components/specification/market-value-widget";
+import { PriceEstimateWidget } from "@/components/specification/price-estimate-widget";
 import { RatingWidget } from "@/components/specification/rating-widget";
 import { GarageButton } from "@/components/garage-button";
 
@@ -267,15 +267,15 @@ export function SpecificationDetailPage() {
           </AnimatedSection>
 
           <AnimatedSection delay={120}>
-            <MarketValueWidget
+            <PriceEstimateWidget
               generationId={generation.id_car_generation}
-              trimId={effectiveTrimId || undefined}
-              makeName={generation.carModel?.carMake?.name || ""}
-              modelName={generation.carModel?.name || ""}
+              yearBegin={generation.year_begin}
+              yearEnd={generation.year_end}
+              locale={locale}
             />
           </AnimatedSection>
 
-          <AnimatedSection delay={180}>
+          <AnimatedSection delay={150}>
             <RecallsSection
               makeName={generation.carModel?.carMake?.name || ""}
               modelName={generation.carModel?.name || ""}

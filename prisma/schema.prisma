@@ -596,6 +596,7 @@ model CarGenerationFR {
   date_update       String?      @default("NULL")
   date_create       Int
   image_url         String?
+  price_new         Int?
   carModel          CarModelFR   @relation(fields: [id_car_model], references: [id_car_model])
   carType           CarTypeFR    @relation(fields: [id_car_type], references: [id_car_type])
   series            CarSerieFR[]
@@ -789,6 +790,7 @@ model CarGenerationEN {
   date_update       String?      @default("NULL")
   date_create       Int
   image_url         String?
+  price_new         Int?
   carModel          CarModelEN   @relation(fields: [id_car_model], references: [id_car_model])
   carType           CarTypeEN    @relation(fields: [id_car_type], references: [id_car_type])
   series            CarSerieEN[]

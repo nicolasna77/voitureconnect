@@ -5,8 +5,9 @@ import Footer from "@/components/footer";
 import { CompareFab } from "@/components/compare-fab";
 
 const font = Inter({
-  weight: "400",
+  weight: ["400", "600", "700"],
   subsets: ["latin"],
+  display: "swap",
 });
 export const metadata: Metadata = {
   title: "DriveMetric - Analyse intelligente de véhicules",
@@ -22,7 +23,7 @@ export default async function RootLayout({
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <main id="main" className="flex-1 pt-16">{children}</main>
+      <main id="main" className="flex-1">{children}</main>
       {modal}
       <CompareFab />
       <Footer />
