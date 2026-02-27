@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo, useCallback } from "react";
+import { useMemo, useCallback, useState } from "react";
 import Image from "next/image";
+import { CarIcon } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +37,8 @@ export function VehicleHeader({
   const modelName = generation.carModel?.name || "";
   const genName = generation.name || "";
   const logoUrl = generation.carModel?.carMake?.logo_url || null;
+  const imageUrl = generation.image_url || null;
+  const [imgErrored, setImgErrored] = useState(false);
 
   const totalTrims = useMemo(() => {
     let count = 0;
@@ -60,15 +63,41 @@ export function VehicleHeader({
     window.print();
   }, []);
 
+  const showCarImage = imageUrl && !imgErrored;
+
   return (
-    <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-primary/5 via-primary/2 to-transparent border">
+    <div className="relative overflow-hidden rounded-2xl bg-linear-to-br from-primary/5 via-primary/2 to-transparent border">
+      {/* Car image banner */}
+      {showCarImage ? (
+        <div className="relative w-full h-52 sm:h-64 lg:h-72 bg-muted overflow-hidden">
+          <Image
+            src={imageUrl}
+            alt={`${makeName} ${modelName} ${genName}`}
+            fill
+            sizes="(max-width: 768px) 100vw, 900px"
+            className="object-contain"
+            priority
+            unoptimized={imageUrl.includes("upload.wikimedia.org")}
+            onError={() => setImgErrored(true)}
+          />
+          {/* Logo badge en bas à droite */}
+          {logoUrl && (
+            <div
+              className="absolute bottom-3 right-3 w-10 h-10 rounded-xl bg-white/90 backdrop-blur-sm border border-white/60 shadow-md flex items-center justify-center overflow-hidden"
+              aria-hidden="true"
+            >
+              <Image src={logoUrl} alt="" width={32} height={32} className="object-contain" unoptimized />
+            </div>
+          )}
+        </div>
+      ) : null}
       <div className="p-6 lg:p-8">
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
-          {/* Left: brand initial + title */}
+          {/* Left: brand logo (only when no car image) + title */}
           <div className="flex items-center gap-5">
-            {logoUrl ? (
+            {!showCarImage && (logoUrl ? (
               <div
-                className="relative w-20 h-20 lg:w-32 lg:h-32 rounded-2xl  shrink-0 shadow-primary/20 overflow-hidden"
+                className="relative w-20 h-20 lg:w-32 lg:h-32 rounded-2xl shrink-0 shadow-primary/20 overflow-hidden"
                 aria-hidden="true"
               >
                 <Image
@@ -87,7 +116,7 @@ export function VehicleHeader({
               >
                 {makeName.charAt(0)}
               </div>
-            )}
+            ))}
             <div className="space-y-2">
               <h1 className="text-3xl lg:text-4xl font-bold tracking-tight font-serif text-balance">
                 {makeName} {modelName}

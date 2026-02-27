@@ -35,6 +35,7 @@ export function CommentForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-3">
       <Textarea
+        name="content"
         value={content}
         onChange={(e) => setContent(e.target.value)}
         placeholder={placeholder || t("placeholder")}

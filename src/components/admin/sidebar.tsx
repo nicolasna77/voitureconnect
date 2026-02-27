@@ -55,6 +55,10 @@ const data = {
           title: "Blog",
           url: "/admin/blog",
         },
+        {
+          title: "Générer avec IA",
+          url: "/admin/blog/generate",
+        },
       ],
     },
   ],

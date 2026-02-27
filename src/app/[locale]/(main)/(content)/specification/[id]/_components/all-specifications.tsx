@@ -36,7 +36,7 @@ export function AllSpecifications({
           Caractéristiques
         </h2>
         <Badge variant="outline" className="tabular-nums text-sm">
-          {totalSpecs} specs
+          {totalSpecs} données
         </Badge>
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

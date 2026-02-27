@@ -22,6 +22,7 @@ export interface Generation {
   name: string;
   year_begin: string | null;
   year_end: string | null;
+  image_url?: string | null;
   carModel: {
     name: string;
     carMake: {

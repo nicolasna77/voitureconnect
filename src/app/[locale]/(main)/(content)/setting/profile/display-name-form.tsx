@@ -63,7 +63,7 @@ export function DisplayNameForm() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             className={cn(
-              "transition-all",
+              "transition-[border-color,background-color]",
               hasChanges && "border-primary/50 bg-primary/5"
             )}
           />

@@ -1,8 +1,20 @@
 {
   "HomePage": {
     "hero": {
+      "sectionLabel": "Hero section — DriveMetric",
+      "badge": "Next-generation automotive analysis",
+      "tagline": "Never overpay again\nfor an unreliable vehicle",
+      "description": "Technical specs, reliability score, known issues and price estimate — everything you need to buy with confidence, in seconds.",
+      "ctaPrimary": "Analyse a vehicle for free",
+      "ctaSecondary": "How it works",
+      "socialProof": "Join over 10,000 confident buyers",
+      "stats": {
+        "vehicles": "Vehicles analysed",
+        "reliability": "Reliable data",
+        "brands": "Brands covered",
+        "rating": "User rating"
+      },
       "title": "Analyze the reliability of your future vehicle",
-      "description": "Use our AI to get a complete analysis of reliability, common problems, and repair costs for any vehicle.",
       "searchPlaceholder": "Search for a brand…",
       "searchLabel": "Search for a car brand",
       "searchButton": "Search",

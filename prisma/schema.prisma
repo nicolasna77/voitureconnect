@@ -406,6 +406,7 @@ model OwnedVehicle {
   maintenances   MaintenanceEntry[]
 
   @@unique([userId, generationId, trimId])
+  @@index([userId])
   @@map("owned_vehicles")
   @@schema("base")
 }
@@ -423,6 +424,7 @@ model MaintenanceEntry {
   createdAt      DateTime     @default(now())
   ownedVehicle   OwnedVehicle @relation(fields: [ownedVehicleId], references: [id], onDelete: Cascade)
 
+  @@index([ownedVehicleId])
   @@map("maintenance_entries")
   @@schema("base")
 }
@@ -469,6 +471,9 @@ model BlogPost {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
+  // Listing: WHERE status = PUBLISHED ORDER BY publishedAt DESC
+  @@index([status, publishedAt(sort: Desc)])
+  @@index([authorId])
   @@map("blog_posts")
   @@schema("base")
 }
@@ -590,6 +595,8 @@ model CarGenerationFR {
   year_end          String?      @default("NULL")
   date_update       String?      @default("NULL")
   date_create       Int
+  image_url         String?
+  price_new         Int?
   carModel          CarModelFR   @relation(fields: [id_car_model], references: [id_car_model])
   carType           CarTypeFR    @relation(fields: [id_car_type], references: [id_car_type])
   series            CarSerieFR[]
@@ -782,6 +789,8 @@ model CarGenerationEN {
   year_end          String?      @default("NULL")
   date_update       String?      @default("NULL")
   date_create       Int
+  image_url         String?
+  price_new         Int?
   carModel          CarModelEN   @relation(fields: [id_car_model], references: [id_car_model])
   carType           CarTypeEN    @relation(fields: [id_car_type], references: [id_car_type])
   series            CarSerieEN[]

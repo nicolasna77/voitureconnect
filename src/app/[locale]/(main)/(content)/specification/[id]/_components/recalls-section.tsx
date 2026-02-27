@@ -155,10 +155,10 @@ export function RecallsSection({
               href={`https://www.nhtsa.gov/recalls?nhtsaId=${encodeURIComponent(makeName)}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
+              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 rounded"
             >
               Voir sur NHTSA.gov
-              <ExternalLink className="h-3 w-3" />
+              <ExternalLink className="h-3 w-3" aria-hidden="true" />
             </a>
           </div>
         )}

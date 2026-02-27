@@ -1,99 +1,66 @@
 import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { routing } from "@/i18n/routing";
-import { auth } from "@/lib/auth";
 
-// Create the intl middleware
+// Edge-compatible: no Node.js APIs (no better-auth/crypto)
+// Auth protection is handled by server-component layouts:
+//   - (protected)/layout.tsx
+//   - (protected)/admin/layout.tsx
 const intlMiddleware = createMiddleware(routing);
 
-// Hoisted regex for locale extraction (vercel-react-best-practices: js-hoist-regexp)
-const LOCALE_REGEX = /^\/(en|fr)/;
+// In-memory rate limit store: ip → { count, resetAt }
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>();
+const RATE_LIMIT_WINDOW_MS = 60_000;
+const RATE_LIMIT_MAX = 30;
 
-// Use Set for O(1) lookups (vercel-react-best-practices: js-set-map-lookups)
-const protectedRoutes = new Set(["/admin", "/user", "/pro", "/profile"]);
-const adminRoutes = new Set(["/admin"]);
-const authRoutes = new Set([
-  "/login",
-  "/register",
-  "/forgot-password",
-  "/reset-password",
-]);
+function getClientIp(request: NextRequest): string {
+  return (
+    request.headers.get("x-forwarded-for")?.split(",")[0].trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown"
+  );
+}
 
-// Check if path matches any route patterns
-function matchesRoute(path: string, routes: Set<string>): boolean {
-  // Remove locale prefix (e.g., /en, /fr)
-  const pathWithoutLocale = path.replace(LOCALE_REGEX, "") || "/";
+function isRateLimited(ip: string): boolean {
+  const now = Date.now();
+  const entry = rateLimitStore.get(ip);
 
-  // Check exact match first (O(1))
-  if (routes.has(pathWithoutLocale)) {
+  if (!entry || now > entry.resetAt) {
+    rateLimitStore.set(ip, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    return false;
+  }
+
+  if (entry.count >= RATE_LIMIT_MAX) {
     return true;
   }
 
-  // Check prefix matches
-  for (const route of routes) {
-    if (pathWithoutLocale.startsWith(route + "/")) {
-      return true;
-    }
-  }
-
+  entry.count++;
   return false;
 }
 
-// Extract locale from path
-function getLocale(pathname: string): string {
-  const match = pathname.match(LOCALE_REGEX);
-  return match?.[1] || "fr";
-}
-
-export default async function proxy(request: NextRequest) {
+export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Early exit for API routes and Next.js internals (vercel-react-best-practices: js-early-exit)
-  if (
-    pathname.startsWith("/api") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/_vercel") ||
-    pathname.includes(".")
-  ) {
-    return intlMiddleware(request);
+  // Rate limiting for public blog API routes
+  if (pathname.startsWith("/api/blog")) {
+    const ip = getClientIp(request);
+    if (isRateLimited(ip)) {
+      return new NextResponse("Too Many Requests", {
+        status: 429,
+        headers: { "Retry-After": "60", "Content-Type": "text/plain" },
+      });
+    }
+    return NextResponse.next();
   }
 
-  // Get session from Better Auth
-  const session = await auth.api.getSession({
-    headers: request.headers,
-  });
-
-  const isAuthenticated = !!session?.user;
-  const userRole = session?.user?.role;
-  const isAdmin = userRole === "admin" || userRole === "ADMIN";
-
-  // Check if trying to access protected route without auth
-  if (matchesRoute(pathname, protectedRoutes) && !isAuthenticated) {
-    const locale = getLocale(pathname);
-    const loginUrl = new URL(`/${locale}/login`, request.url);
-    loginUrl.searchParams.set("callbackUrl", pathname);
-    return NextResponse.redirect(loginUrl);
-  }
-
-  // Check if trying to access admin route without admin role
-  if (matchesRoute(pathname, adminRoutes) && !isAdmin) {
-    const locale = getLocale(pathname);
-    return NextResponse.redirect(new URL(`/${locale}`, request.url));
-  }
-
-  // Redirect authenticated users away from auth routes
-  if (matchesRoute(pathname, authRoutes) && isAuthenticated) {
-    const locale = getLocale(pathname);
-    return NextResponse.redirect(new URL(`/${locale}`, request.url));
-  }
-
-  // Apply internationalization middleware
+  // Internationalization routing for all non-API paths
   return intlMiddleware(request);
 }
 
 export const config = {
-  // Match all pathnames except for
-  // - … if they start with `/api`, `/_next` or `/_vercel`
-  // - … the ones containing a dot (e.g. `favicon.ico`)
-  matcher: ["/((?!api|_next|_vercel|.*\\..*).*)"],
+  matcher: [
+    "/api/blog/:path*",
+    // Match all paths except Next.js internals and static assets
+    "/((?!api|_next|_vercel|.*\\..*).*)",
+  ],
 };

@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Plus, Trash2, Wrench, Droplets } from "lucide-react";
+import { useLocale } from "next-intl";
 import type { OwnedVehicleWithMaintenance, MaintenanceEntry } from "./types";
 import { MAINTENANCE_TYPES } from "./types";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ function getTypeLabel(type: string): string {
 
 export function MaintenanceDialog({ vehicle, onClose }: MaintenanceDialogProps) {
   const queryClient = useQueryClient();
+  const locale = useLocale();
   const [showForm, setShowForm] = useState(false);
   const [type, setType] = useState("");
   const [label, setLabel] = useState("");
@@ -149,8 +151,8 @@ export function MaintenanceDialog({ vehicle, onClose }: MaintenanceDialogProps) 
                       {entry.label || getTypeLabel(entry.type)}
                     </p>
                     <p className="text-muted-foreground">
-                      {new Date(entry.date).toLocaleDateString("fr-FR")}
-                      {entry.km && ` · ${entry.km.toLocaleString("fr-FR")} km`}
+                      {new Date(entry.date).toLocaleDateString(locale)}
+                      {entry.km && ` · ${entry.km.toLocaleString(locale)} km`}
                     </p>
                     {entry.nextDueDate && (
                       <Badge
@@ -158,7 +160,7 @@ export function MaintenanceDialog({ vehicle, onClose }: MaintenanceDialogProps) 
                         className="mt-1 text-xs"
                       >
                         Prochain :{" "}
-                        {new Date(entry.nextDueDate).toLocaleDateString("fr-FR")}
+                        {new Date(entry.nextDueDate).toLocaleDateString(locale)}
                       </Badge>
                     )}
                   </div>
@@ -183,9 +185,9 @@ export function MaintenanceDialog({ vehicle, onClose }: MaintenanceDialogProps) 
             <h3 className="text-sm font-semibold">Nouvel entretien</h3>
 
             <div className="space-y-2">
-              <Label>Type</Label>
+              <Label id="label-maint-type">Type</Label>
               <Select value={type} onValueChange={setType}>
-                <SelectTrigger>
+                <SelectTrigger aria-labelledby="label-maint-type">
                   <SelectValue placeholder="Type d'entretien" />
                 </SelectTrigger>
                 <SelectContent>
