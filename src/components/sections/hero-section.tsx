@@ -285,12 +285,12 @@ export async function HeroSection() {
                     <Icon className={`h-4 w-4 ${color}`} aria-hidden="true" />
                   </div>
                   <div>
+                    <dt className="text-[11px] text-muted-foreground">
+                      {t(`stats.${key}`)}
+                    </dt>
                     <dd className={`text-lg font-bold tabular-nums leading-none ${color}`}>
                       {value}
                     </dd>
-                    <dt className="mt-0.5 text-[11px] text-muted-foreground">
-                      {t(`stats.${key}`)}
-                    </dt>
                   </div>
                 </div>
               ))}

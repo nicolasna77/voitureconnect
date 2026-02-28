@@ -481,7 +481,7 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
             className={cn(
               "flex items-center gap-1.5",
               "rounded-lg border-2 border-transparent bg-secondary/50",
-              "transition-all focus-within:border-primary focus-within:bg-background focus-within:shadow-lg focus-within:shadow-primary/5",
+              "transition-[border-color,background-color,box-shadow] focus-within:border-primary focus-within:bg-background focus-within:shadow-lg focus-within:shadow-primary/5",
             )}
           >
             <Search
@@ -660,27 +660,28 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
               </div>
 
               {recentSearches.map((term) => (
-                <div
-                  key={term}
-                  onMouseDown={(e) => {
-                    e.preventDefault();
-                    setQuery(term);
-                    setInputFocused(false);
-                    setSuggestionsOpen(true);
-                    // Trigger suggestions fetch
-                    inputRef.current?.focus();
-                  }}
-                  className="flex items-center gap-3 mx-1 px-3 py-2 cursor-pointer rounded-md text-sm hover:bg-accent/60 transition-colors"
-                >
-                  <Clock
-                    className="h-3.5 w-3.5 text-muted-foreground shrink-0"
-                    aria-hidden="true"
-                  />
-                  <span className="flex-1 truncate">{term}</span>
+                <div key={term} className="flex items-center mx-1">
+                  <button
+                    type="button"
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      setQuery(term);
+                      setInputFocused(false);
+                      setSuggestionsOpen(true);
+                      inputRef.current?.focus();
+                    }}
+                    className="flex flex-1 items-center gap-3 px-3 py-2 rounded-md text-sm hover:bg-accent/60 transition-colors text-left"
+                  >
+                    <Clock
+                      className="h-3.5 w-3.5 text-muted-foreground shrink-0"
+                      aria-hidden="true"
+                    />
+                    <span className="flex-1 truncate">{term}</span>
+                  </button>
                   <button
                     type="button"
                     onMouseDown={(e) => removeRecentSearch(term, e)}
-                    className="p-0.5 rounded-sm hover:bg-muted transition-colors"
+                    className="p-0.5 mr-3 rounded-sm hover:bg-muted transition-colors shrink-0"
                     aria-label={`Retirer "${term}" des recherches récentes`}
                   >
                     <X

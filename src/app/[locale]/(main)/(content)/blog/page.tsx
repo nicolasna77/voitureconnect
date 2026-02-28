@@ -175,7 +175,11 @@ export default async function BlogPage({
 
       {/* Search — reset to page 1 on new query */}
       <form method="GET" className="mb-8">
+        <label htmlFor="blog-search" className="sr-only">
+          Rechercher un article
+        </label>
         <Input
+          id="blog-search"
           type="search"
           name="q"
           defaultValue={q}
