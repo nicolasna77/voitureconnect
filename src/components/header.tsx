@@ -1,15 +1,21 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Gauge, Search } from "lucide-react";
-import LoginMenu from "@/components/auth/login-menu";
 import { useSession } from "@/lib/auth-client";
 import { CreditBalance } from "@/components/credits/credit-balance";
 import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 import { SearchWithFilters } from "@/components/specification/search-with-filters";
+
+const LoginMenu = dynamic(() => import("@/components/auth/login-menu"), {
+  ssr: false,
+  loading: () => <Skeleton className="h-9 w-9 rounded-full" />,
+});
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
