@@ -176,7 +176,7 @@ const SpecificationPage = () => {
   // ── Render ────────────────────────────────────────────────────────────────
 
   return (
-    <div className="space-y-6 py-6">
+    <div className="space-y-6">
       {/* Recent history */}
       <RecentHistory />
 
