@@ -1,12 +1,11 @@
 "use client";
 
 import React, { useCallback, useMemo } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useRouter, useSearchParams } from "next/navigation";
-import PaginationComponant from "@/components/component/pagination";
 import ListSpecification from "@/components/list/list-specification";
-import { X } from "lucide-react";
+import { X, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RecentHistory } from "./_components/recent-history";
@@ -25,6 +24,7 @@ const SpecificationPage = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  // Current filter state (no page — page is handled internally)
   const formState = useMemo(
     () => ({
       marque: searchParams.get("marque") || "",
@@ -33,22 +33,46 @@ const SpecificationPage = () => {
       yearMin: searchParams.get("yearMin") || "",
       yearMax: searchParams.get("yearMax") || "",
       sortBy: searchParams.get("sortBy") || "make_asc",
-      page: parseInt(searchParams.get("page") || "1", 10),
     }),
     [searchParams]
   );
 
-  const query = new URLSearchParams(searchParams.toString());
+  // Stable filter params for the query key (no page)
+  const filterParams = useMemo(() => {
+    const p = new URLSearchParams();
+    if (formState.marque) p.set("marque", formState.marque);
+    if (formState.model) p.set("model", formState.model);
+    if (formState.generation) p.set("generation", formState.generation);
+    if (formState.yearMin) p.set("yearMin", formState.yearMin);
+    if (formState.yearMax) p.set("yearMax", formState.yearMax);
+    if (formState.sortBy && formState.sortBy !== "make_asc")
+      p.set("sortBy", formState.sortBy);
+    return p;
+  }, [formState]);
 
+  // Infinite query — resets automatically when filterParams key changes
   const {
-    data: carData,
+    data: infiniteData,
     isLoading,
+    isFetchingNextPage,
+    fetchNextPage,
+    hasNextPage,
     isFetching,
     error,
-  } = useQuery({
-    queryKey: ["carData", query.toString()],
-    queryFn: () => fetchCarData(query),
-    placeholderData: (previousData) => previousData,
+  } = useInfiniteQuery({
+    queryKey: ["carData", filterParams.toString()],
+    queryFn: async ({ pageParam }: { pageParam: number }) => {
+      const p = new URLSearchParams(filterParams.toString());
+      p.set("page", String(pageParam));
+      return fetchCarData(p);
+    },
+    getNextPageParam: (lastPage: any, allPages: unknown[]) => {
+      if (allPages.length < (lastPage?.pagination?.totalPages || 0)) {
+        return allPages.length + 1;
+      }
+      return undefined;
+    },
+    initialPageParam: 1,
     staleTime: 30 * 1000,
   });
 
@@ -58,8 +82,18 @@ const SpecificationPage = () => {
     staleTime: 60 * 1000,
   });
 
+  // Flatten all pages into a single array
+  const allVehicles = useMemo(
+    () => infiniteData?.pages.flatMap((p: any) => p.data ?? []) ?? [],
+    [infiniteData]
+  );
+
+  const totalCars = (infiniteData?.pages[0] as any)?.pagination?.totalCars || 0;
+
+  // ── Filter state mutations ────────────────────────────────────────────────
+
   const updateFormState = useCallback(
-    (type: string, value: string | number) => {
+    (type: string, value: string) => {
       const current = {
         marque: searchParams.get("marque") || "",
         model: searchParams.get("model") || "",
@@ -67,7 +101,6 @@ const SpecificationPage = () => {
         yearMin: searchParams.get("yearMin") || "",
         yearMax: searchParams.get("yearMax") || "",
         sortBy: searchParams.get("sortBy") || "make_asc",
-        page: parseInt(searchParams.get("page") || "1", 10),
       };
       const newState = { ...current, [type]: value };
 
@@ -78,8 +111,6 @@ const SpecificationPage = () => {
         newState.generation = "";
       }
 
-      newState.page = type === "page" ? Number(value) : 1;
-
       const params = new URLSearchParams();
       if (newState.marque) params.append("marque", newState.marque);
       if (newState.model) params.append("model", newState.model);
@@ -88,20 +119,10 @@ const SpecificationPage = () => {
       if (newState.yearMax) params.append("yearMax", newState.yearMax);
       if (newState.sortBy && newState.sortBy !== "make_asc")
         params.append("sortBy", newState.sortBy);
-      if (newState.page > 1) params.append("page", newState.page.toString());
 
       router.push(`?${params.toString()}`, { scroll: false });
     },
     [searchParams, router]
-  );
-
-  const handlePageChange = useCallback(
-    (newPage: number) => {
-      const totalPages = carData?.pagination?.totalPages || 0;
-      if (newPage < 1 || newPage > totalPages) return;
-      updateFormState("page", newPage);
-    },
-    [carData?.pagination?.totalPages, updateFormState]
   );
 
   const clearFilter = useCallback(
@@ -118,10 +139,6 @@ const SpecificationPage = () => {
     },
     [updateFormState]
   );
-
-  const totalCars = carData?.pagination?.totalCars || 0;
-  const currentPage = formState.page;
-  const totalPages = carData?.pagination?.totalPages || 0;
 
   const activeFilters = useMemo(() => {
     const filters: {
@@ -155,6 +172,8 @@ const SpecificationPage = () => {
   }, [formState]);
 
   const hasActiveFilters = activeFilters.length > 0;
+
+  // ── Render ────────────────────────────────────────────────────────────────
 
   return (
     <div className="space-y-6 py-6">
@@ -206,8 +225,11 @@ const SpecificationPage = () => {
           </span>{" "}
           résultat{totalCars !== 1 ? "s" : ""}
         </p>
-        {isFetching && !isLoading && (
-          <span className="flex items-center gap-2 text-xs text-muted-foreground" aria-hidden="true">
+        {isFetching && !isLoading && !isFetchingNextPage && (
+          <span
+            className="flex items-center gap-2 text-xs text-muted-foreground"
+            aria-hidden="true"
+          >
             <span className="h-2 w-2 rounded-full bg-primary animate-pulse motion-reduce:animate-none" />
             Mise à jour…
           </span>
@@ -218,19 +240,43 @@ const SpecificationPage = () => {
       <ListSpecification
         isPending={isLoading}
         isError={!!error}
-        data={carData}
+        data={allVehicles.length ? { data: allVehicles } : null}
         unlockedIds={unlockedIds}
       />
 
-      {/* Pagination */}
-      {totalPages > 1 && (
-        <nav aria-label="Pagination des fiches techniques" className="pt-4">
-          <PaginationComponant
-            page={currentPage}
-            totalPages={totalPages}
-            handlePageChange={handlePageChange}
-          />
-        </nav>
+      {/* Load more */}
+      {hasNextPage && (
+        <div className="pt-4 flex justify-center">
+          <Button
+            variant="outline"
+            onClick={() => fetchNextPage()}
+            disabled={isFetchingNextPage}
+            className="min-w-40 gap-2"
+          >
+            {isFetchingNextPage ? (
+              <>
+                <Loader2
+                  className="h-4 w-4 animate-spin motion-reduce:animate-none"
+                  aria-hidden="true"
+                />
+                Chargement…
+              </>
+            ) : (
+              "Voir plus"
+            )}
+          </Button>
+        </div>
+      )}
+
+      {/* All loaded indicator */}
+      {!hasNextPage && allVehicles.length > 0 && !isLoading && (
+        <p
+          className="text-center text-sm text-muted-foreground pt-2"
+          aria-live="polite"
+        >
+          {allVehicles.length.toLocaleString("fr-FR")} véhicule
+          {allVehicles.length !== 1 ? "s" : ""} affichés
+        </p>
       )}
     </div>
   );
