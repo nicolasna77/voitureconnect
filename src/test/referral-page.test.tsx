@@ -56,7 +56,7 @@ describe("ReferralPage", () => {
     mockUseMutation.mockReturnValue({
       mutate: vi.fn(),
       isPending: false,
-    } as ReturnType<typeof useMutation>);
+    } as unknown as ReturnType<typeof useMutation>);
   });
 
   it("shows loading skeletons while data is loading", () => {

@@ -11,7 +11,7 @@ import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import PaginationComponent from "@/components/component/pagination";
 import { CommentForm } from "./comment-form";
-import { CommentItem } from "./comment-item";
+import { CommentItem, type Comment } from "./comment-item";
 import { useTranslations } from "next-intl";
 
 interface CommentsSectionProps {
@@ -95,7 +95,7 @@ export function CommentsSection({ generationId }: CommentsSectionProps) {
               </div>
             ) : data?.comments?.length > 0 ? (
               <div className="space-y-4">
-                {data.comments.map((comment: any) => (
+                {data.comments.map((comment: Comment) => (
                   <CommentItem
                     key={comment.id}
                     comment={comment}

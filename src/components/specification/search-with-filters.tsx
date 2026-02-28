@@ -30,6 +30,8 @@ import {
   Sparkles,
   SlidersHorizontal,
   X,
+  History,
+  Clock,
 } from "lucide-react";
 import { useDebounce } from "@/hooks/use-debounce";
 import { cn } from "@/lib/utils";
@@ -169,6 +171,17 @@ function Chip({
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
+const RECENT_KEY = "dm_recent_searches";
+
+function loadRecentSearches(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    return JSON.parse(localStorage.getItem(RECENT_KEY) || "[]");
+  } catch {
+    return [];
+  }
+}
+
 export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersProps) {
   const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -184,6 +197,7 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
   // Search state
   const [query, setQuery] = useState("");
   const [suggestionsOpen, setSuggestionsOpen] = useState(false);
+  const [inputFocused, setInputFocused] = useState(false);
   const debouncedQuery = useDebounce(query, 300);
 
   // Keyboard navigation
@@ -199,6 +213,50 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
   // Filter state
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [filters, setFilters] = useState<FilterState>(DEFAULT_FILTERS);
+
+  // Recent searches
+  const [recentSearches, setRecentSearches] = useState<string[]>(loadRecentSearches);
+
+  const saveSearch = useCallback((term: string) => {
+    if (!term.trim()) return;
+    setRecentSearches((prev) => {
+      const next = [term.trim(), ...prev.filter((s) => s !== term.trim())].slice(0, 5);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const removeRecentSearch = useCallback((term: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setRecentSearches((prev) => {
+      const next = prev.filter((s) => s !== term);
+      localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+      return next;
+    });
+  }, []);
+
+  const clearRecentSearches = useCallback(() => {
+    setRecentSearches([]);
+    localStorage.removeItem(RECENT_KEY);
+  }, []);
+
+  const showRecentSearches =
+    inputFocused && !query && !selectedBrand && recentSearches.length > 0;
+
+  // Keyboard shortcut: press / on desktop to focus the search input
+  useEffect(() => {
+    const handleGlobalKey = (e: KeyboardEvent) => {
+      if (e.key !== "/") return;
+      if (window.innerWidth < 768) return;
+      const tag = (document.activeElement as HTMLElement)?.tagName;
+      if (tag === "INPUT" || tag === "TEXTAREA") return;
+      if ((document.activeElement as HTMLElement)?.isContentEditable) return;
+      e.preventDefault();
+      inputRef.current?.focus();
+    };
+    document.addEventListener("keydown", handleGlobalKey);
+    return () => document.removeEventListener("keydown", handleGlobalKey);
+  }, []);
 
   // ── Suggestions query ───────────────────────────────────────────────────────
 
@@ -261,6 +319,8 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
       setSuggestionsOpen(false);
       setQuery("");
       setActiveIndex(-1);
+      setInputFocused(false);
+      saveSearch(getSuggestionLabel(suggestion));
 
       if (suggestion.type === "generation" && suggestion.id_car_generation) {
         router.push(`/specification/${suggestion.id_car_generation}`);
@@ -282,7 +342,7 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
       setSelectedModel(null);
       inputRef.current?.focus();
     },
-    [router],
+    [router, saveSearch],
   );
 
   const handleSubmit = useCallback(
@@ -290,8 +350,11 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
       e.preventDefault();
       setSuggestionsOpen(false);
       setActiveIndex(-1);
+      setInputFocused(false);
 
       if (selectedBrand) {
+        const term = selectedBrand.name + (selectedModel ? ` ${selectedModel}` : "");
+        saveSearch(term);
         const params = new URLSearchParams();
         params.set("marque", selectedBrand.name);
         if (selectedModel) params.set("model", selectedModel);
@@ -299,12 +362,13 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
         return;
       }
       if (query.trim()) {
+        saveSearch(query.trim());
         router.push(
           `/specification?marque=${encodeURIComponent(query.trim())}`,
         );
       }
     },
-    [selectedBrand, selectedModel, query, router],
+    [selectedBrand, selectedModel, query, router, saveSearch],
   );
 
   const handleKeyDown = useCallback(
@@ -399,11 +463,16 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
     );
   }, [groupedSuggestions]);
 
+  const popoverOpen = (suggestionsOpen && hasResults) || showRecentSearches;
+
   return (
     <div className={cn("relative", className)}>
       <Popover
-        open={suggestionsOpen && hasResults}
-        onOpenChange={setSuggestionsOpen}
+        open={popoverOpen}
+        onOpenChange={(open) => {
+          setSuggestionsOpen(open);
+          if (!open) setInputFocused(false);
+        }}
       >
         <PopoverAnchor asChild>
           <form
@@ -441,9 +510,11 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
                   setQuery(e.target.value);
                   if (e.target.value.length >= 2) setSuggestionsOpen(true);
                 }}
-                onFocus={() =>
-                  debouncedQuery.length >= 2 && setSuggestionsOpen(true)
-                }
+                onFocus={() => {
+                  setInputFocused(true);
+                  if (debouncedQuery.length >= 2) setSuggestionsOpen(true);
+                }}
+                onBlur={() => setInputFocused(false)}
                 onKeyDown={handleKeyDown}
                 autoComplete="off"
                 aria-label="Rechercher des fiches techniques"
@@ -457,6 +528,15 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
               />
             )}
             {selectedModel && <span className="flex-1" />}
+
+            {!inputFocused && !query && !selectedBrand && (
+              <kbd
+                aria-hidden="true"
+                className="hidden md:inline-flex items-center px-1.5 py-0.5 bg-muted/60 rounded text-[10px] font-mono text-muted-foreground/50 mr-0.5 shrink-0"
+              >
+                /
+              </kbd>
+            )}
 
             {isLoading && (
               <Loader2
@@ -548,110 +628,170 @@ export function SearchWithFilters({ className, autoFocus }: SearchWithFiltersPro
           </form>
         </PopoverAnchor>
 
-        {/* Suggestions dropdown — plain HTML for reliable keyboard control */}
+        {/* Suggestions / recent searches dropdown */}
         <PopoverContent
           className="w-(--radix-popover-trigger-width) p-0 shadow-xl border-border/50"
           align="start"
           sideOffset={8}
           onOpenAutoFocus={(e) => e.preventDefault()}
-          onInteractOutside={() => setSuggestionsOpen(false)}
+          onInteractOutside={() => {
+            setSuggestionsOpen(false);
+            setInputFocused(false);
+          }}
         >
-          <div
-            ref={listRef}
-            id="search-suggestions"
-            role="listbox"
-            aria-label="Suggestions de recherche"
-            className="max-h-80 overflow-y-auto py-1"
-          >
-            {indexedGroups.map(({ type, items }) => (
-              <div key={type} role="group" aria-label={TYPE_LABELS[type]}>
-                {/* Group heading */}
-                <div className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-muted-foreground">
-                  {TYPE_ICONS[type]}
-                  {TYPE_LABELS[type]}
-                </div>
+          {showRecentSearches ? (
+            /* ── Recent searches ─────────────────────────────────────────── */
+            <div className="py-1">
+              <div className="flex items-center justify-between px-3 py-1.5">
+                <span className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                  <History className="h-3.5 w-3.5" aria-hidden="true" />
+                  Recherches récentes
+                </span>
+                <button
+                  type="button"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    clearRecentSearches();
+                  }}
+                  className="text-xs text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Effacer tout
+                </button>
+              </div>
 
-                {items.map(({ suggestion, index: fi }) => (
-                  <div
-                    key={`${type}-${fi}`}
-                    id={`suggestion-${fi}`}
-                    role="option"
-                    aria-selected={fi === activeIndex}
-                    data-index={fi}
-                    onMouseDown={(e) => {
-                      // Prevent input blur before selection fires
-                      e.preventDefault();
-                      handleSelect(suggestion);
-                    }}
-                    onMouseEnter={() => setActiveIndex(fi)}
-                    onMouseLeave={() => setActiveIndex(-1)}
-                    className={cn(
-                      "flex items-center gap-3 mx-1 px-3 py-2.5 cursor-pointer rounded-md text-sm transition-colors",
-                      fi === activeIndex
-                        ? "bg-accent text-accent-foreground"
-                        : "hover:bg-accent/60",
-                    )}
+              {recentSearches.map((term) => (
+                <div
+                  key={term}
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    setQuery(term);
+                    setInputFocused(false);
+                    setSuggestionsOpen(true);
+                    // Trigger suggestions fetch
+                    inputRef.current?.focus();
+                  }}
+                  className="flex items-center gap-3 mx-1 px-3 py-2 cursor-pointer rounded-md text-sm hover:bg-accent/60 transition-colors"
+                >
+                  <Clock
+                    className="h-3.5 w-3.5 text-muted-foreground shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span className="flex-1 truncate">{term}</span>
+                  <button
+                    type="button"
+                    onMouseDown={(e) => removeRecentSearch(term, e)}
+                    className="p-0.5 rounded-sm hover:bg-muted transition-colors"
+                    aria-label={`Retirer "${term}" des recherches récentes`}
                   >
-                    {suggestion.logo_url && (
-                      <span className="relative w-5 h-5 shrink-0">
-                        <Image
-                          src={suggestion.logo_url}
-                          alt=""
-                          fill
-                          sizes="20px"
-                          className="object-contain"
-                          unoptimized
-                        />
-                      </span>
-                    )}
-                    <span className="flex-1 truncate font-medium">
-                      {getSuggestionLabel(suggestion)}
-                    </span>
-                    <Badge
-                      variant={TYPE_BADGES[type]?.variant || "secondary"}
-                      className="text-xs shrink-0"
-                    >
-                      {TYPE_BADGES[type]?.label || type}
-                    </Badge>
-                    {suggestion.type === "generation" && (
-                      <ArrowRight
-                        className="h-3 w-3 text-muted-foreground shrink-0"
-                        aria-hidden="true"
-                      />
-                    )}
+                    <X
+                      className="h-3 w-3 text-muted-foreground"
+                      aria-hidden="true"
+                    />
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            /* ── Autocomplete suggestions ────────────────────────────────── */
+            <>
+              <div
+                ref={listRef}
+                id="search-suggestions"
+                role="listbox"
+                aria-label="Suggestions de recherche"
+                className="max-h-80 overflow-y-auto py-1"
+              >
+                {indexedGroups.map(({ type, items }) => (
+                  <div key={type} role="group" aria-label={TYPE_LABELS[type]}>
+                    {/* Group heading */}
+                    <div className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium text-muted-foreground">
+                      {TYPE_ICONS[type]}
+                      {TYPE_LABELS[type]}
+                    </div>
+
+                    {items.map(({ suggestion, index: fi }) => (
+                      <div
+                        key={`${type}-${fi}`}
+                        id={`suggestion-${fi}`}
+                        role="option"
+                        aria-selected={fi === activeIndex}
+                        data-index={fi}
+                        onMouseDown={(e) => {
+                          // Prevent input blur before selection fires
+                          e.preventDefault();
+                          handleSelect(suggestion);
+                        }}
+                        onMouseEnter={() => setActiveIndex(fi)}
+                        onMouseLeave={() => setActiveIndex(-1)}
+                        className={cn(
+                          "flex items-center gap-3 mx-1 px-3 py-2.5 cursor-pointer rounded-md text-sm transition-colors",
+                          fi === activeIndex
+                            ? "bg-accent text-accent-foreground"
+                            : "hover:bg-accent/60",
+                        )}
+                      >
+                        {suggestion.logo_url && (
+                          <span className="relative w-5 h-5 shrink-0">
+                            <Image
+                              src={suggestion.logo_url}
+                              alt=""
+                              fill
+                              sizes="20px"
+                              className="object-contain"
+                              unoptimized
+                            />
+                          </span>
+                        )}
+                        <span className="flex-1 truncate font-medium">
+                          {getSuggestionLabel(suggestion)}
+                        </span>
+                        <Badge
+                          variant={TYPE_BADGES[type]?.variant || "secondary"}
+                          className="text-xs shrink-0"
+                        >
+                          {TYPE_BADGES[type]?.label || type}
+                        </Badge>
+                        {suggestion.type === "generation" && (
+                          <ArrowRight
+                            className="h-3 w-3 text-muted-foreground shrink-0"
+                            aria-hidden="true"
+                          />
+                        )}
+                      </div>
+                    ))}
                   </div>
                 ))}
               </div>
-            ))}
-          </div>
 
-          {/* Footer hint */}
-          <div className="border-t border-border px-3 py-2 flex items-center justify-between text-xs text-muted-foreground">
-            <span className="flex items-center gap-1">
-              <Sparkles className="h-3 w-3" aria-hidden="true" />
-              Suggestions intelligentes
-            </span>
-            <span className="hidden sm:flex items-center gap-2">
-              <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
-                  ↑↓
-                </kbd>
-                <span>naviguer</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
-                  ↵
-                </kbd>
-                <span>sélectionner</span>
-              </span>
-              <span className="flex items-center gap-1">
-                <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
-                  esc
-                </kbd>
-                <span>fermer</span>
-              </span>
-            </span>
-          </div>
+              {/* Footer hint */}
+              <div className="border-t border-border px-3 py-2 flex items-center justify-between text-xs text-muted-foreground">
+                <span className="flex items-center gap-1">
+                  <Sparkles className="h-3 w-3" aria-hidden="true" />
+                  Suggestions intelligentes
+                </span>
+                <span className="hidden sm:flex items-center gap-2">
+                  <span className="flex items-center gap-1">
+                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                      ↑↓
+                    </kbd>
+                    <span>naviguer</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                      ↵
+                    </kbd>
+                    <span>sélectionner</span>
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <kbd className="px-1.5 py-0.5 bg-muted rounded text-[10px] font-mono">
+                      esc
+                    </kbd>
+                    <span>fermer</span>
+                  </span>
+                </span>
+              </div>
+            </>
+          )}
         </PopoverContent>
       </Popover>
     </div>

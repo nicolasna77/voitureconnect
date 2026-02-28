@@ -159,6 +159,7 @@ export default async function BlogPage({
     <div className="container mx-auto py-8">
       <div className="flex items-center justify-between mb-2">
         <h1 className="text-3xl font-bold">Blog</h1>
+        {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
         <a
           href="/api/blog/feed"
           title="Flux RSS"

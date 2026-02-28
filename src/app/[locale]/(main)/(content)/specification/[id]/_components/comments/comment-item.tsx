@@ -51,7 +51,7 @@ interface CommentUser {
   picture: string;
 }
 
-interface Comment {
+export interface Comment {
   id: string;
   userId: string;
   user: CommentUser;
