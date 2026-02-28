@@ -27,7 +27,7 @@ const steps = [
 
 export function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="py-24 lg:py-36 bg-accent/50">
+    <section id="how-it-works" className="scroll-mt-20 py-24 lg:py-36 bg-accent/50">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <Reveal>
           <div className="mx-auto max-w-2xl text-center">
@@ -48,12 +48,12 @@ export function HowItWorksSection() {
           <div className="grid gap-8 lg:grid-cols-3">
             {steps.map((item, index) => (
               <Reveal key={item.step} delay={200 + index * 150}>
-                <div className="group rounded-2xl border border-border bg-card p-8 text-center transition-all duration-300 hover:border-foreground/15 hover:shadow-lg">
+                <div className="group rounded-2xl border border-border bg-card p-8 text-center transition-[box-shadow,border-color] duration-300 motion-reduce:transition-none hover:border-foreground/15 hover:shadow-lg">
                   <div className="relative mx-auto mb-6 w-fit">
-                    <div className={`flex h-16 w-16 items-center justify-center rounded-2xl border transition-colors duration-300 ${item.color.bg} ${item.color.border} ${item.color.hover}`}>
+                    <div className={`flex h-16 w-16 items-center justify-center rounded-2xl border transition-colors motion-reduce:transition-none ${item.color.bg} ${item.color.border} ${item.color.hover}`}>
                       <item.icon className={`h-7 w-7 ${item.color.icon}`} aria-hidden="true" />
                     </div>
-                    <span className={`absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-primary-foreground ${item.color.badge}`}>
+                    <span aria-hidden="true" className={`absolute -top-2 -right-2 flex h-7 w-7 items-center justify-center rounded-full text-xs font-bold text-primary-foreground ${item.color.badge}`}>
                       {item.step}
                     </span>
                   </div>
