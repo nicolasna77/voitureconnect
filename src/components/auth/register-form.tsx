@@ -44,12 +44,13 @@ const registerSchema = z.object({
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-const RegisterForm = () => {
+const RegisterForm = ({ callbackUrl }: { callbackUrl?: string }) => {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const router = useRouter();
   const t = useTranslations("RegisterForm");
+  const safeCallback = callbackUrl?.startsWith("/") ? callbackUrl : "/";
 
   const {
     register,
@@ -89,7 +90,7 @@ const RegisterForm = () => {
         toast.success(t("success.title"), {
           description: t("success.description"),
         });
-        router.push("/login");
+        router.push(safeCallback !== "/" ? `/login?callbackUrl=${safeCallback}` : "/login");
       }
     } catch {
       setError(t("errors.default"));
@@ -110,7 +111,7 @@ const RegisterForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <LoginSocial />
+        <LoginSocial callbackUrl={safeCallback} />
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
@@ -248,7 +249,10 @@ const RegisterForm = () => {
 
         <p className="text-center text-sm text-muted-foreground">
           Vous avez déjà un compte ?{" "}
-          <Link href="/login" className="text-primary font-medium hover:underline">
+          <Link
+            href={safeCallback !== "/" ? `/login?callbackUrl=${safeCallback}` : "/login"}
+            className="text-primary font-medium hover:underline"
+          >
             Se connecter
           </Link>
         </p>

@@ -24,11 +24,12 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "@/lib/auth-client";
 
-const LoginForm = () => {
+const LoginForm = ({ callbackUrl }: { callbackUrl?: string }) => {
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const safeCallback = callbackUrl?.startsWith("/") ? callbackUrl : "/";
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -48,7 +49,7 @@ const LoginForm = () => {
       if (result.error) {
         setError(result.error.message || "Identifiants invalides.");
       } else {
-        router.push("/");
+        router.push(safeCallback);
         router.refresh();
       }
     } catch {
@@ -70,7 +71,7 @@ const LoginForm = () => {
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <LoginSocial />
+        <LoginSocial callbackUrl={safeCallback} />
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
@@ -166,7 +167,10 @@ const LoginForm = () => {
 
         <p className="text-center text-sm text-muted-foreground">
           Vous n&apos;avez pas de compte ?{" "}
-          <Link href="/register" className="text-primary font-medium hover:underline">
+          <Link
+            href={safeCallback !== "/" ? `/register?callbackUrl=${safeCallback}` : "/register"}
+            className="text-primary font-medium hover:underline"
+          >
             Créer un compte
           </Link>
         </p>

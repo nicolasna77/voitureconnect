@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "../ui/button";
 import {
   DropdownMenu,
@@ -42,14 +43,17 @@ export default function LoginMenu() {
     return <Skeleton className="h-9 w-9 rounded-full" />;
   }
 
+  const pathname = usePathname();
+  const callbackParam = `?callbackUrl=${pathname}`;
+
   if (!session?.user) {
     return (
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/login">Connexion</Link>
+          <Link href={`/login${callbackParam}`}>Connexion</Link>
         </Button>
         <Button size="sm" asChild>
-          <Link href="/register">S&apos;inscrire</Link>
+          <Link href={`/register${callbackParam}`}>S&apos;inscrire</Link>
         </Button>
       </div>
     );

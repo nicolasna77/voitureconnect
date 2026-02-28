@@ -5,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
 
-const LoginSocial = () => {
+const LoginSocial = ({ callbackUrl }: { callbackUrl?: string }) => {
   const [isLoading, setIsLoading] = useState(false);
 
   const onClick = async () => {
@@ -13,7 +13,7 @@ const LoginSocial = () => {
       setIsLoading(true);
       await signIn.social({
         provider: "google",
-        callbackURL: "/",
+        callbackURL: callbackUrl?.startsWith("/") ? callbackUrl : "/",
       });
     } catch (error) {
       console.error("Erreur de connexion:", error);
