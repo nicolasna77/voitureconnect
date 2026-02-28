@@ -56,7 +56,7 @@ Une plateforme innovante de mise en relation entre particuliers et professionnel
 
 ```bash
 # Cloner le repository
-git clone https://github.com/votre-username/carconnect.git
+git clone https://github.com/votre-username/drivemetric.git
 
 # Accéder au dossier
 cd carconnect
