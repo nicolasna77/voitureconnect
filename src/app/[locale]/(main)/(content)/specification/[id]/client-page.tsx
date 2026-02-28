@@ -15,14 +15,21 @@ import {
 import { useLocale } from "next-intl";
 import { useSession } from "@/lib/auth-client";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
-  ChevronLeft,
   Wrench,
   TrendingUp,
   Star,
 } from "lucide-react";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+
 
 import type { Generation } from "./_components/types";
 import { getAllTrims, getMergedSpecs } from "./_components/helpers";
@@ -146,14 +153,41 @@ export function SpecificationDetailPage() {
 
   return (
     <div className="space-y-6 print:space-y-4">
-      {/* Back Link */}
-      <nav aria-label="Navigation retour" className="print:hidden">
-        <Button variant="ghost" size="sm" asChild>
-          <Link href="/specification">
-            <ChevronLeft className="h-4 w-4 mr-1" aria-hidden="true" />
-            Retour aux fiches
-          </Link>
-        </Button>
+      {/* Breadcrumb */}
+      <nav aria-label="Fil d'Ariane" className="print:hidden">
+        <Breadcrumb>
+          <BreadcrumbList>
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link href="/specification">Fiches techniques</Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link
+                  href={`/specification?marque=${encodeURIComponent(generation.carModel?.carMake?.name || "")}`}
+                >
+                  {generation.carModel?.carMake?.name}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbLink asChild>
+                <Link
+                  href={`/specification?marque=${encodeURIComponent(generation.carModel?.carMake?.name || "")}&model=${encodeURIComponent(generation.carModel?.name || "")}`}
+                >
+                  {generation.carModel?.name}
+                </Link>
+              </BreadcrumbLink>
+            </BreadcrumbItem>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem>
+              <BreadcrumbPage>{generation.name}</BreadcrumbPage>
+            </BreadcrumbItem>
+          </BreadcrumbList>
+        </Breadcrumb>
       </nav>
 
       {/* Hero */}
