@@ -42,7 +42,7 @@ export function HowItWorksSection() {
 
         <div className="relative mt-16">
           <div
-            className="pointer-events-none absolute top-24 right-[16.67%] left-[16.67%] hidden h-px bg-gradient-to-r from-chart-2/30 via-chart-3/30 to-chart-4/30 lg:block"
+            className="pointer-events-none absolute top-16 right-[16.67%] left-[16.67%] hidden h-px bg-gradient-to-r from-chart-2/30 via-chart-3/30 to-chart-4/30 lg:block"
             aria-hidden="true"
           />
           <div className="grid gap-8 lg:grid-cols-3">
