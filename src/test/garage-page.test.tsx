@@ -90,14 +90,14 @@ describe("GaragePage", () => {
     mockUseMutation.mockReturnValue({
       mutate: vi.fn(),
       isPending: false,
-    } as ReturnType<typeof useMutation>);
+    } as unknown as ReturnType<typeof useMutation>);
   });
 
   it("shows loading skeletons while data is loading", () => {
     mockUseQuery.mockReturnValue({
       data: [],
       isLoading: true,
-    } as ReturnType<typeof useQuery>);
+    } as unknown as ReturnType<typeof useQuery>);
 
     const { container } = render(<GaragePage />);
     expect(container.querySelector(".animate-pulse")).toBeInTheDocument();

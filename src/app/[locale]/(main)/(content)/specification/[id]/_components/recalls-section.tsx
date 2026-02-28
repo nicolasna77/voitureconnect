@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -58,12 +59,12 @@ export function RecallsSection({
 
   if (isLoading) {
     return (
-      <Card className="animate-pulse motion-reduce:animate-none">
+      <Card>
         <CardHeader>
-          <div className="h-5 bg-muted rounded w-1/2" />
+          <Skeleton className="h-5 w-1/2" />
         </CardHeader>
         <CardContent>
-          <div className="h-20 bg-muted rounded" />
+          <Skeleton className="h-20 w-full" />
         </CardContent>
       </Card>
     );

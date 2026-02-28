@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Car, PlusCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { AddVehicleDialog } from "./_components/add-vehicle-dialog";
 import { VehicleCard } from "./_components/vehicle-card";
 import { EditVehicleDialog } from "./_components/edit-vehicle-dialog";
@@ -39,13 +40,9 @@ export default function GaragePage() {
 
       {/* Content */}
       {isLoading ? (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+        <div className="grid gap-4 sm:grid-cols-2">
           {[...Array(2)].map((_, i) => (
-            <div
-              key={i}
-              className="h-48 rounded-xl border bg-muted/30 animate-pulse"
-              aria-hidden="true"
-            />
+            <Skeleton key={i} className="h-48 rounded-xl" aria-hidden="true" />
           ))}
         </div>
       ) : vehicles.length === 0 ? (

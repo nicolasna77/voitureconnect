@@ -10,8 +10,9 @@ import { MessageSquare } from "lucide-react";
 import { Link } from "@/i18n/routing";
 import { Button } from "@/components/ui/button";
 import PaginationComponent from "@/components/component/pagination";
+import { Skeleton } from "@/components/ui/skeleton";
 import { CommentForm } from "./comment-form";
-import { CommentItem } from "./comment-item";
+import { CommentItem, type Comment } from "./comment-item";
 import { useTranslations } from "next-intl";
 
 interface CommentsSectionProps {
@@ -81,21 +82,18 @@ export function CommentsSection({ generationId }: CommentsSectionProps) {
                 aria-label={t("loading")}
               >
                 {[...Array(3)].map((_, i) => (
-                  <div
-                    key={i}
-                    className="flex gap-3 animate-pulse motion-reduce:animate-none"
-                  >
-                    <div className="h-8 w-8 rounded-full bg-muted shrink-0" />
+                  <div key={i} className="flex gap-3" aria-hidden="true">
+                    <Skeleton className="h-8 w-8 rounded-full shrink-0" />
                     <div className="flex-1 min-w-0 space-y-2">
-                      <div className="h-4 bg-muted rounded w-1/4" />
-                      <div className="h-4 bg-muted rounded w-3/4" />
+                      <Skeleton className="h-4 w-1/4" />
+                      <Skeleton className="h-4 w-3/4" />
                     </div>
                   </div>
                 ))}
               </div>
             ) : data?.comments?.length > 0 ? (
               <div className="space-y-4">
-                {data.comments.map((comment: any) => (
+                {data.comments.map((comment: Comment) => (
                   <CommentItem
                     key={comment.id}
                     comment={comment}
@@ -104,9 +102,17 @@ export function CommentsSection({ generationId }: CommentsSectionProps) {
                 ))}
               </div>
             ) : (
-              <p className="text-center text-sm text-muted-foreground py-4">
-                {t("noComments")}
-              </p>
+              <div className="flex flex-col items-center py-10 text-center gap-3">
+                <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center">
+                  <MessageSquare
+                    className="h-6 w-6 text-muted-foreground"
+                    aria-hidden="true"
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {t("noComments")}
+                </p>
+              </div>
             )}
           </div>
 

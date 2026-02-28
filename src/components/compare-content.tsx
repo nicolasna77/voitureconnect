@@ -116,12 +116,12 @@ export function CompareContent({ header, className, showShareButton }: CompareCo
 
   const getTrims = (vehicle: CompareVehicle): Trim[] => vehicle.series?.[0]?.trims || [];
 
-  const getSelectedTrim = (vehicle: CompareVehicle): Trim | null => {
+  const getSelectedTrim = useCallback((vehicle: CompareVehicle): Trim | null => {
     const trims = getTrims(vehicle);
     if (trims.length === 0) return null;
     const selectedId = selectedTrims[vehicle.id_car_generation];
     return (selectedId && trims.find((t) => t.id_car_trim === selectedId)) || trims[0];
-  };
+  }, [selectedTrims]);
 
   const gridStyle = useMemo(
     () => ({
