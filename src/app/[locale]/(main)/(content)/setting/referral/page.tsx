@@ -281,12 +281,12 @@ export default function ReferralPage() {
       </Card>
 
       {/* Referrals list */}
-      {referralData?.referrals && referralData.referrals.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Mes filleuls</CardTitle>
-          </CardHeader>
-          <CardContent>
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">Mes filleuls</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {referralData?.referrals && referralData.referrals.length > 0 ? (
             <div className="space-y-2">
               {referralData.referrals.map((referral) => (
                 <div
@@ -317,9 +317,25 @@ export default function ReferralPage() {
                 </div>
               ))}
             </div>
-          </CardContent>
-        </Card>
-      )}
+          ) : (
+            <div className="flex flex-col items-center py-8 text-center gap-3">
+              <div className="h-12 w-12 rounded-2xl bg-muted flex items-center justify-center">
+                <Users className="h-6 w-6 text-muted-foreground" aria-hidden="true" />
+              </div>
+              <div>
+                <p className="text-sm font-medium">Aucun filleul pour l&apos;instant</p>
+                <p className="text-xs text-muted-foreground mt-1">
+                  Partagez votre code pour inviter vos amis et gagner des crédits
+                </p>
+              </div>
+              <Button size="sm" onClick={handleShare} className="gap-2 mt-1">
+                <Share2 className="h-4 w-4" aria-hidden="true" />
+                Partager mon code
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
     </div>
   );
 }

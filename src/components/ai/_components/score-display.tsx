@@ -1,12 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
-
-function getScoreColor(score: number) {
-  if (score >= 80) return "text-green-600 border-green-500 bg-green-50";
-  if (score >= 60) return "text-yellow-600 border-yellow-500 bg-yellow-50";
-  if (score >= 40) return "text-orange-600 border-orange-500 bg-orange-50";
-  return "text-red-600 border-red-500 bg-red-50";
-}
+import { ScoreRing } from "@/components/ui/score-ring";
 
 function getScoreLabel(score: number, locale: string) {
   if (locale === "fr") {
@@ -29,17 +22,16 @@ export function ScoreDisplay({
   locale: string;
 }) {
   return (
-    <div
-      className={cn(
-        "flex items-center justify-between p-3 rounded-lg border-2",
-        getScoreColor(score),
-      )}
-    >
-      <div>
-        <p className="text-xs font-medium opacity-80">Score</p>
-        <p className="text-2xl font-bold tabular-nums">{score}/100</p>
+    <div className="flex items-center gap-4 p-3 rounded-lg bg-muted/40">
+      <ScoreRing score={score} size={80} strokeWidth={7} />
+      <div className="space-y-1">
+        <p className="text-xs text-muted-foreground font-medium">
+          {locale === "fr" ? "Score de fiabilité" : "Reliability score"}
+        </p>
+        <Badge variant="secondary" className="text-sm px-2 py-0.5">
+          {getScoreLabel(score, locale)}
+        </Badge>
       </div>
-      <Badge variant="secondary">{getScoreLabel(score, locale)}</Badge>
     </div>
   );
 }

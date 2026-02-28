@@ -103,7 +103,7 @@ describe("RatingWidget", () => {
     mockUseMutation.mockReturnValue({
       mutate: vi.fn(),
       isPending: false,
-    } as ReturnType<typeof useMutation>);
+    } as unknown as ReturnType<typeof useMutation>);
   });
 
   it("shows loading skeleton while data is loading", () => {

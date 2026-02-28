@@ -8,6 +8,12 @@ export const metadata: Metadata = {
   description:
     "Fiches techniques complètes, fiabilité notée par IA, estimation de prix et problèmes connus.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000"),
+  manifest: "/manifest.json",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "DriveMetric",
+  },
   openGraph: {
     type: "website",
     siteName: "DriveMetric",
